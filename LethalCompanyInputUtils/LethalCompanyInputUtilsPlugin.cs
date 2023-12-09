@@ -3,6 +3,7 @@ using BepInEx;
 using HarmonyLib;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace LethalCompanyInputUtils;
 
@@ -23,6 +24,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     {
         _instance = this;
         _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModId);
+        SceneManager.activeSceneChanged += OnSceneChanged;
         
         FsUtils.EnsureControlsDir();
 
@@ -38,13 +40,17 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         Logger.LogInfo($"Plugin {ModId} is loaded!");
     }
 
-    private void Start()
-    {
-        
-    }
-
     private void EmoteWheelCallback(InputAction.CallbackContext context)
     {
-        Logger.LogInfo("Emotema balls");
+        Logger.LogInfo("Emotema");
+    }
+
+    private static void OnSceneChanged(Scene current, Scene next)
+    {
+        var menuButtons = next.FindMenuButtons();
+        if (!menuButtons)
+            return;
+        
+        
     }
 }

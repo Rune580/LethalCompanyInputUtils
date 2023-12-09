@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using BepInEx;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,12 +15,15 @@ public abstract class LcInputActions
     private readonly string _jsonPath;
     protected readonly InputActionAsset Asset;
     
+    public BepInPlugin Plugin { get; }
+    
     protected LcInputActions()
     {
         Asset = ScriptableObject.CreateInstance<InputActionAsset>();
+
+        Plugin = Assembly.GetCallingAssembly().GetBepInPlugin() ?? throw new InvalidOperationException();
         
-        var plugin = Assembly.GetCallingAssembly().GetBepInPlugin();
-        var modGuid = plugin.GUID;
+        var modGuid = Plugin.GUID;
         _jsonPath = Path.Combine(FsUtils.ControlsDir, $"{modGuid}.json");
 
         var mapBuilder = new InputActionMapBuilder(modGuid);
