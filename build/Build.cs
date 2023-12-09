@@ -69,7 +69,9 @@ public class BuildContext(ICakeContext context) : FrostingContext(context)
     {
         "Assembly-CSharp.dll",
         "Newtonsoft.Json.dll",
-        "Unity.InputSystem.dll"
+        "Unity.InputSystem.dll",
+        "Unity.TextMeshPro.dll",
+        "UnityEngine.UI.dll"
     };
 }
 
@@ -113,6 +115,35 @@ public sealed class BuildTask : FrostingTask<BuildContext>
         {
             Configuration = context.MsBuildConfiguration
         });
+    }
+}
+
+[TaskName("DeployUnity")]
+[IsDependentOn(typeof(BuildTask))]
+public sealed class DeployToUnity : FrostingTask<BuildContext>
+{
+    public override void Run(BuildContext context)
+    {
+        AbsolutePath unityPkgDir = (AbsolutePath)"../" / "Unity-LethalCompanyInputUtils" / "Packages";
+        
+        foreach (var project in context.Solution.Projects)
+        {
+            if (string.Equals(project.Name, "build"))
+                continue;
+            
+            AbsolutePath buildDir = (AbsolutePath)project.Path.GetDirectory() / "bin" / context.MsBuildConfiguration / "netstandard2.1";
+            AbsolutePath destDir = unityPkgDir / project.Name;
+
+            if (!Directory.Exists(destDir))
+                Directory.CreateDirectory(destDir);
+            
+            buildDir.GlobFiles("*.dll", "*.pdb")
+                .ForEach(file =>
+                {
+                    var destFile = destDir / file.Name;
+                    File.Copy(file, destFile, true);
+                });
+        }
     }
 }
 
