@@ -20,7 +20,7 @@ public abstract class LcInputActions
         
         var plugin = Assembly.GetCallingAssembly().GetBepInPlugin();
         var modGuid = plugin.GUID;
-        _jsonPath = Path.Combine(Paths.ControlsPath, $"{modGuid}.json");
+        _jsonPath = Path.Combine(FsUtils.ControlsDir, $"{modGuid}.json");
 
         var mapBuilder = new InputActionMapBuilder(modGuid);
 
@@ -59,6 +59,11 @@ public abstract class LcInputActions
     public void Enable()
     {
         Asset.Enable();
+    }
+
+    public void Disable()
+    {
+        Asset.Disable();
     }
 
     internal void Save()

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace LethalCompanyInputUtils.Utils;
 
-internal static class Paths
+internal static class FsUtils
 {
     public static string SaveDir { get; } = GetSaveDir();
 
@@ -14,5 +14,11 @@ internal static class Paths
         return Path.Combine(userDir, "AppData", "LocalLow", "ZeekerssRBLX", "Lethal Company");
     }
 
-    public static string ControlsPath { get; } = Path.Combine(BepInEx.Paths.BepInExRootPath, "controls");
+    public static string ControlsDir { get; } = Path.Combine(BepInEx.Paths.BepInExRootPath, "controls");
+
+    public static void EnsureControlsDir()
+    {
+        if (!Directory.Exists(ControlsDir))
+            Directory.CreateDirectory(ControlsDir);
+    }
 }

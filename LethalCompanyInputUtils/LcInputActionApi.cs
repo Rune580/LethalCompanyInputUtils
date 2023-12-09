@@ -15,7 +15,7 @@ public static class LcInputActionApi
 
     private static InputActionAsset LoadInputActionAsset(InputActionAsset asset)
     {
-        string controlsPath = Path.Join(Paths.SaveDir, "controls.json");
+        string controlsPath = Path.Join(FsUtils.SaveDir, "controls.json");
 
         if (!File.Exists(controlsPath))
             File.WriteAllText(controlsPath, asset.ToJson());

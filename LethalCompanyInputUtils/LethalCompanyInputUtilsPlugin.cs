@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using BepInEx;
 using HarmonyLib;
+using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
 
 namespace LethalCompanyInputUtils;
@@ -22,6 +23,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     {
         _instance = this;
         _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModId);
+        
+        FsUtils.EnsureControlsDir();
 
         InputTestActions = new TestActions();
         
