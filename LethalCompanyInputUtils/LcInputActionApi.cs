@@ -18,15 +18,16 @@ public static class LcInputActionApi
         string controlsPath = Path.Join(FsUtils.SaveDir, "controls.json");
 
         if (!File.Exists(controlsPath))
-            File.WriteAllText(controlsPath, asset.ToJson());
+            File.WriteAllText(controlsPath, asset.SaveBindingOverridesAsJson());
         
         try
         {
-            return InputActionAsset.FromJson(File.ReadAllText(controlsPath));
+            asset.LoadBindingOverridesFromJson(File.ReadAllText(controlsPath));
+            return asset;
         }
         catch
         {
-            File.WriteAllText(controlsPath, asset.ToJson());
+            File.WriteAllText(controlsPath, asset.SaveBindingOverridesAsJson());
             return asset;
         }
     }
