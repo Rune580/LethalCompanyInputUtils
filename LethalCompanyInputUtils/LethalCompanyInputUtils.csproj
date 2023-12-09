@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>preview</LangVersion>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.Analyzers" Version="1.*">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="BepInEx.Core" Version="5.*" />
+        <PackageReference Include="UnityEngine.Modules" Version="2022.3.9" />
+    </ItemGroup>
+    
+    <PropertyGroup>
+        <GameRefsDir>..\.gameReferences\</GameRefsDir>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <AssemblyFiles Include="$(GameRefsDir)*.dll" InProject="false" />
+        <Reference Include="@(AssemblyFiles)" Private="false" />
+    </ItemGroup>
+</Project>
