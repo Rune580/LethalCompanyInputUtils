@@ -25,6 +25,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         FsUtils.EnsureControlsDir();
         
         Logger.LogInfo($"Plugin {ModId} is loaded!");
+
+        var inst = TestAction.Instance;
     }
 
     private static void OnSceneChanged(Scene current, Scene next)

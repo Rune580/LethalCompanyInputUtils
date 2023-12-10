@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using BepInEx;
+using LethalCompanyInputUtils.Data;
 using LethalCompanyInputUtils.Utils;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -88,11 +91,23 @@ public abstract class LcInputActions
 
     internal void Save()
     {
-        File.WriteAllText(_jsonPath, Asset.SaveBindingOverridesAsJson());
+        var overrides = new BindingOverrides(Asset.bindings);
+        File.WriteAllText(_jsonPath, JsonConvert.SerializeObject(overrides));
     }
 
     internal void Load()
     {
-        Asset.LoadBindingOverridesFromJson(_jsonPath);
+        if (!File.Exists(_jsonPath))
+            return;
+        
+        try
+        {
+            var overrides = JsonConvert.DeserializeObject<BindingOverrides>(File.ReadAllText(_jsonPath));
+            overrides?.LoadInto(Asset);
+        }
+        catch (Exception e)
+        {
+            Logging.Logger.LogError(e);
+        }
     }
 }

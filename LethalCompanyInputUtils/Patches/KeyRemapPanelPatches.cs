@@ -48,8 +48,9 @@ public static class KeyRemapPanelPatches
     public static class UnloadKeybindsUIPatch
     {
         // ReSharper disable once InconsistentNaming
-        public static void Prefix(KepRemapPanel __instance)
+        public static void Prefix()
         {
+            LcInputActionApi.SaveOverrides();
             LcInputActionApi.ReEnableFromRebind();
         }
     }
