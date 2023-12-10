@@ -2,7 +2,6 @@
 using BepInEx;
 using HarmonyLib;
 using LethalCompanyInputUtils.Utils;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 namespace LethalCompanyInputUtils;
@@ -15,8 +14,6 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     public const string ModVersion = "0.1.0";
 
     private Harmony? _harmony;
-
-    public TestActions InputTestActions;
     
     private void Awake()
     {
@@ -26,22 +23,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         SceneManager.activeSceneChanged += OnSceneChanged;
         
         FsUtils.EnsureControlsDir();
-
-        InputTestActions = new TestActions();
-        
-        InputTestActions.Enable();
-        InputTestActions.EmoteWheel.Enable();
-        
-        InputTestActions.EmoteWheel.started += EmoteWheelCallback;
-        InputTestActions.EmoteWheel.performed += EmoteWheelCallback;
-        InputTestActions.EmoteWheel.canceled += EmoteWheelCallback;
         
         Logger.LogInfo($"Plugin {ModId} is loaded!");
-    }
-
-    private void EmoteWheelCallback(InputAction.CallbackContext context)
-    {
-        Logger.LogInfo("Emotema");
     }
 
     private static void OnSceneChanged(Scene current, Scene next)

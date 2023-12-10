@@ -72,12 +72,11 @@ public static class LcInputActionApi
 
     internal static void RegisterInputActions(LcInputActions lcInputActions)
     {
-        if (!InputActionsMap.TryAdd(lcInputActions.Id, lcInputActions))
-        {
-            Logging.Logger.LogWarning($"The mod [{lcInputActions.Plugin.GUID}] instantiated an Actions class [{lcInputActions.GetType().Name}] more than once!\n" +
-                                      $"\t These classes should be treated as singletons!, do not instantiate more than once!");
+        if (InputActionsMap.TryAdd(lcInputActions.Id, lcInputActions))
             return;
-        }
+        
+        Logging.Logger.LogWarning($"The mod [{lcInputActions.Plugin.GUID}] instantiated an Actions class [{lcInputActions.GetType().Name}] more than once!\n" +
+                                  $"\t These classes should be treated as singletons!, do not instantiate more than once!");
     }
 
     internal static void DisableForRebind()
