@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text.Json;
 using build.Utils;
 using Cake.Common;
 using Cake.Common.IO;
@@ -206,6 +208,54 @@ public sealed class DebugMod : FrostingTask<BuildContext>
 
         startGame.Start();
         startGame.WaitForExit();
+    }
+}
+
+[TaskName("BuildThunderstore")]
+[IsDependentOn(typeof(BuildTask))]
+public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
+{
+    public override void Run(BuildContext context)
+    {
+        AbsolutePath manifestFile = "../manifest.json";
+        AbsolutePath iconFile = "../icon.png";
+        AbsolutePath readmeFile = "../README.md";
+        
+        foreach (var project in context.Solution.Projects)
+        {
+            if (string.Equals(project.Name, "build"))
+                continue;
+            
+            AbsolutePath buildDir = (AbsolutePath)project.Path.GetDirectory() / "bin" / context.MsBuildConfiguration / "netstandard2.1";
+            AbsolutePath publishDir = buildDir / "publish";
+
+            if (Directory.Exists(publishDir))
+                Directory.Delete(publishDir);
+
+            Directory.CreateDirectory(publishDir);
+
+            var modDir = publishDir / project.Name;
+            Directory.CreateDirectory(modDir);
+            
+            buildDir.GlobFiles("*.dll")
+                .ForEach(file =>
+                {
+                    var destFile = modDir / file.Name;
+                    File.Copy(file, destFile, true);
+                });
+            
+            File.Copy(manifestFile, publishDir / manifestFile);
+            File.Copy(iconFile, publishDir / iconFile);
+            File.Copy(readmeFile, publishDir / readmeFile);
+
+            var manifest = JsonSerializer.Deserialize<ThunderStoreManifest>(File.ReadAllText(manifestFile));
+
+            var destFile = buildDir / $"Rune580-{manifest!.name}-{manifest.version_number}.zip";
+            if (File.Exists(destFile))
+                File.Delete(destFile);
+            
+            ZipFile.CreateFromDirectory(publishDir, destFile);
+        }
     }
 }
 
