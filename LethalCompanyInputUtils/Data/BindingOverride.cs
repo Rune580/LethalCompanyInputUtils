@@ -2,8 +2,10 @@
 
 namespace LethalCompanyInputUtils.Data;
 
+[Serializable]
 public struct BindingOverride
 {
-    public string? Action { get; set; }
-    public string? Path { get; set; }
+    public string? action;
+    public string? origPath;
+    public string? path;
 }

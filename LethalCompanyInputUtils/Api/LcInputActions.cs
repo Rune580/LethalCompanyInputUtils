@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using BepInEx;
 using LethalCompanyInputUtils.Data;
@@ -102,8 +101,8 @@ public abstract class LcInputActions
         
         try
         {
-            var overrides = JsonConvert.DeserializeObject<BindingOverrides>(File.ReadAllText(_jsonPath));
-            overrides?.LoadInto(Asset);
+            var overrides = BindingOverrides.FromJson(File.ReadAllText(_jsonPath));
+            overrides.LoadInto(Asset);
         }
         catch (Exception e)
         {

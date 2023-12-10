@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using BepInEx;
 using HarmonyLib;
-using LethalCompanyInputUtils.Utils;
+using LethalCompanyInputUtils.Utils;    
 using UnityEngine.SceneManagement;
 
 namespace LethalCompanyInputUtils;
@@ -25,8 +25,6 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         FsUtils.EnsureControlsDir();
         
         Logger.LogInfo($"Plugin {ModId} is loaded!");
-
-        var inst = TestAction.Instance;
     }
 
     private static void OnSceneChanged(Scene current, Scene next)
