@@ -32,7 +32,7 @@ In order for the action to be registered to the API, you must use the attribute 
 This attribute has 3 required parameters: actionId, keyboard/mouse binding path, and gamepad binding path.
 There are also 2 optional parameters: ActionType (default: InputActionType.Button), and Name. The Name parameter is what will be displayed in game.
 ```csharp
-[InputAction("explode", "<Keyboard>/j", "<Gamepad>/Button North", Name: "Explode")]
+[InputAction("explode", "<Keyboard>/j", "<Gamepad>/Button North", Name = "Explode")]
 public InputAction Explode { get; set; }
 ```
 
