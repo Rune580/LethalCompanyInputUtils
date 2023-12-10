@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using BepInEx;
 using LethalCompanyInputUtils.Utils;
@@ -13,23 +12,28 @@ namespace LethalCompanyInputUtils.Api;
 public abstract class LcInputActions
 {
     private readonly string _jsonPath;
+    private readonly InputActionReference[] _actionRefs;
     protected readonly InputActionAsset Asset;
-    
+
+    internal bool Loaded = false;
+
+    internal bool WasEnabled { get; private set; }
+    public bool Enabled => Asset.enabled;
+    internal IReadOnlyCollection<InputActionReference> ActionRefs => _actionRefs;
+    internal string Id => $"{Plugin.GUID}.{GetType().Name}";
     public BepInPlugin Plugin { get; }
     
     protected LcInputActions()
     {
         Asset = ScriptableObject.CreateInstance<InputActionAsset>();
-
         Plugin = Assembly.GetCallingAssembly().GetBepInPlugin() ?? throw new InvalidOperationException();
         
         var modGuid = Plugin.GUID;
         _jsonPath = Path.Combine(FsUtils.ControlsDir, $"{modGuid}.json");
 
         var mapBuilder = new InputActionMapBuilder(modGuid);
-
+        
         var props = GetType().GetProperties();
-
         var inputProps = new Dictionary<PropertyInfo, InputActionAttribute>();
         foreach (var prop in props)
         {
@@ -56,17 +60,29 @@ public abstract class LcInputActions
         Asset.AddActionMap(mapBuilder.Build());
         Asset.Enable();
 
+        var actionRefs = new List<InputActionReference>();
         foreach (var (prop, attr) in inputProps)
-            prop.SetValue(this, Asset.FindAction(attr.Action));
+        {
+            var action = Asset.FindAction(attr.Action);
+            prop.SetValue(this, action);
+            
+            actionRefs.Add(InputActionReference.Create(action));
+        }
+
+        _actionRefs = actionRefs.ToArray();
+        
+        LcInputActionApi.RegisterInputActions(this);
     }
 
     public void Enable()
     {
+        WasEnabled = Asset.enabled;
         Asset.Enable();
     }
 
     public void Disable()
     {
+        WasEnabled = Asset.enabled;
         Asset.Disable();
     }
 

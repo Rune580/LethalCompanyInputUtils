@@ -14,15 +14,14 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     public const string ModName = "Lethal Company Input Utils";
     public const string ModVersion = "0.1.0";
 
-    private static LethalCompanyInputUtilsPlugin? _instance;
-
     private Harmony? _harmony;
 
     public TestActions InputTestActions;
     
     private void Awake()
     {
-        _instance = this;
+        Logging.SetLogSource(Logger);
+        
         _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModId);
         SceneManager.activeSceneChanged += OnSceneChanged;
         
@@ -47,10 +46,6 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
 
     private static void OnSceneChanged(Scene current, Scene next)
     {
-        var menuButtons = next.FindMenuButtons();
-        if (!menuButtons)
-            return;
-        
-        
+        LcInputActionApi.ResetLoadedInputActions();
     }
 }
