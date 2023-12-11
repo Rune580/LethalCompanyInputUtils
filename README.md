@@ -90,5 +90,8 @@ Discord: @rune
 Github: Rune580
 
 # Changelog
+    0.2.0:
+        Interactions for the kbm and gamepad bindings can now be set in the attribute.
+
     0.1.0:
         Initial Beta Release.

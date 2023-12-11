@@ -1,6 +1,6 @@
 {
     "name": "LethalCompany_InputUtils",
-    "version_number": "0.1.0",
+    "version_number": "0.2.0",
     "website_url": "https://github.com/Rune580/LethalCompanyInputUtils",
     "description": "Utilities for creating InputActions and having them be accessible in game",
     "dependencies": [
