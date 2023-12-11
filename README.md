@@ -85,7 +85,7 @@ public class MyOtherClassOrMonoBehavior
 }
 ```
 
-A good implimentation of this is getting the boolean value from when it is triggered
+A good implementation of this is getting the boolean value from when it is triggered
 ```csharp
 public class MyOtherClassOrMonoBehavior
 {
