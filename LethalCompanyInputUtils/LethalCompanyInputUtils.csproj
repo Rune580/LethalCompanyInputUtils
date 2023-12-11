@@ -18,10 +18,16 @@
     
     <PropertyGroup>
         <GameRefsDir>..\.gameReferences\</GameRefsDir>
+        <StubbedRefsDir>..\libs\</StubbedRefsDir>
     </PropertyGroup>
     
-    <ItemGroup>
+    <ItemGroup Condition="'$(IN_ACTION)' == ''">
         <AssemblyFiles Include="$(GameRefsDir)*.dll" InProject="false" />
+        <Reference Include="@(AssemblyFiles)" Private="false" />
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(IN_ACTION)' != ''">
+        <AssemblyFiles Include="$(StubbedRefsDir)*.dll" InProject="false" />
         <Reference Include="@(AssemblyFiles)" Private="false" />
     </ItemGroup>
 </Project>

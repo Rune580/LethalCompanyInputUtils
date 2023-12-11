@@ -1,0 +1,36 @@
+
+name: Build
+
+on:
+  pull_request:
+    branches: [ master, main ]
+  push:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IN_ACTION: 1
+      VERSION: ${{ github.ref_name }}
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Grant execute permissions for build script
+      run: chmod +x build.sh
+
+    - name: Build
+      run: ./build.sh --configuration=Release BuildThunderstore
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: input-utils
+        path: LethalCompanyInputUtils/bin/Release/netstandard2.1/upload/
+        retention-days: 30
