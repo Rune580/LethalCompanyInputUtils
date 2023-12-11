@@ -26,7 +26,7 @@ jobs:
       run: chmod +x build.sh
 
     - name: Build
-      run: ./build.sh --configuration=Release BuildThunderstore
+      run: ./build.sh --configuration=Release --target=BuildThunderstore
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
