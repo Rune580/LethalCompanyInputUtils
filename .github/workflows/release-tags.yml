@@ -40,7 +40,7 @@ jobs:
       run: gh release delete --yes "${RELEASE_VERSION}"
       continue-on-error: true
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
 
     - name: Release under current tag
       run: |
@@ -55,7 +55,7 @@ jobs:
       shell: bash
       continue-on-error: true
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
 
     - name: Get upload file path
       run: |
