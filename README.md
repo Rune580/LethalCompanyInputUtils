@@ -21,7 +21,7 @@ Create a new class, name it whatever you prefer, this class will contain all the
 Make sure it extends `LcInputActions`.
 
 ```csharp
-public class [CLASSNAME] : LcInputActions 
+public class MyExampleInputClass : LcInputActions 
 {
 
 }
@@ -29,54 +29,72 @@ public class [CLASSNAME] : LcInputActions
 
 Next make properties for all of the InputActions you want/need
 ```csharp
-public InputAction Explode { get; set; }
+public InputAction ExplodeKey { get; set; }
 ```
 
 In order for the action to be registered to the API, you must use the attribute `[InputAction(...)]`.
 This attribute has 3 required parameters: actionId, keyboard/mouse binding path, and gamepad binding path.
-There are also 2 optional parameters: ActionType (default: InputActionType.Button), and Name. The Name parameter is what will be displayed in game.
+There are also 2 optional parameters: Name and ActionType (default: InputActionType.Button). The Name parameter is what will be displayed in game.
+
+
 ```csharp
-[InputAction("explode", "<Keyboard>/j", "<Gamepad>/Button North", Name = "Explode")]
-public InputAction Explode { get; set; }
+// [InputAction(string actionId, string keyBinding, string gamepadBinding, Name = "Shown Name", ActionType = InputActionType...)]
+
+[InputAction("explode", "<Keyboard>/minus", "<Gamepad>/Button North", Name = "Explode")]
+public InputAction ExplodeKey { get; set; }
 ```
 
 Finally to use the InputAction you need an instance of this class. Due to how registration works, only 1 instance of this class can exist.
 The easiest (opinionated) way to do so would be to have a static instance in your plugin class.
 ```csharp
 [BepInPlugin(...)]
-public class [MODPLUGIN] : BaseUnityPlugin
+public class MyExamplePlugin : BaseUnityPlugin
 {
-    internal static [CLASSNAME] InputActionsInstance = new [CLASSNAME]();
+    internal static MyExampleInputClass InputActionsInstance = new MyExampleInputClass();
 }
 ```
 You could also opt for having the instance in the InputActions class.
 ```csharp
-public class [CLASSNAME] : LcInputActions 
+public class MyExamplePlugin : LcInputActions 
 {
-    public static [CLASSNAME] Instance = new();
+    public static MyExampleInputClass Instance = new();
 
-    [InputAction("explode", "<Keyboard>/j", "<Gamepad>/Button North", Name = "Explode")]
-    public InputAction Explode { get; set; }
+    [InputAction("explodekey", "<Keyboard>/j", "<Gamepad>/Button North", Name = "Explode")]
+    public InputAction ExplodeKey { get; set; }
 }
 ```
 
 You could then simply reference the instance anywhere you need to have your actions at
 ```csharp
-public class [SomeOtherClassOrMonoBehavior]
+public class MyOtherClassOrMonoBehavior
 {
     public void DoSomething()
     {
-        [MODPLUGIN].InputActionsInstance.Explode ...
+        MyExamplePlugin.InputActionsInstance.ExplodeKey ...
     }
 }
 ```
 or
 ```csharp
-public class [SomeOtherClassOrMonoBehavior]
+public class MyOtherClassOrMonoBehavior
 {
     public void DoSomething()
     {
-        [CLASSNAME].Instance.Explode ...
+        MyExampleInputClass.Instance.ExplodeKey ...
+    }
+}
+```
+
+A good implimentation of this is getting the boolean value from when it is triggered
+```csharp
+public class MyOtherClassOrMonoBehavior
+{
+    public void DoSomething()
+    {
+        if (MyExamplePlugin.InputActionsInstance.ExplodeKey.triggered)
+        {
+            //Your executing code here
+        }
     }
 }
 ```
@@ -88,6 +106,9 @@ Check out Unity's documentation for their [InputSystem](https://docs.unity3d.com
 Discord: @rune
 
 Github: Rune580
+
+# Contributers
+Thanks to @Boxofbiscuits97 for helping make the ReadME easier for Devs
 
 # Changelog
     0.1.0:
