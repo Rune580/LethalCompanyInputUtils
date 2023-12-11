@@ -72,6 +72,7 @@ jobs:
         version: ${{ github.ref_name }}
         community: lethal-company
         token: ${{ secrets.THUNDERSTORE_TOKEN }}
+        repo: thunderstore.io
         categories: |
           libraries
         file: ${{ env.THUNDERSTORE_PKG_PATH }}
