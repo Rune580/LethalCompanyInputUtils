@@ -217,9 +217,9 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
     {
-        AbsolutePath manifestFile = "../manifest.json";
-        AbsolutePath iconFile = "../icon.png";
-        AbsolutePath readmeFile = "../README.md";
+        AbsolutePath manifestFile = "manifest.json";
+        AbsolutePath iconFile = "icon.png";
+        AbsolutePath readmeFile = "README.md";
         
         foreach (var project in context.Solution.Projects)
         {
@@ -230,7 +230,7 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
             AbsolutePath publishDir = buildDir / "publish";
 
             if (Directory.Exists(publishDir))
-                Directory.Delete(publishDir);
+                Directory.Delete(publishDir, true);
 
             Directory.CreateDirectory(publishDir);
 
@@ -244,11 +244,11 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
                     File.Copy(file, destFile, true);
                 });
             
-            File.Copy(manifestFile, publishDir / manifestFile);
-            File.Copy(iconFile, publishDir / iconFile);
-            File.Copy(readmeFile, publishDir / readmeFile);
+            File.Copy("../" / manifestFile, publishDir / manifestFile, true);
+            File.Copy("../" / iconFile, publishDir / iconFile, true);
+            File.Copy("../" / readmeFile, publishDir / readmeFile, true);
 
-            var manifest = JsonSerializer.Deserialize<ThunderStoreManifest>(File.ReadAllText(manifestFile));
+            var manifest = JsonSerializer.Deserialize<ThunderStoreManifest>(File.ReadAllText(publishDir / manifestFile));
 
             var destFile = buildDir / $"Rune580-{manifest!.name}-{manifest.version_number}.zip";
             if (File.Exists(destFile))
