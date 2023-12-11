@@ -32,7 +32,7 @@ public class BuildContext(ICakeContext context) : FrostingContext(context)
 
     public readonly string MsBuildConfiguration = context.Argument<string>("configuration", "Debug");
     public readonly AbsolutePath GameDir = context.Arg("gameDir");
-    public readonly string? Version = context.EnvironmentVariable("VERSION");
+    public readonly string? Version = context.EnvironmentVariable("RELEASE_VERSION");
 
     #endregion
 
