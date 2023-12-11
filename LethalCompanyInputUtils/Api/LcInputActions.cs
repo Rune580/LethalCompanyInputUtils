@@ -54,6 +54,8 @@ public abstract class LcInputActions
                 .WithBindingName(attr.Name)
                 .WithKbmPath(attr.KbmPath)
                 .WithGamepadPath(attr.GamepadPath)
+                .WithKbmInteractions(attr.KbmInteractions)
+                .WithGamepadInteractions(attr.GamepadInteractions)
                 .Finish();
 
             inputProps[prop] = attr;
