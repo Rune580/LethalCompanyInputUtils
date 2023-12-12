@@ -85,7 +85,7 @@ public class MyExamplePlugin : LcInputActions
 > [!IMPORTANT]
 > ### But How Do I Get My Binds String?
 > You may have noticed that `<keyboard>/yourKey` can be a little confusing for the special buttons. So try this:
-> 1. First, arbitarily set the value to some regular value or just an empty string
+> 1. First, arbitrarily set the value to some regular value or just an empty string
 > 2. Then, load up your mod and change the keybind to the desired key
 > 3. After, look in your `.../BepInEx/controls/YOURMODID.json` file
 > 4. Find the `{"action":"myaction","origPath":"","path":"<Keyboard>/f8"}]}`
@@ -154,7 +154,7 @@ Discord: @rune
 
 Github: Rune580
 
-# Contributers
+# Contributors
 Thanks to @Boxofbiscuits97 for reworking most of the documentation
 
 # Changelog
