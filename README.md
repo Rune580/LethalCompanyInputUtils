@@ -67,7 +67,12 @@ public InputAction ExplodeKey { get; set; }
 > In this case above the Hold Interaction is being used. This keybind triggers after being held for *5* seconds. See [Interactions Docs](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/api/UnityEngine.InputSystem.Interactions.html)
 
 ## Referencing Your Binds
-Finally, to use the InputAction you need an instance of this class. Due to how registration works, only 1 instance of this class can exist.
+To use your InputActions class, you need to instantiate it.
+
+> [!IMPORTANT]
+> Do **not** create more than one instance of your InputActions class. 
+> If your class is instantiated more than once, your InputActions are unlikely to work as intended.
+
 The easiest (opinionated) way to do so would be to have a static instance in your plugin class.
 ```csharp
 [BepInPlugin(...)]
@@ -76,7 +81,7 @@ public class MyExamplePlugin : BaseUnityPlugin
     internal static MyExampleInputClass InputActionsInstance = new MyExampleInputClass();
 }
 ```
-You could also opt for having the instance in the InputActions class.
+You could also opt for instantiating the instance in the InputActions class (Singleton-style).
 ```csharp
 public class MyExamplePlugin : LcInputActions 
 {
