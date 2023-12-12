@@ -10,36 +10,40 @@ This mod is just a dependency for other mods, it doesn't add content, but it all
 ### Recommended Install
 Use a Mod manager. I won't provide support if a mod manager wasn't used, a mod manager makes it far easier to debug issues since users can just share a modpack code.
 
-# Developer Quick-Start
+## Developer Quick-Start
 *This Api/Mod is still in beta, please keep in mind that stuff may change.*
 Feedback is appreciated.
 
 Download the latest release from either the [Thunderstore](https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils) or the [Releases](https://github.com/Rune580/LethalCompanyInputUtils/releases).
 Extract the zip and add a reference to the dll file of the mod in Visual Studio or Rider.
 
-## Initializing Your Binds
-* Create a **New Class** for bindings, name it whatever you prefer, this class will contain all the InputActions your mod needs.
-    * Make sure it extends `LcInputActions`.
-* **Create Properties** for all of the InputActions you want/need
+### Initializing Your Binds
+- Create a **subclass of `LcInputActions`**
+  - An instance of this class will contain all `InputAction`s your mod wishes to bind inputs for
+  - Name the class appropriately
+- **Create instance properties** for all desired `InputActions`
+- **Annotate** the instance properties with the `[InputAction(...)]` annotation
 
 ```csharp
 public class MyExampleInputClass : LcInputActions 
 {
+    [InputAction("<Keyboard>/g", Name = "Explode")]
     public InputAction ExplodeKey { get; set; }
+    [InputAction("<Keyboard>/h", Name = "Another")]
     public InputAction AnotherKey { get; set; }
 }
 ```
 
 > [!IMPORTANT]  
-> For actions to be registered to the API, **Properties MUST use the Attribute `[InputAction(...)]`**
+> For actions to be registered to the API, **Properties MUST be annotated with `[InputAction(...)]`**
 >```csharp
 >[InputAction("YourkbmPath", Name = "", GamepadPath = "", KbmInteractions = "", GamepadInteractions = "", ActionID = "", ActionType = InputActionType...)]
 >```
 
-### Required Parameters
+#### Required Parameters
 * `kbmPath`: The default bind for Keyboard and Mouse devices
   
-### Optional Parameters
+#### Optional Parameters
 * `Name`: The Displayed text in the game keybinds menu
 * `GamepadPath`: The default bind for Gamepad devices
   
@@ -62,8 +66,13 @@ public InputAction ExplodeKey { get; set; }
 > [!NOTE]
 > In this case above the Hold Interaction is being used. This keybind triggers after being held for *5* seconds. See [Interactions Docs](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/api/UnityEngine.InputSystem.Interactions.html)
 
-## Referencing Your Binds
-Finally, to use the InputAction you need an instance of this class. Due to how registration works, only 1 instance of this class can exist.
+### Referencing Your Binds
+To use your InputActions class, you need to instantiate it.
+
+> [!IMPORTANT]
+> Do **not** create more than one instance of your InputActions class. 
+> If your class is instantiated more than once, your InputActions are unlikely to work as intended.
+
 The easiest (opinionated) way to do so would be to have a static instance in your plugin class.
 ```csharp
 [BepInPlugin(...)]
@@ -72,7 +81,7 @@ public class MyExamplePlugin : BaseUnityPlugin
     internal static MyExampleInputClass InputActionsInstance = new MyExampleInputClass();
 }
 ```
-You could also opt for having the instance in the InputActions class.
+You could also opt for instantiating the instance in the InputActions class (Singleton-style).
 ```csharp
 public class MyExamplePlugin : LcInputActions 
 {
@@ -83,15 +92,15 @@ public class MyExamplePlugin : LcInputActions
 }
 ```
 > [!IMPORTANT]
-> ### But How Do I Get My Binds String?
+> #### But How Do I Get My Binds String?
 > You may have noticed that `<keyboard>/yourKey` can be a little confusing for the special buttons. So try this:
-> 1. First, arbitarily set the value to some regular value or just an empty string
+> 1. First, arbitrarily set the value to some regular value or just an empty string
 > 2. Then, load up your mod and change the keybind to the desired key
 > 3. After, look in your `.../BepInEx/controls/YOURMODID.json` file
 > 4. Find the `{"action":"myaction","origPath":"","path":"<Keyboard>/f8"}]}`
 > 5. Last, copy that `path:""` from the far right i.e. `"<Keyboard>/f8"`
 
-## Using Your Binds
+### Using Your Binds
 You could then simply reference the instance anywhere you need to have your actions at.
 ```csharp
 public class MyOtherClassOrMonoBehavior
@@ -113,35 +122,48 @@ public class MyOtherClassOrMonoBehavior
 }
 ```
 
-### The best way to implement this would be using callback contexts with `.performed`
+#### Best Practises
+It is common to see tutorials call `InputAction.ReadValue<>()` or `InputAction.triggered` from mono-behaviour `Update()` functions.
 ```csharp
 public class MyOtherClassOrMonoBehavior
 {
-    // Name this whatever you like.
+    public void Update()
+    {
+        DoSomething();
+    }
+    
+    public void DoSomething()
+    {
+        if (!MyExamplePlugin.InputActionsInstance.ExplodeKey.triggered) return;
+        
+        //Your executing code here
+    }
+}
+```
+This approach is sufficient for 'continuous' actions, e.g. movement. 
+
+For 'discrete' actions, it's more appropriate to create event listeners that accept an `InputAction.CallbackContext` 
+and subscribe to `InputAction.performed`.
+```csharp
+public class MyOtherClassOrMonoBehavior
+{
+    public void Awake()
+    {
+        SetupKeybindCallbacks();
+    }    
+    
+    // Name this whatever you like. It needs to be called exactly once, so 
     public void SetupKeybindCallbacks()
     {
-        MyExamplePlugin.InputActionsInstance.ExplodeKey.performed += OnExplodeKeyPressed
+        MyExamplePlugin.InputActionsInstance.ExplodeKey.performed += OnExplodeKeyPressed;
     }
 
     public void OnExplodeKeyPressed(InputAction.CallbackContext explodeConext)
     {
-        if (explodeConext.performed) //Add more checks so your actions only happen when you want the keybind to do something
-        {
-            // Your executing code here
-        }
-    }
-}
-```
-Another implementation of this inside of an updating method is getting the boolean value from `.triggered`
-```csharp
-public class MyOtherClassOrMonoBehavior
-{
-    public void DoSomething()
-    {
-        if (MyExamplePlugin.InputActionsInstance.ExplodeKey.triggered)
-        {
-            //Your executing code here
-        }
+        if (!explodeConext.performed) return; 
+        // Add more context checks if desired
+ 
+        // Your executing code here
     }
 }
 ```
@@ -149,21 +171,31 @@ public class MyOtherClassOrMonoBehavior
 ### Next Steps
 Check out Unity's documentation for their [InputSystem](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/manual/index.html)
 
-# Contact
+## Contact
 Discord: @rune
 
 Github: Rune580
 
-# Contributers
+## Contributors
 Thanks to @Boxofbiscuits97 for reworking most of the documentation
 
-# Changelog
-    0.3.0:
-        The only required parameter for the InputActions attribute is now only just the kbmPath, the rest are now optional.
-        Should help improve DX.
+## Changelog
+All notable changes to this project will be documented here.
 
-    0.2.0:
-        Interactions for the kbm and gamepad bindings can now be set in the attribute.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-    0.1.0:
-        Initial Beta Release.
+### [Unreleased]
+
+### [0.3.0]
+
+The only required parameter for the InputActions attribute is now only just the kbmPath, the rest are now optional.
+Should help improve DX.
+
+### [0.2.0]
+
+Interactions for the kbm and gamepad bindings can now be set in the attribute.
+
+### [0.1.0]
+
+Initial Beta Release.
