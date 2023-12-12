@@ -35,7 +35,7 @@ public class MyExampleInputClass : LcInputActions
 ```
 
 > [!IMPORTANT]  
-> For actions to be registered to the API, **Properties MUST use the Attribute `[InputAction(...)]`**
+> For actions to be registered to the API, **Properties MUST be annotated with `[InputAction(...)]`**
 >```csharp
 >[InputAction("YourkbmPath", Name = "", GamepadPath = "", KbmInteractions = "", GamepadInteractions = "", ActionID = "", ActionType = InputActionType...)]
 >```
