@@ -10,14 +10,14 @@ This mod is just a dependency for other mods, it doesn't add content, but it all
 ### Recommended Install
 Use a Mod manager. I won't provide support if a mod manager wasn't used, a mod manager makes it far easier to debug issues since users can just share a modpack code.
 
-# Developer Quick-Start
+## Developer Quick-Start
 *This Api/Mod is still in beta, please keep in mind that stuff may change.*
 Feedback is appreciated.
 
 Download the latest release from either the [Thunderstore](https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils) or the [Releases](https://github.com/Rune580/LethalCompanyInputUtils/releases).
 Extract the zip and add a reference to the dll file of the mod in Visual Studio or Rider.
 
-## Initializing Your Binds
+### Initializing Your Binds
 - Create a **subclass of `LcInputActions`**
   - An instance of this class will contain all `InputAction`s your mod wishes to bind inputs for
   - Name the class appropriately
@@ -40,10 +40,10 @@ public class MyExampleInputClass : LcInputActions
 >[InputAction("YourkbmPath", Name = "", GamepadPath = "", KbmInteractions = "", GamepadInteractions = "", ActionID = "", ActionType = InputActionType...)]
 >```
 
-### Required Parameters
+#### Required Parameters
 * `kbmPath`: The default bind for Keyboard and Mouse devices
   
-### Optional Parameters
+#### Optional Parameters
 * `Name`: The Displayed text in the game keybinds menu
 * `GamepadPath`: The default bind for Gamepad devices
   
@@ -66,7 +66,7 @@ public InputAction ExplodeKey { get; set; }
 > [!NOTE]
 > In this case above the Hold Interaction is being used. This keybind triggers after being held for *5* seconds. See [Interactions Docs](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/api/UnityEngine.InputSystem.Interactions.html)
 
-## Referencing Your Binds
+### Referencing Your Binds
 To use your InputActions class, you need to instantiate it.
 
 > [!IMPORTANT]
@@ -92,7 +92,7 @@ public class MyExamplePlugin : LcInputActions
 }
 ```
 > [!IMPORTANT]
-> ### But How Do I Get My Binds String?
+> #### But How Do I Get My Binds String?
 > You may have noticed that `<keyboard>/yourKey` can be a little confusing for the special buttons. So try this:
 > 1. First, arbitrarily set the value to some regular value or just an empty string
 > 2. Then, load up your mod and change the keybind to the desired key
@@ -100,7 +100,7 @@ public class MyExamplePlugin : LcInputActions
 > 4. Find the `{"action":"myaction","origPath":"","path":"<Keyboard>/f8"}]}`
 > 5. Last, copy that `path:""` from the far right i.e. `"<Keyboard>/f8"`
 
-## Using Your Binds
+### Using Your Binds
 You could then simply reference the instance anywhere you need to have your actions at.
 ```csharp
 public class MyOtherClassOrMonoBehavior
@@ -122,7 +122,7 @@ public class MyOtherClassOrMonoBehavior
 }
 ```
 
-### Best Practises
+#### Best Practises
 It is common to see tutorials call `InputAction.ReadValue<>()` or `InputAction.triggered` from mono-behaviour `Update()` functions.
 ```csharp
 public class MyOtherClassOrMonoBehavior
@@ -171,31 +171,31 @@ public class MyOtherClassOrMonoBehavior
 ### Next Steps
 Check out Unity's documentation for their [InputSystem](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/manual/index.html)
 
-# Contact
+## Contact
 Discord: @rune
 
 Github: Rune580
 
-# Contributors
+## Contributors
 Thanks to @Boxofbiscuits97 for reworking most of the documentation
 
-# Changelog
+## Changelog
 All notable changes to this project will be documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+### [Unreleased]
 
-## [0.3.0]
+### [0.3.0]
 
 The only required parameter for the InputActions attribute is now only just the kbmPath, the rest are now optional.
 Should help improve DX.
 
-## [0.2.0]
+### [0.2.0]
 
 Interactions for the kbm and gamepad bindings can now be set in the attribute.
 
-## [0.1.0]
+### [0.1.0]
 
 Initial Beta Release.
