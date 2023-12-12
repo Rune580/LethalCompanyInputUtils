@@ -31,7 +31,8 @@ public class BuildContext(ICakeContext context) : FrostingContext(context)
     #region Arguments
 
     public readonly string MsBuildConfiguration = context.Argument<string>("configuration", "Debug");
-    public readonly AbsolutePath GameDir = context.Arg("gameDir");
+    public AbsolutePath? GameDir => GetGameDirArg();
+    public readonly string? Version = context.EnvironmentVariable("RELEASE_VERSION");
 
     #endregion
 
@@ -71,10 +72,16 @@ public class BuildContext(ICakeContext context) : FrostingContext(context)
     {
         "Assembly-CSharp.dll",
         "Newtonsoft.Json.dll",
-        "Unity.InputSystem.dll",
-        "Unity.TextMeshPro.dll",
-        "UnityEngine.UI.dll"
+        "Unity.InputSystem.dll"
     };
+
+    private AbsolutePath? GetGameDirArg()
+    {
+        if (Environment.GetEnvironmentVariable("IN_ACTION") is not null)
+            return null;
+
+        return context.Arg("gameDir");
+    }
 }
 
 [TaskName("FetchRefs")]
@@ -82,10 +89,13 @@ public sealed class FetchReferences : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
     {
+        if (Environment.GetEnvironmentVariable("IN_ACTION") is not null)
+            return;
+        
         if (!Directory.Exists(context.GameReferencesDir))
             Directory.CreateDirectory(context.GameReferencesDir);
         
-        AbsolutePath srcDir = context.GameDir / "Lethal Company_Data" / "Managed";
+        AbsolutePath srcDir = context.GameDir! / "Lethal Company_Data" / "Managed";
 
         foreach (var reference in context.References)
         {
@@ -155,7 +165,7 @@ public sealed class DeployToGame : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
     {
-        if (!Directory.Exists(context.GameDir))
+        if (!Directory.Exists(context.GameDir!))
             throw new Exception("Please make sure the game directory actually exists!");
 
         foreach (var project in context.Solution.Projects)
@@ -250,7 +260,14 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
 
             var manifest = JsonSerializer.Deserialize<ThunderStoreManifest>(File.ReadAllText(publishDir / manifestFile));
 
-            var destFile = buildDir / $"Rune580-{manifest!.name}-{manifest.version_number}.zip";
+            var destDir = buildDir / "upload";
+            if (Directory.Exists(destDir)) 
+                Directory.Delete(destDir, true);
+
+            Directory.CreateDirectory(destDir);
+
+            var version = context.Version ?? manifest!.version_number;
+            var destFile = destDir / $"Rune580-{manifest!.name}-{version}.zip";
             if (File.Exists(destFile))
                 File.Delete(destFile);
             

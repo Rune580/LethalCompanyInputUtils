@@ -158,5 +158,12 @@ Github: Rune580
 Thanks to @Boxofbiscuits97 for reworking most of the documentation
 
 # Changelog
+    0.3.0:
+        The only required parameter for the InputActions attribute is now only just the kbmPath, the rest are now optional.
+        Should help improve DX.
+
+    0.2.0:
+        Interactions for the kbm and gamepad bindings can now be set in the attribute.
+
     0.1.0:
         Initial Beta Release.

@@ -1,0 +1,78 @@
+
+name: Release tagged build
+
+on:
+  push:
+    tags: [ '*' ]
+
+permissions:
+    contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IN_ACTION: 1
+      RELEASE_VERSION: ${{ github.ref_name }}
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Grant execute permissions for build script
+      run: chmod +x build.sh
+
+    - name: Build
+      run: ./build.sh --configuration=Release --target=BuildThunderstore
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: input-utils
+        path: LethalCompanyInputUtils/bin/Release/netstandard2.1/upload/
+        retention-days: 30
+
+    - name: Delete old release if it already exists
+      run: gh release delete --yes "${RELEASE_VERSION}"
+      continue-on-error: true
+      env:
+        GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+
+    - name: Release under current tag
+      run: |
+        export "CHANGELOG_FILE=$(mktemp --suffix=.md)"
+        echo "CHANGELOG_FILE=${CHANGELOG_FILE}" >> $GITHUB_ENV
+        gh api --method POST -H "Accept: application/vnd.github+json" \
+          "/repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+          -f tag_name="${RELEASE_VERSION}" \
+          --jq ".body" > "${CHANGELOG_FILE}"
+        cat "${CHANGELOG_FILE}"
+        gh release create "${RELEASE_VERSION}" -F "${CHANGELOG_FILE}" LethalCompanyInputUtils/bin/Release/netstandard2.1/upload/*.zip
+      shell: bash
+      continue-on-error: true
+      env:
+        GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+
+    - name: Get upload file path
+      run: |
+        for fn in LethalCompanyInputUtils/bin/Release/netstandard2.1/upload/*.zip; do echo "THUNDERSTORE_PKG_PATH=${fn}" >> "$GITHUB_ENV"; done;
+      shell: bash
+      continue-on-error: true
+
+    - name: Upload Thunderstore Package
+      uses: GreenTF/upload-thunderstore-package@v4.1
+      with:
+        namespace: Rune580
+        name: LethalCompany_InputUtils
+        description: Empty
+        version: ${{ github.ref_name }}
+        community: lethal-company
+        token: ${{ secrets.THUNDERSTORE_TOKEN }}
+        repo: thunderstore.io
+        categories: |
+          libraries
+        file: ${{ env.THUNDERSTORE_PKG_PATH }}
