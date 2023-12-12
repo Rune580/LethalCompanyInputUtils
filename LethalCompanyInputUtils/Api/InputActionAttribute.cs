@@ -4,12 +4,34 @@ using UnityEngine.InputSystem;
 namespace LethalCompanyInputUtils.Api;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class InputActionAttribute(string action, string kbmPath, string gamepadPath) : Attribute
+public class InputActionAttribute : Attribute
 {
-    public readonly string Action = action;
-    public readonly string KbmPath = kbmPath;
-    public readonly string GamepadPath = gamepadPath;
-
+    [Obsolete("Prefer using the named optional params instead.")]
+    public InputActionAttribute(string action, string kbmPath, string gamepadPath)
+    {
+        ActionId = action;
+        KbmPath = kbmPath;
+        GamepadPath = gamepadPath;
+    }
+    
+    /// <param name="kbmPath">The default bind for Keyboard and Mouse devices</param>
+    public InputActionAttribute(string kbmPath)
+    {
+        KbmPath = kbmPath;
+    }
+    
+    public readonly string KbmPath;
+    
+    /// <summary>
+    /// Overrides the generated actionId for this <see cref="InputAction"/>.<remarks>Only needs to be unique within your mod</remarks>
+    /// </summary>
+    public string? ActionId { get; set; }
+    
+    /// <summary>
+    /// The default bind for Gamepad devices.
+    /// </summary>
+    public string? GamepadPath { get; set; }
+    
     public InputActionType ActionType { get; set; } = InputActionType.Button;
     
     /// <summary>

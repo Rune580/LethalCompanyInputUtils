@@ -45,11 +45,12 @@ public abstract class LcInputActions
 
             if (prop.PropertyType != typeof(InputAction))
                 continue;
-            
-            var actionBuilder = mapBuilder.NewActionBinding();
 
-            actionBuilder
-                .WithActionName(attr.Action)
+            attr.ActionId ??= prop.Name;
+            attr.GamepadPath ??= "";
+
+            mapBuilder.NewActionBinding()
+                .WithActionName(attr.ActionId)
                 .WithActionType(attr.ActionType)
                 .WithBindingName(attr.Name)
                 .WithKbmPath(attr.KbmPath)
@@ -67,7 +68,7 @@ public abstract class LcInputActions
         var actionRefs = new List<InputActionReference>();
         foreach (var (prop, attr) in inputProps)
         {
-            var action = Asset.FindAction(attr.Action);
+            var action = Asset.FindAction(attr.ActionId);
             prop.SetValue(this, action);
             
             actionRefs.Add(InputActionReference.Create(action));
