@@ -122,35 +122,48 @@ public class MyOtherClassOrMonoBehavior
 }
 ```
 
-### The best way to implement this would be using callback contexts with `.performed`
+### Best Practises
+It is common to see tutorials call `InputAction.ReadValue<>()` or `InputAction.triggered` from mono-behaviour `Update()` functions.
 ```csharp
 public class MyOtherClassOrMonoBehavior
 {
-    // Name this whatever you like.
+    public void Update()
+    {
+        DoSomething();
+    }
+    
+    public void DoSomething()
+    {
+        if (!MyExamplePlugin.InputActionsInstance.ExplodeKey.triggered) return;
+        
+        //Your executing code here
+    }
+}
+```
+This approach is sufficient for 'continuous' actions, e.g. movement. 
+
+For 'discrete' actions, it's more appropriate to create event listeners that accept an `InputAction.CallbackContext` 
+and subscribe to `InputAction.performed`.
+```csharp
+public class MyOtherClassOrMonoBehavior
+{
+    public void Awake()
+    {
+        SetupKeybindCallbacks();
+    }    
+    
+    // Name this whatever you like. It needs to be called exactly once, so 
     public void SetupKeybindCallbacks()
     {
-        MyExamplePlugin.InputActionsInstance.ExplodeKey.performed += OnExplodeKeyPressed
+        MyExamplePlugin.InputActionsInstance.ExplodeKey.performed += OnExplodeKeyPressed;
     }
 
     public void OnExplodeKeyPressed(InputAction.CallbackContext explodeConext)
     {
-        if (explodeConext.performed) //Add more checks so your actions only happen when you want the keybind to do something
-        {
-            // Your executing code here
-        }
-    }
-}
-```
-Another implementation of this inside of an updating method is getting the boolean value from `.triggered`
-```csharp
-public class MyOtherClassOrMonoBehavior
-{
-    public void DoSomething()
-    {
-        if (MyExamplePlugin.InputActionsInstance.ExplodeKey.triggered)
-        {
-            //Your executing code here
-        }
+        if (!explodeConext.performed) return; 
+        // Add more context checks if desired
+ 
+        // Your executing code here
     }
 }
 ```
