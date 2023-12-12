@@ -177,7 +177,9 @@ Discord: @rune
 Github: Rune580
 
 ## Contributors
-Thanks to @Boxofbiscuits97 for reworking most of the documentation
+Thanks to the following contributers:
+- @Boxofbiscuits97 for reworking most of the documentation.
+- @Lordfirespeed for housekeeping and additional documentation cleanup.
 
 ## Changelog
 All notable changes to this project will be documented here.
