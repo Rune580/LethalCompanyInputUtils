@@ -113,7 +113,7 @@ public class MyOtherClassOrMonoBehavior
 }
 ```
 
-### The best way to implement this would be using callback contexts with `.preformed`
+### The best way to implement this would be using callback contexts with `.performed`
 ```csharp
 public class MyOtherClassOrMonoBehavior
 {
