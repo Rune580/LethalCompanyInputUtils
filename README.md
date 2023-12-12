@@ -85,7 +85,24 @@ public class MyOtherClassOrMonoBehavior
 }
 ```
 
-A good implementation of this is getting the boolean value from when it is triggered
+You can then use callbacks on the InputAction, make sure to read Unity's [docs](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/manual/Interactions.html#default-interaction) on how these callbacks work.
+```csharp
+public class MyOtherClassOrMonoBehavior
+{
+    // Name this whatever you like.
+    public void SetupKeybindCallbacks()
+    {
+        MyExamplePlugin.InputActionsInstance.ExplodeKey.performed += OnExplodeKeyPressed
+    }
+
+    public void OnExplodeKeyPressed(InputAction.CallbackContext ctx)
+    {
+        // Your executing code here
+    }
+}
+```
+
+Another good implementation of this is getting the boolean value from when it is triggered
 ```csharp
 public class MyOtherClassOrMonoBehavior
 {
