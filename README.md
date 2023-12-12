@@ -18,14 +18,18 @@ Download the latest release from either the [Thunderstore](https://thunderstore.
 Extract the zip and add a reference to the dll file of the mod in Visual Studio or Rider.
 
 ## Initializing Your Binds
-* Create a **New Class** for bindings, name it whatever you prefer, this class will contain all the InputActions your mod needs.
-    * Make sure it extends `LcInputActions`.
-* **Create Properties** for all of the InputActions you want/need
+- Create a **subclass of `LcInputActions`**
+  - An instance of this class will contain all `InputAction`s your mod wishes to bind inputs for
+  - Name the class appropriately
+- **Create instance properties** for all desired `InputActions`
+- **Annotate** the instance properties with the `[InputAction(...)]` annotation
 
 ```csharp
 public class MyExampleInputClass : LcInputActions 
 {
+    [InputAction("<Keyboard>/g", Name = "Explode")]
     public InputAction ExplodeKey { get; set; }
+    [InputAction("<Keyboard>/h", Name = "Another")]
     public InputAction AnotherKey { get; set; }
 }
 ```
