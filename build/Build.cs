@@ -9,6 +9,8 @@ using Cake.Common;
 using Cake.Common.IO;
 using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.Build;
+using Cake.Common.Tools.DotNet.MSBuild;
+using Cake.Common.Tools.DotNet.Pack;
 using Cake.Core;
 using Cake.Frosting;
 using dotenv.net;
@@ -259,6 +261,73 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
         destFile.DeleteFile();
         
         ZipFile.CreateFromDirectory(publishDir, destFile);
+    }
+}
+
+[TaskName("BuildNuGet")]
+[IsDependentOn(typeof(BuildTask))]
+public sealed class BuildNuGetPackage : FrostingTask<BuildContext>
+{
+    public override void Run(BuildContext context)
+    {
+        AbsolutePath manifestFile = (AbsolutePath)"../" / "manifest.json";
+        var manifest = JsonSerializer.Deserialize<ThunderStoreManifest>(File.ReadAllText(manifestFile));
+        if (manifest is null)
+            throw new InvalidOperationException();
+
+        AbsolutePath readmeFile = (AbsolutePath)"../" / "README.md";
+        File.Copy(readmeFile, context.BuildDir / "README.md", true);
+        
+        AbsolutePath iconFile = (AbsolutePath)"../" / "icon.png";
+        File.Copy(iconFile, context.BuildDir / "icon.png", true);
+
+        AbsolutePath licenseFile = (AbsolutePath)"../" / "LICENSE";
+        File.Copy(licenseFile, context.BuildDir / "LICENSE", true);
+        
+        var dllFile = $"{context.Project.Name}.dll";
+        var nuspecContent = $"""
+                              <?xml version="1.0" encoding="utf-8"?>
+                              <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+                                  <metadata>
+                                      <id>{context.ManifestAuthor}.{manifest.name}</id>
+                                      <version>{manifest.version_number}</version>
+                                      <description>{manifest.description}</description>
+                                      <authors>{context.ManifestAuthor}</authors>
+                                      <projectUrl>{manifest.website_url}</projectUrl>
+                                      <readme>README.md</readme>
+                                      <iconUrl>https://cdn.rune580.dev/icons/lethalcompany_inpututils/icon.png</iconUrl>
+                                      <icon>icon.png</icon>
+                                      <license type="file">LICENSE</license>
+                                  </metadata>
+                                  <files>
+                                      <file src="{dllFile}" target="lib/{dllFile}" />
+                                      <file src="README.md" />
+                                      <file src="icon.png" />
+                                      <file src="LICENSE" />
+                                  </files>
+                              </package>
+                              """;
+
+        var nuspecFile = context.BuildDir / $"{context.Project.Name}.nuspec";
+        File.WriteAllText(nuspecFile, nuspecContent);
+
+        var msBuildSettings = new DotNetMSBuildSettings
+        {
+            Properties =
+            {
+                ["NuspecFile"] = [nuspecFile]
+            }
+        };
+
+        var packSettings = new DotNetPackSettings
+        {
+            NoBuild = true,
+            Configuration = "Release",
+            OutputDirectory = (string)(context.BuildDir / "artifacts"),
+            MSBuildSettings = msBuildSettings
+        };
+        
+        context.DotNetPack(context.Project.Directory, packSettings);
     }
 }
 
