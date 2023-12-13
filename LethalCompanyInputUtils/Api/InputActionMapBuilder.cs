@@ -23,7 +23,7 @@ public class InputActionMapBuilder(string mapName)
         return new InputActionBindingBuilder(this);
     }
 
-    public InputActionMap Build()
+    internal InputActionMap Build()
     {
         return _actionMap;
     }
