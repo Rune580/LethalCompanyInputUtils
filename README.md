@@ -21,8 +21,7 @@ Extract the zip and add a reference to the dll file of the mod in Visual Studio 
 - Create a **subclass of `LcInputActions`**
   - An instance of this class will contain all `InputAction`s your mod wishes to bind inputs for
   - Name the class appropriately
-- **Create instance properties** for all desired `InputActions`
-- **Annotate** the instance properties with the `[InputAction(...)]` annotation
+- Create InputActions [using Attributes](#using-attributes) or [at Runtime](#at-runtime)
 
 ```csharp
 public class MyExampleInputClass : LcInputActions 
@@ -33,6 +32,10 @@ public class MyExampleInputClass : LcInputActions
     public InputAction AnotherKey { get; set; }
 }
 ```
+
+### Using Attributes
+- **Create instance properties** for all desired `InputActions`
+- **Annotate** the instance properties with the `[InputAction(...)]` annotation
 
 > [!IMPORTANT]  
 > For actions to be registered to the API, **Properties MUST be annotated with `[InputAction(...)]`**
@@ -65,6 +68,34 @@ public InputAction ExplodeKey { get; set; }
 ```
 > [!NOTE]
 > In this case above the Hold Interaction is being used. This keybind triggers after being held for *5* seconds. See [Interactions Docs](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/api/UnityEngine.InputSystem.Interactions.html)
+
+### At Runtime
+- **Override Method** `void CreateInputActions(in InputActionMapBuilder builder)`
+- Use the builder to create InputActions
+- **Reference InputAction** by calling `Asset["actionId"]` in your class
+
+> [!IMPORTANT]
+> Make sure you call `Finish()` after you're done creating each InputAction.
+
+Here's an example usage of the runtime api
+```csharp
+public class MyExampleInputClass : LcInputActions
+{
+    public static readonly MyExampleInputClass Instance = new();
+    
+    public InputAction ExplodeKey => Asset["explodekey"];
+
+    public override void CreateInputActions(in InputActionMapBuilder builder)
+    {
+        builder.NewActionBinding()
+            .WithActionId("explodekey")
+            .WithActionType(InputActionType.Button)
+            .WithKbmPath("<Keyboard>/j")
+            .WithBindingName("Explode")
+            .Finish();
+    }
+}
+```
 
 ### Referencing Your Binds
 To use your InputActions class, you need to instantiate it.
