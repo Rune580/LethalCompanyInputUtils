@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using BepInEx;
 using HarmonyLib;
-using LethalCompanyInputUtils.Utils;    
+using LethalCompanyInputUtils.Utils;
 using UnityEngine.SceneManagement;
 
 namespace LethalCompanyInputUtils;

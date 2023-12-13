@@ -3,6 +3,7 @@ using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace LethalCompanyInputUtils;
 
@@ -70,7 +71,7 @@ public static class LcInputActionApi
             lcInputActions.Loaded = false;
     }
 
-    internal static void RegisterInputActions(LcInputActions lcInputActions)
+    internal static void RegisterInputActions(LcInputActions lcInputActions, InputActionMapBuilder builder)
     {
         if (!InputActionsMap.TryAdd(lcInputActions.Id, lcInputActions))
         {
@@ -81,7 +82,17 @@ public static class LcInputActionApi
             return;
         }
         
+        lcInputActions.CreateInputActions(builder);
+        
+        lcInputActions.GetAsset()
+            .AddActionMap(builder.Build());
+        lcInputActions.GetAsset()
+            .Enable();
+        
+        lcInputActions.OnAssetLoaded();
         lcInputActions.Load();
+        
+        lcInputActions.BuildActionRefs();
     }
 
     internal static void DisableForRebind()

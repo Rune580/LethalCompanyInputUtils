@@ -6,7 +6,7 @@ public class InputActionBindingBuilder
 {
     private readonly InputActionMapBuilder _mapBuilder;
     
-    private string? _actionName;
+    private string? _actionId;
     
     private string? _kbmPath;
     private string? _gamepadPath;
@@ -22,9 +22,9 @@ public class InputActionBindingBuilder
         _mapBuilder = mapBuilder;
     }
 
-    public InputActionBindingBuilder WithActionName(string actionName)
+    public InputActionBindingBuilder WithActionId(string actionId)
     {
-        _actionName = actionName;
+        _actionId = actionId;
         return this;
     }
 
@@ -66,17 +66,16 @@ public class InputActionBindingBuilder
 
     public InputAction Finish()
     {
-        _name ??= _actionName;
-        
+        _name ??= _actionId;
 
-        var action = new InputAction(_actionName, _actionType);
+        var action = new InputAction(_actionId, _actionType);
         _mapBuilder.WithAction(action);
 
         if (_kbmPath is not null)
-            _mapBuilder.WithBinding(new InputBinding(_kbmPath, _actionName, interactions: _kbmInteractions, name: _name));
+            _mapBuilder.WithBinding(new InputBinding(_kbmPath, _actionId, interactions: _kbmInteractions, name: _name));
         
         if (_gamepadPath is not null)
-            _mapBuilder.WithBinding(new InputBinding(_gamepadPath, _actionName, interactions: _gamepadInteractions, name: _name));
+            _mapBuilder.WithBinding(new InputBinding(_gamepadPath, _actionId, interactions: _gamepadInteractions, name: _name));
 
         return action;
     }

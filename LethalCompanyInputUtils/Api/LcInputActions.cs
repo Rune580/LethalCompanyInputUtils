@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using BepInEx;
 using LethalCompanyInputUtils.Data;
@@ -14,29 +15,33 @@ namespace LethalCompanyInputUtils.Api;
 public abstract class LcInputActions
 {
     private readonly string _jsonPath;
-    private readonly InputActionReference[] _actionRefs;
+    private readonly List<InputActionReference> _actionRefs = [];
+    
     protected readonly InputActionAsset Asset;
+    internal InputActionAsset GetAsset() => Asset;
 
     internal bool Loaded = false;
+    private readonly Dictionary<PropertyInfo, InputActionAttribute> _inputProps;
 
     internal bool WasEnabled { get; private set; }
     public bool Enabled => Asset.enabled;
     internal IReadOnlyCollection<InputActionReference> ActionRefs => _actionRefs;
-    internal string Id => $"{Plugin.GUID}.{GetType().Name}";
+    internal string Id => $"{Plugin.GUID}.{MapName}";
     public BepInPlugin Plugin { get; }
+
+    protected virtual string MapName => GetType().Name;
     
     protected LcInputActions()
     {
         Asset = ScriptableObject.CreateInstance<InputActionAsset>();
         Plugin = Assembly.GetCallingAssembly().GetBepInPlugin() ?? throw new InvalidOperationException();
         
-        var modGuid = Plugin.GUID;
-        _jsonPath = Path.Combine(FsUtils.ControlsDir, $"{modGuid}.json");
+        _jsonPath = Path.Combine(FsUtils.ControlsDir, $"{Id}.json");
 
-        var mapBuilder = new InputActionMapBuilder(modGuid);
+        var mapBuilder = new InputActionMapBuilder(Id);
         
         var props = GetType().GetProperties();
-        var inputProps = new Dictionary<PropertyInfo, InputActionAttribute>();
+        _inputProps = new Dictionary<PropertyInfo, InputActionAttribute>();
         foreach (var prop in props)
         {
             var attr = prop.GetCustomAttribute<InputActionAttribute>();
@@ -50,7 +55,7 @@ public abstract class LcInputActions
             attr.GamepadPath ??= "";
 
             mapBuilder.NewActionBinding()
-                .WithActionName(attr.ActionId)
+                .WithActionId(attr.ActionId)
                 .WithActionType(attr.ActionType)
                 .WithBindingName(attr.Name)
                 .WithKbmPath(attr.KbmPath)
@@ -58,25 +63,30 @@ public abstract class LcInputActions
                 .WithKbmInteractions(attr.KbmInteractions)
                 .WithGamepadInteractions(attr.GamepadInteractions)
                 .Finish();
-
-            inputProps[prop] = attr;
+            
+            _inputProps[prop] = attr;
         }
+        
+        LcInputActionApi.RegisterInputActions(this, mapBuilder);
+    }
 
-        Asset.AddActionMap(mapBuilder.Build());
-        Asset.Enable();
+    public virtual void CreateInputActions(in InputActionMapBuilder builder) { }
+    
+    public virtual void OnAssetLoaded() { }
 
-        var actionRefs = new List<InputActionReference>();
-        foreach (var (prop, attr) in inputProps)
+    internal void BuildActionRefs()
+    {
+        foreach (var (prop, attr) in _inputProps)
         {
             var action = Asset.FindAction(attr.ActionId);
             prop.SetValue(this, action);
-            
-            actionRefs.Add(InputActionReference.Create(action));
         }
-
-        _actionRefs = actionRefs.ToArray();
         
-        LcInputActionApi.RegisterInputActions(this);
+        var refs = Asset.actionMaps
+            .SelectMany(map => map.actions)
+            .Select(InputActionReference.Create);
+        
+        _actionRefs.AddRange(refs);
     }
 
     public void Enable()
