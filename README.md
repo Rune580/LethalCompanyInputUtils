@@ -21,7 +21,7 @@ Extract the zip and add a reference to the dll file of the mod in Visual Studio 
 - Create a **subclass of `LcInputActions`**
   - An instance of this class will contain all `InputAction`s your mod wishes to bind inputs for
   - Name the class appropriately
-- Create InputActions [using Attributes](#using-attributes) or [at Runtime](#at-runtime)
+- Create InputActions [using Attributes](#using-attributes) and/or [at Runtime](#at-runtime)
 
 ```csharp
 public class MyExampleInputClass : LcInputActions 
@@ -219,6 +219,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+
+### [0.4.0]
+
+InputActions can now be made at runtime by overriding the method `CreateInputActions(...)` and using the provided builder.
 
 ### [0.3.0]
 
