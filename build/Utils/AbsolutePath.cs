@@ -6,11 +6,44 @@ using Path = System.IO.Path;
 
 namespace build.Utils;
 
-public class AbsolutePath(string path)
+public class AbsolutePath
 {
-    private readonly string _path = path;
-
+    private readonly string _path;
+    
     public string Name => Path.GetFileName(_path);
+    
+    public AbsolutePath(string path)
+    {
+        if (path.StartsWith("./"))
+            path = path[2..];
+        
+        _path = path;
+    }
+    
+    public void EnsureDirectoryExists()
+    {
+        if (!Directory.Exists(_path))
+            Directory.CreateDirectory(_path);
+    }
+
+    public void CleanAndCreateDirectory()
+    {
+        if (Directory.Exists(_path))
+            Directory.Delete(_path, true);
+
+        Directory.CreateDirectory(_path);
+    }
+
+    public void CreateDirectory()
+    {
+        Directory.CreateDirectory(_path);
+    }
+
+    public void DeleteFile()
+    {
+        if (File.Exists(_path))
+            File.Delete(_path);
+    }
 
     public List<AbsolutePath> GlobFiles(params string[] patterns)
     {
@@ -33,11 +66,33 @@ public class AbsolutePath(string path)
 
     public static AbsolutePath operator /(AbsolutePath left, AbsolutePath right)
     {
-        return new AbsolutePath($"{left._path}{Path.DirectorySeparatorChar}{right._path}");
+        var separator = !left._path.EndsWith('/') && !right._path.StartsWith('/')
+            ? $"{Path.DirectorySeparatorChar}"
+            : "";
+        
+        return new AbsolutePath($"{left._path}{separator}{right._path}");
     }
 
     public static AbsolutePath operator /(AbsolutePath left, string right)
     {
         return left / (AbsolutePath)right;
+    }
+}
+
+internal static class AbsolutePathUtils
+{
+    public static void CopyFilesTo(this IEnumerable<AbsolutePath> files, AbsolutePath destDir)
+    {
+        foreach (var file in files)
+        {
+            var destFile = destDir / file.Name;
+            File.Copy(file, destFile, true);
+        }
+    }
+
+    public static void DeleteFiles(this IEnumerable<AbsolutePath> files)
+    {
+        foreach (var file in files)
+            File.Delete(file);
     }
 }

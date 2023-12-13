@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      IN_ACTION: 1
+      USE_STUBBED_LIBS: 1
       RELEASE_VERSION: ${{ github.ref_name }}
     steps:
     - name: Checkout Repo

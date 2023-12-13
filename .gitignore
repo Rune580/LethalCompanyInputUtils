@@ -6,3 +6,5 @@ riderModule.iml
 .gameReferences
 .idea/
 **.user
+
+.env

@@ -7,11 +7,11 @@ using System.Text.Json;
 using build.Utils;
 using Cake.Common;
 using Cake.Common.IO;
-using Cake.Common.Solution;
 using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.Build;
 using Cake.Core;
 using Cake.Frosting;
+using dotenv.net;
 
 namespace build;
 
@@ -26,74 +26,94 @@ public static class Build
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class BuildContext(ICakeContext context) : FrostingContext(context)
+public class BuildContext : FrostingContext
 {
     #region Arguments
 
-    public readonly string MsBuildConfiguration = context.Argument<string>("configuration", "Debug");
-    public AbsolutePath? GameDir => GetGameDirArg();
-    public readonly string? Version = context.EnvironmentVariable("RELEASE_VERSION");
+    public readonly string MsBuildConfiguration;
+    public AbsolutePath? GameDir { get; }
+    
+    public readonly string? Version;
 
     #endregion
 
-    #region Project
+    
+    #region Settings
 
-    private string? _solutionPath;
+    public string[] References { get; }
+    public CSharpProject Project { get; }
+    public string ManifestAuthor { get; }
 
-    public string SolutionPath
-    {
-        get
-        {
-            _solutionPath ??= context.GetFiles("../*.sln")
-                .First()
-                .FullPath;
+    #endregion
 
-            return _solutionPath;
-        }
-    }
+    
+    #region Env
 
-    private SolutionParserResult? _solution;
-
-    public SolutionParserResult Solution
-    {
-        get
-        {
-            _solution ??= context.ParseSolution(SolutionPath);
-
-            return _solution;
-        }
-    }
+    public AbsolutePath SolutionPath { get; }
+    public bool UseStubbedLibs { get; }
+    public AbsolutePath[] DeployTargets { get; }
 
     #endregion
 
     public readonly AbsolutePath GameReferencesDir = new AbsolutePath("../") / ".gameReferences";
-
-    public readonly string[] References =
+    public AbsolutePath BuildDir { get; }
+    
+    public BuildContext(ICakeContext context) : base(context)
     {
-        "Assembly-CSharp.dll",
-        "Newtonsoft.Json.dll",
-        "Unity.InputSystem.dll"
-    };
+        DotEnv.Load(new DotEnvOptions(envFilePaths: new[] { "../.env" }));
+        
+        MsBuildConfiguration = context.Argument<string>("configuration", "Debug");
+        Version = context.EnvironmentVariable("RELEASE_VERSION");
+        
+        SolutionPath = context.GetFiles("../*.sln")
+            .First()
+            .FullPath;
+        
+        var settings = ProjectBuildSettings.LoadFromFile("../build-settings.json");
+        if (settings is null)
+            throw new InvalidOperationException();
+        
+        var projectFilePath = (AbsolutePath)"../" / settings.ProjectFile;
+        References = settings.References;
+        Project = new CSharpProject(projectFilePath);
+        ManifestAuthor = settings.ManifestAuthor;
+        
+        UseStubbedLibs = context.Environment.GetEnvironmentVariable("USE_STUBBED_LIBS") is not null;
+        GameDir = GetGameDirArg(context);
+        
+        string deployTargetEnv = context.Environment.GetEnvironmentVariable("DEPLOY_TARGETS");
+        if (deployTargetEnv is not null)
+        {
+            DeployTargets = deployTargetEnv
+                .Split(";")
+                .Select(dir => new AbsolutePath(dir))
+                .ToArray();
+        }
+        else
+        {
+            DeployTargets = [];
+        }
 
-    private AbsolutePath? GetGameDirArg()
+        BuildDir = Project.Directory / "bin" / MsBuildConfiguration / "netstandard2.1";
+    }
+
+    private AbsolutePath? GetGameDirArg(ICakeContext context)
     {
-        if (Environment.GetEnvironmentVariable("IN_ACTION") is not null)
-            return null;
-
-        return context.Arg("gameDir");
+        return UseStubbedLibs ? null : new AbsolutePath(context.Arg("gameDir"));
     }
 }
 
 [TaskName("FetchRefs")]
 public sealed class FetchReferences : FrostingTask<BuildContext>
 {
+    public override bool ShouldRun(BuildContext context)
+    {
+        return !context.UseStubbedLibs;
+    }
+
     public override void Run(BuildContext context)
     {
-        if (Environment.GetEnvironmentVariable("IN_ACTION") is not null)
-            return;
-        
-        if (!Directory.Exists(context.GameReferencesDir))
-            Directory.CreateDirectory(context.GameReferencesDir);
+        context.GameReferencesDir.EnsureDirectoryExists();
         
         AbsolutePath srcDir = context.GameDir! / "Lethal Company_Data" / "Managed";
 
@@ -138,24 +158,13 @@ public sealed class DeployToUnity : FrostingTask<BuildContext>
     {
         AbsolutePath unityPkgDir = (AbsolutePath)"../" / "Unity-LethalCompanyInputUtils" / "Packages";
         
-        foreach (var project in context.Solution.Projects)
-        {
-            if (string.Equals(project.Name, "build"))
-                continue;
+        var project = context.Project;
+        
+        AbsolutePath destDir = unityPkgDir / project.Name;
+        destDir.EnsureDirectoryExists();
             
-            AbsolutePath buildDir = (AbsolutePath)project.Path.GetDirectory() / "bin" / context.MsBuildConfiguration / "netstandard2.1";
-            AbsolutePath destDir = unityPkgDir / project.Name;
-
-            if (!Directory.Exists(destDir))
-                Directory.CreateDirectory(destDir);
-            
-            buildDir.GlobFiles("*.dll", "*.pdb")
-                .ForEach(file =>
-                {
-                    var destFile = destDir / file.Name;
-                    File.Copy(file, destFile, true);
-                });
-        }
+        context.BuildDir.GlobFiles("*.dll", "*.pdb")
+            .CopyFilesTo(destDir);
     }
 }
 
@@ -163,28 +172,22 @@ public sealed class DeployToUnity : FrostingTask<BuildContext>
 [IsDependentOn(typeof(BuildTask))]
 public sealed class DeployToGame : FrostingTask<BuildContext>
 {
+    public override bool ShouldRun(BuildContext context)
+    {
+        return context.GameDir is not null;
+    }
+
     public override void Run(BuildContext context)
     {
-        if (!Directory.Exists(context.GameDir!))
-            throw new Exception("Please make sure the game directory actually exists!");
+        var project = context.Project;
 
-        foreach (var project in context.Solution.Projects)
+        foreach (var target in context.DeployTargets)
         {
-            if (string.Equals(project.Name, "build"))
-                continue;
+            AbsolutePath destDir = target / project.Name;
+            destDir.EnsureDirectoryExists();
             
-            AbsolutePath buildDir = (AbsolutePath)project.Path.GetDirectory() / "bin" / context.MsBuildConfiguration / "netstandard2.1";
-            AbsolutePath destDir = context.GameDir / "BepInEx" / "plugins" / project.Name;
-
-            if (!Directory.Exists(destDir))
-                Directory.CreateDirectory(destDir);
-            
-            buildDir.GlobFiles("*.dll", "*.pdb")
-                .ForEach(file =>
-                {
-                    var destFile = destDir / file.Name;
-                    File.Copy(file, destFile, true);
-                });
+            context.BuildDir.GlobFiles("*.dll", "*.pdb")
+                .CopyFilesTo(destDir);
         }
     }
 }
@@ -231,48 +234,31 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
         AbsolutePath iconFile = "icon.png";
         AbsolutePath readmeFile = "README.md";
         
-        foreach (var project in context.Solution.Projects)
-        {
-            if (string.Equals(project.Name, "build"))
-                continue;
+        var project = context.Project;
+        
+        AbsolutePath publishDir = context.BuildDir / "publish";
+        publishDir.CleanAndCreateDirectory();
+
+        var modDir = publishDir / project.Name;
+        modDir.CreateDirectory();
             
-            AbsolutePath buildDir = (AbsolutePath)project.Path.GetDirectory() / "bin" / context.MsBuildConfiguration / "netstandard2.1";
-            AbsolutePath publishDir = buildDir / "publish";
-
-            if (Directory.Exists(publishDir))
-                Directory.Delete(publishDir, true);
-
-            Directory.CreateDirectory(publishDir);
-
-            var modDir = publishDir / project.Name;
-            Directory.CreateDirectory(modDir);
+        context.BuildDir.GlobFiles("*.dll")
+            .CopyFilesTo(modDir);
             
-            buildDir.GlobFiles("*.dll")
-                .ForEach(file =>
-                {
-                    var destFile = modDir / file.Name;
-                    File.Copy(file, destFile, true);
-                });
-            
-            File.Copy("../" / manifestFile, publishDir / manifestFile, true);
-            File.Copy("../" / iconFile, publishDir / iconFile, true);
-            File.Copy("../" / readmeFile, publishDir / readmeFile, true);
+        File.Copy("../" / manifestFile, publishDir / manifestFile, true);
+        File.Copy("../" / iconFile, publishDir / iconFile, true);
+        File.Copy("../" / readmeFile, publishDir / readmeFile, true);
 
-            var manifest = JsonSerializer.Deserialize<ThunderStoreManifest>(File.ReadAllText(publishDir / manifestFile));
+        var manifest = JsonSerializer.Deserialize<ThunderStoreManifest>(File.ReadAllText(publishDir / manifestFile));
 
-            var destDir = buildDir / "upload";
-            if (Directory.Exists(destDir)) 
-                Directory.Delete(destDir, true);
+        var uploadDir = context.BuildDir / "upload";
+        uploadDir.CleanAndCreateDirectory();
 
-            Directory.CreateDirectory(destDir);
-
-            var version = context.Version ?? manifest!.version_number;
-            var destFile = destDir / $"Rune580-{manifest!.name}-{version}.zip";
-            if (File.Exists(destFile))
-                File.Delete(destFile);
-            
-            ZipFile.CreateFromDirectory(publishDir, destFile);
-        }
+        var version = context.Version ?? manifest!.version_number;
+        var destFile = uploadDir / $"{context.ManifestAuthor}-{manifest!.name}-{version}.zip";
+        destFile.DeleteFile();
+        
+        ZipFile.CreateFromDirectory(publishDir, destFile);
     }
 }
 
