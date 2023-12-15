@@ -7,6 +7,12 @@ InputActions created through this mod are accessible in-game via the keybinds me
 
 ## General Users
 This mod is just a dependency for other mods, it doesn't add content, but it allows mods to add keybinds.
+
+### Where are my bind overrides stored?
+Depends on the version of InputUtils:
+- **>= 0.4.1** `BepInEx/config/controls`
+- **<= 0.4.0** `BepInEx/controls`
+
 ### Recommended Install
 Use a Mod manager. I won't provide support if a mod manager wasn't used, a mod manager makes it far easier to debug issues since users can just share a modpack code.
 
@@ -272,6 +278,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+
+### [0.4.1]
+
+Bind overrides have been moved from `BepInEx/controls` to `BepInEx/config/controls` allowing for bind overrides to be distributed with modpacks.
 
 ### [0.4.0]
 
