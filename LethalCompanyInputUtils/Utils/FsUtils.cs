@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using BepInEx;
 
 namespace LethalCompanyInputUtils.Utils;
 
@@ -14,8 +15,8 @@ internal static class FsUtils
         return Path.Combine(userDir, "AppData", "LocalLow", "ZeekerssRBLX", "Lethal Company");
     }
 
-    public static string Pre041ControlsDir { get; } = Path.Combine(BepInEx.Paths.BepInExRootPath, "controls");
-    public static string ControlsDir { get; } = Path.Combine(BepInEx.Paths.BepInExConfigPath, "controls");
+    public static string Pre041ControlsDir { get; } = Path.Combine(Paths.BepInExRootPath, "controls");
+    public static string ControlsDir { get; } = Path.Combine(Paths.ConfigPath, "controls");
 
     public static void EnsureControlsDir()
     {
