@@ -202,6 +202,59 @@ public class MyOtherClassOrMonoBehavior
 ### Next Steps
 Check out Unity's documentation for their [InputSystem](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/manual/index.html)
 
+## Build Instructions
+
+### Build Script Args
+- `--target=TARGET`
+  - Valid targets:
+    - Build (default)
+    - FetchRefs
+    - Deploy (requires a valid `GAME_DIR` env var)
+    - BuildThunderstore
+    - BuildNuGet
+- `--configuration=MSBUILDCONFIGURATION`
+  - Valid configurations:
+    - Debug (default)
+    - Release
+
+Check `Build/Build.cs` for the source code of the build script.
+
+### Linux
+Clone and enter the repo.
+```shell
+git clone https://github.com/Rune580/LethalCompanyInputUtils && cd LethalCompanyInputUtils
+```
+Copy and rename `.env.example` to `.env`.
+```shell
+cp .env.example .env
+```
+Edit `.env` to fit your needs, a valid installation of Lethal Company is required unless `USE_STUBBED_LIBS` is set.
+
+Run ./build.sh to run the default build task.
+```shell
+./build.sh
+```
+
+### Windows
+Clone the repo.
+```shell
+git clone https://github.com/Rune580/LethalCompanyInputUtils
+```
+Enter the cloned repo.
+```shell
+cd LethalCompanyInputUtils
+```
+Copy and rename `.env.example` to `.env`.
+```shell
+cp .env.example .env
+```
+Edit `.env` to fit your needs, a valid installation of Lethal Company is required unless `USE_STUBBED_LIBS` is set.
+
+Run ./build.ps1 to run the default build task.
+```shell
+.\build.ps1
+```
+
 ## Contact
 Discord: @rune
 
