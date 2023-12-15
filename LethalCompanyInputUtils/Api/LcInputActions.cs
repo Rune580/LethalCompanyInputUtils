@@ -16,7 +16,7 @@ public abstract class LcInputActions
 {
     private readonly string _jsonPath;
     private readonly List<InputActionReference> _actionRefs = [];
-    
+
     protected readonly InputActionAsset Asset;
     internal InputActionAsset GetAsset() => Asset;
 
@@ -30,16 +30,16 @@ public abstract class LcInputActions
     public BepInPlugin Plugin { get; }
 
     protected virtual string MapName => GetType().Name;
-    
+
     protected LcInputActions()
     {
         Asset = ScriptableObject.CreateInstance<InputActionAsset>();
         Plugin = Assembly.GetCallingAssembly().GetBepInPlugin() ?? throw new InvalidOperationException();
-        
+
         _jsonPath = Path.Combine(FsUtils.ControlsDir, $"{Id}.json");
 
         var mapBuilder = new InputActionMapBuilder(Id);
-        
+
         var props = GetType().GetProperties();
         _inputProps = new Dictionary<PropertyInfo, InputActionAttribute>();
         foreach (var prop in props)
@@ -63,15 +63,15 @@ public abstract class LcInputActions
                 .WithKbmInteractions(attr.KbmInteractions)
                 .WithGamepadInteractions(attr.GamepadInteractions)
                 .Finish();
-            
+
             _inputProps[prop] = attr;
         }
-        
+
         LcInputActionApi.RegisterInputActions(this, mapBuilder);
     }
 
     public virtual void CreateInputActions(in InputActionMapBuilder builder) { }
-    
+
     public virtual void OnAssetLoaded() { }
 
     internal void BuildActionRefs()
@@ -81,11 +81,11 @@ public abstract class LcInputActions
             var action = Asset.FindAction(attr.ActionId);
             prop.SetValue(this, action);
         }
-        
+
         var refs = Asset.actionMaps
             .SelectMany(map => map.actions)
             .Select(InputActionReference.Create);
-        
+
         _actionRefs.AddRange(refs);
     }
 
@@ -109,9 +109,11 @@ public abstract class LcInputActions
 
     internal void Load()
     {
+        ApplyMigrations();
+
         if (!File.Exists(_jsonPath))
             return;
-        
+
         try
         {
             var overrides = BindingOverrides.FromJson(File.ReadAllText(_jsonPath));
@@ -121,5 +123,12 @@ public abstract class LcInputActions
         {
             Logging.Logger.LogError(e);
         }
+    }
+
+    private void ApplyMigrations()
+    {
+        var pre041JsonPath = Path.Combine(FsUtils.Pre041ControlsDir, $"{Id}.json");
+        if (File.Exists(pre041JsonPath))
+            File.Move(pre041JsonPath, _jsonPath);
     }
 }

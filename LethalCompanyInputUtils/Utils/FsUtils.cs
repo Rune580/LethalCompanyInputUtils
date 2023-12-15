@@ -14,7 +14,8 @@ internal static class FsUtils
         return Path.Combine(userDir, "AppData", "LocalLow", "ZeekerssRBLX", "Lethal Company");
     }
 
-    public static string ControlsDir { get; } = Path.Combine(BepInEx.Paths.BepInExRootPath, "controls");
+    public static string Pre041ControlsDir { get; } = Path.Combine(BepInEx.Paths.BepInExRootPath, "controls");
+    public static string ControlsDir { get; } = Path.Combine(BepInEx.Paths.BepInExConfigPath, "controls");
 
     public static void EnsureControlsDir()
     {
