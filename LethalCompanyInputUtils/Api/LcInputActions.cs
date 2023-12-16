@@ -109,7 +109,15 @@ public abstract class LcInputActions
 
     internal void Load()
     {
-        ApplyMigrations();
+        try
+        {
+            ApplyMigrations();
+        }
+        catch (Exception e)
+        {
+            Logging.Logger.LogError("Got error when applying migrations, skipping...");
+            Logging.Logger.LogError(e);
+        }
 
         if (!File.Exists(_jsonPath))
             return;
@@ -128,7 +136,7 @@ public abstract class LcInputActions
     private void ApplyMigrations()
     {
         var pre041JsonPath = Path.Combine(FsUtils.Pre041ControlsDir, $"{Id}.json");
-        if (File.Exists(pre041JsonPath))
+        if (File.Exists(pre041JsonPath) && !File.Exists(_jsonPath))
             File.Move(pre041JsonPath, _jsonPath);
     }
 }
