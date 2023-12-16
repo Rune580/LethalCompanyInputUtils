@@ -279,6 +279,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [0.4.2]
+
+Hotfix for applying migrations when the new file already existed, no longer crashes the mod.
+
 ### [0.4.1]
 
 Bind overrides have been moved from `BepInEx/controls` to `BepInEx/config/controls` allowing for bind overrides to be distributed with modpacks.
