@@ -17,7 +17,7 @@ public abstract class LcInputActions
     private readonly string _jsonPath;
     private readonly List<InputActionReference> _actionRefs = [];
 
-    protected readonly InputActionAsset Asset;
+    public InputActionAsset Asset { get; }
     internal InputActionAsset GetAsset() => Asset;
 
     internal bool Loaded = false;
