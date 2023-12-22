@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using LethalCompanyInputUtils.Api;
 using UnityEngine.InputSystem;
 
 namespace LethalCompanyInputUtils.Patches;
@@ -20,7 +21,8 @@ public static class InputControlPathPatches
         // ReSharper disable once InconsistentNaming
         public static void Postfix(ref string __result)
         {
-            if (__result is not ("<InputUtils-Gamepad-Not-Bound>" or "<InputUtils-Kbm-Not-Bound>"))
+            if (__result is not (LcInputActions.UnboundGamepadIdentifier
+                or LcInputActions.UnboundKeyboardAndMouseIdentifier))
                 return;
 
             __result = "";
