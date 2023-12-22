@@ -52,13 +52,14 @@ public abstract class LcInputActions
                 continue;
 
             attr.ActionId ??= prop.Name;
-            attr.GamepadPath ??= "";
+            attr.GamepadPath ??= "<InputUtils-Gamepad-Not-Bound>";
+            var kbmPath = string.IsNullOrEmpty(attr.KbmPath) ? "<InputUtils-Kbm-Not-Bound>" : attr.KbmPath;
 
             mapBuilder.NewActionBinding()
                 .WithActionId(attr.ActionId)
                 .WithActionType(attr.ActionType)
                 .WithBindingName(attr.Name)
-                .WithKbmPath(attr.KbmPath)
+                .WithKbmPath(kbmPath)
                 .WithGamepadPath(attr.GamepadPath)
                 .WithKbmInteractions(attr.KbmInteractions)
                 .WithGamepadInteractions(attr.GamepadInteractions)
