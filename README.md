@@ -113,6 +113,7 @@ To use your InputActions class, you need to instantiate it.
 The easiest (opinionated) way to do so would be to have a static instance in your plugin class.
 ```csharp
 [BepInPlugin(...)]
+[BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.HardDependency)]
 public class MyExamplePlugin : BaseUnityPlugin
 {
     internal static MyExampleInputClass InputActionsInstance = new MyExampleInputClass();
@@ -120,7 +121,7 @@ public class MyExamplePlugin : BaseUnityPlugin
 ```
 You could also opt for instantiating the instance in the InputActions class (Singleton-style).
 ```csharp
-public class MyExamplePlugin : LcInputActions 
+public class MyExampleInputClass : LcInputActions 
 {
     public static MyExampleInputClass Instance = new();
 
@@ -159,7 +160,7 @@ public class MyOtherClassOrMonoBehavior
 }
 ```
 
-#### Best Practises
+#### Best Practices
 It is common to see tutorials call `InputAction.ReadValue<>()` or `InputAction.triggered` from mono-behaviour `Update()` functions.
 ```csharp
 public class MyOtherClassOrMonoBehavior
@@ -204,6 +205,57 @@ public class MyOtherClassOrMonoBehavior
     }
 }
 ```
+
+### Using InputUtils as an Optional or Soft Dependency
+First make sure to add the `[BepInDependency(...)]` attribute to your mods Plugin class, mark it as a `SoftDependency`.
+If you already have the attribute set as a `HardDependency` make sure to replace that.
+```csharp
+[BepInPlugin(...)]
+[BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.SoftDependency)]
+public class MyExamplePlugin : BaseUnityPlugin
+```
+
+Create your InputActions class as you would following the guide above.
+Make a class specifically for when the mod is loaded
+```csharp
+internal static class InputUtilsCompat
+{
+    public static bool Enabled =>
+        BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.rune580.LethalCompanyInputUtils");
+
+    public static InputAction ExplodeKey =>
+        MyExampleInputClass.Instance.ExplodeKey;
+}
+```
+
+Finally whenever you reference stuff from `InputUtilsCompat`, make sure to check its `Enabled` Property first.
+```csharp
+if (InputUtilsCompat.Enabled)
+    InputUtilsCompat.ExplodeKey...
+```
+Reference [Best Practices](#best-practices) for details on how to best use the InputAction
+
+> [!IMPORTANT]
+> #### If your mod uses [NetcodePatcher](https://github.com/EvaisaDev/UnityNetcodeWeaver) you may need to do additional steps.
+> **This only applies to mods that use InputUtils as a soft-dependency**
+> 
+> Please check their Readme for more info.
+> However for a possible fix, replace
+> ```csharp
+> var types = Assembly.GetExecutingAssembly().GetTypes();
+> ```
+> with
+> ```csharp
+> IEnumerable<Type> types;
+> try
+> {
+>     types = Assembly.GetExecutingAssembly().GetTypes();
+> }
+> catch (ReflectionTypeLoadException e)
+> {
+>     types = e.Types.Where(t => t != null);
+> }
+> ```
 
 ### Next Steps
 Check out Unity's documentation for their [InputSystem](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/manual/index.html)
@@ -278,6 +330,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+
+### [0.4.3]
+
+`LcInputActions.Asset` now has a public getter.
+Fixed issue where binds that were unbound by default would not save/load their new binds after restarting your game. 
 
 ### [0.4.2]
 
