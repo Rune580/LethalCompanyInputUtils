@@ -2,7 +2,9 @@
   "References": [
     "Assembly-CSharp.dll",
     "Newtonsoft.Json.dll",
-    "Unity.InputSystem.dll"
+    "Unity.InputSystem.dll",
+    "UnityEngine.UI.dll",
+    "Unity.TextMeshPro.dll"
   ],
   "ProjectFile": "./LethalCompanyInputUtils/LethalCompanyInputUtils.csproj",
   "ManifestAuthor": "Rune580"

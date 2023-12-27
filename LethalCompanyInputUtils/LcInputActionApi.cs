@@ -2,8 +2,10 @@
 using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Utils;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace LethalCompanyInputUtils;
 
@@ -15,6 +17,11 @@ public static class LcInputActionApi
     
     internal static void LoadIntoUI(KepRemapPanel panel)
     {
+        UpdateFontScaling(panel);
+        EnsureContentSizeFitter(panel);
+        var layoutElement = EnsureLayoutElement(panel);
+        layoutElement.minHeight = 0;
+        
         var keys = panel.remappableKeys;
         var kbmKeyCount = keys.Count(key => !key.gamepadOnly);
         
@@ -52,6 +59,49 @@ public static class LcInputActionApi
         var maxItemsInRow = Mathf.Floor(maxVisibleWidth / widthPerItem);
 
         panel.maxVertical = kbmKeyCount / maxItemsInRow;
+        layoutElement.minHeight += (panel.maxVertical + 1) * panel.verticalOffset;
+    }
+
+    private static void UpdateFontScaling(KepRemapPanel panel)
+    {
+        var textMeshPro = panel.keyRemapSlotPrefab.transform.Find("Text (1)")
+            .GetComponent<TextMeshProUGUI>();
+
+        if (textMeshPro.enableAutoSizing)
+            return;
+
+        textMeshPro.fontSizeMax = textMeshPro.fontSize;
+        textMeshPro.fontSizeMin = textMeshPro.fontSize - 4;
+        textMeshPro.enableAutoSizing = true;
+    }
+
+    private static void EnsureContentSizeFitter(KepRemapPanel panel)
+    {
+        var content = panel.keyRemapContainer.parent.gameObject;
+        if (content.GetComponent<ContentSizeFitter>() is not null)
+            return;
+
+        panel.keyRemapContainer.SetPivotY(1);
+        panel.keyRemapContainer.SetAnchorMinY(1);
+        panel.keyRemapContainer.SetAnchorMaxY(1);
+        panel.keyRemapContainer.SetAnchoredPosY(0);
+        panel.keyRemapContainer.SetLocalPosY(0);
+
+        var sizeFitter = content.AddComponent<ContentSizeFitter>();
+        sizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        sizeFitter.verticalFit = ContentSizeFitter.FitMode.MinSize;
+    }
+
+    private static LayoutElement EnsureLayoutElement(KepRemapPanel panel)
+    {
+        var content = panel.keyRemapContainer.parent.gameObject;
+
+        var layoutElement = content.GetComponent<LayoutElement>();
+        if (layoutElement is not null)
+            return layoutElement;
+
+        layoutElement = content.AddComponent<LayoutElement>();
+        return layoutElement;
     }
 
     internal static void CalculateVerticalMaxForGamepad(KepRemapPanel panel)
@@ -63,6 +113,9 @@ public static class LcInputActionApi
         var maxItemsInRow = Mathf.Floor(maxVisibleWidth / widthPerItem);
 
         panel.maxVertical = gamepadKeyCount / maxItemsInRow;
+
+        var layoutElement = EnsureLayoutElement(panel);
+        layoutElement.minHeight += (panel.maxVertical + 2) * panel.verticalOffset;
     }
 
     internal static void ResetLoadedInputActions()
