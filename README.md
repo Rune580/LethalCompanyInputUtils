@@ -331,6 +331,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [0.4.4]
+
+Text in the remap ui now has auto-scaling size.
+Remap ui no longer cuts-off the bottom of the controller section.
+Changed method for determining the BepInPlugin of dependents.
+
 ### [0.4.3]
 
 `LcInputActions.Asset` now has a public getter.
