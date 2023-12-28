@@ -18,7 +18,7 @@ public static class LcInputActionApi
     internal static void LoadIntoUI(KepRemapPanel panel)
     {
         UpdateFontScaling(panel);
-        EnsureContentSizeFitter(panel);
+        AdjustSizeAndPos(panel);
         var layoutElement = EnsureLayoutElement(panel);
         layoutElement.minHeight = 0;
         
@@ -75,7 +75,7 @@ public static class LcInputActionApi
         textMeshPro.enableAutoSizing = true;
     }
 
-    private static void EnsureContentSizeFitter(KepRemapPanel panel)
+    private static void AdjustSizeAndPos(KepRemapPanel panel)
     {
         var content = panel.keyRemapContainer.parent.gameObject;
         if (content.GetComponent<ContentSizeFitter>() is not null)
@@ -115,7 +115,7 @@ public static class LcInputActionApi
         panel.maxVertical = gamepadKeyCount / maxItemsInRow;
 
         var layoutElement = EnsureLayoutElement(panel);
-        layoutElement.minHeight += (panel.maxVertical + 2) * panel.verticalOffset;
+        layoutElement.minHeight += (panel.maxVertical + 3) * panel.verticalOffset;
     }
 
     internal static void ResetLoadedInputActions()
