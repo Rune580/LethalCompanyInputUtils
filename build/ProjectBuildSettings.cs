@@ -6,9 +6,10 @@ namespace build;
 
 public class ProjectBuildSettings
 {
-    public required string[] References { get; set; }
-    public required string ProjectFile { get; set; }
-    public required string ManifestAuthor { get; set; }
+    public required string[] References { get; init; }
+    public required string ProjectFile { get; init; }
+    public required string UnityProjectDir { get; init; }
+    public required string ManifestAuthor { get; init; }
 
     public static ProjectBuildSettings? LoadFromFile(AbsolutePath filePath)
     {

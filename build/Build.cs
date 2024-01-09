@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
+using BepInEx.AssemblyPublicizer;
 using build.Utils;
 using Cake.Common;
 using Cake.Common.IO;
@@ -44,6 +45,7 @@ public class BuildContext : FrostingContext
 
     public string[] References { get; }
     public CSharpProject Project { get; }
+    public AbsolutePath UnityProjectDir { get; }
     public string ManifestAuthor { get; }
 
     #endregion
@@ -59,6 +61,7 @@ public class BuildContext : FrostingContext
 
     public readonly AbsolutePath GameReferencesDir = new AbsolutePath("../") / ".gameReferences";
     public AbsolutePath BuildDir { get; }
+    public AbsolutePath UnityAssetBundlesDir { get; }
     
     public BuildContext(ICakeContext context) : base(context)
     {
@@ -78,6 +81,7 @@ public class BuildContext : FrostingContext
         var projectFilePath = (AbsolutePath)"../" / settings.ProjectFile;
         References = settings.References;
         Project = new CSharpProject(projectFilePath);
+        UnityProjectDir = (AbsolutePath)"../" / settings.UnityProjectDir;
         ManifestAuthor = settings.ManifestAuthor;
         
         UseStubbedLibs = context.Environment.GetEnvironmentVariable("USE_STUBBED_LIBS") is not null;
@@ -97,6 +101,7 @@ public class BuildContext : FrostingContext
         }
 
         BuildDir = Project.Directory / "bin" / MsBuildConfiguration / "netstandard2.1";
+        UnityAssetBundlesDir = UnityProjectDir / "AssetBundles" / "StandaloneWindows";
     }
 
     private AbsolutePath? GetGameDirArg(ICakeContext context)
@@ -138,9 +143,20 @@ public sealed class RestoreTask : FrostingTask<BuildContext>
     }
 }
 
+[TaskName("UpdateAssetBundles")]
+public sealed class UpdateAssetBundles : FrostingTask<BuildContext>
+{
+    public override void Run(BuildContext context)
+    {
+        context.UnityAssetBundlesDir.GlobFiles()
+            .CopyFilesTo(context.Project.Directory / "AssetBundles");
+    }
+}
+
 [TaskName("Build")]
 [IsDependentOn(typeof(RestoreTask))]
 [IsDependentOn(typeof(FetchReferences))]
+[IsDependentOn(typeof(UpdateAssetBundles))]
 public sealed class BuildTask : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
@@ -152,13 +168,53 @@ public sealed class BuildTask : FrostingTask<BuildContext>
     }
 }
 
+[TaskName("StubAndDeployRequiredDepsToUnity")]
+public sealed class StubAndDeployRequiredUnityDeps : FrostingTask<BuildContext>
+{
+    public override bool ShouldRun(BuildContext context)
+    {
+        if (context.GameDir is null)
+            return false;
+        
+        AbsolutePath destDir = context.UnityProjectDir / "Packages" / context.Project.Name;
+        if (!Directory.Exists(destDir))
+            return true;
+
+        string[] depsToFind = [ "BepInEx.dll", "0Harmony.dll" ];
+        var stubbedDeps = destDir.GlobFiles(depsToFind);
+        if (stubbedDeps.Count != depsToFind.Length)
+            return true;
+
+        return false;
+    }
+
+    public override void Run(BuildContext context)
+    {
+        AbsolutePath destDir = context.UnityProjectDir / "Packages" / context.Project.Name;
+        destDir.EnsureDirectoryExists();
+        
+        var coreDir = context.GameDir! / "BepInEx" / "core";
+        var depsToStub = coreDir.GlobFiles("BepInEx.dll", "0Harmony.dll");
+
+        var stubOptions = new AssemblyPublicizerOptions
+        {
+            Strip = true,
+            IncludeOriginalAttributesAttribute = false
+        };
+        
+        foreach (var dep in depsToStub)
+            AssemblyPublicizer.Publicize(dep, destDir / dep.Name, stubOptions);
+    }
+}
+
 [TaskName("DeployUnity")]
 [IsDependentOn(typeof(BuildTask))]
+[IsDependentOn(typeof(StubAndDeployRequiredUnityDeps))]
 public sealed class DeployToUnity : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
     {
-        AbsolutePath unityPkgDir = (AbsolutePath)"../" / "Unity-LethalCompanyInputUtils" / "Packages";
+        AbsolutePath unityPkgDir = context.UnityProjectDir / "Packages";
         
         var project = context.Project;
         
@@ -182,6 +238,7 @@ public sealed class DeployToGame : FrostingTask<BuildContext>
     public override void Run(BuildContext context)
     {
         var project = context.Project;
+        var assetBundlesDir = context.BuildDir / "AssetBundles";
 
         foreach (var target in context.DeployTargets)
         {
@@ -190,6 +247,9 @@ public sealed class DeployToGame : FrostingTask<BuildContext>
             
             context.BuildDir.GlobFiles("*.dll", "*.pdb")
                 .CopyFilesTo(destDir);
+
+            assetBundlesDir.GlobFiles("*")
+                .CopyFilesTo(destDir / "AssetBundles");
         }
     }
 }
@@ -246,7 +306,11 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
             
         context.BuildDir.GlobFiles("*.dll")
             .CopyFilesTo(modDir);
-            
+
+        var assetBundlesDir = context.BuildDir / "AssetBundles";
+        assetBundlesDir.GlobFiles("*")
+            .CopyFilesTo(modDir / "AssetBundles");
+        
         File.Copy("../" / manifestFile, publishDir / manifestFile, true);
         File.Copy("../" / iconFile, publishDir / iconFile, true);
         File.Copy("../" / readmeFile, publishDir / readmeFile, true);
