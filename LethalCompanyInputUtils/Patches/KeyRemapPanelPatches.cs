@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
+using LethalCompanyInputUtils.Utils;
+using UnityEngine;
 
 namespace LethalCompanyInputUtils.Patches;
 
@@ -14,6 +16,10 @@ public static class KeyRemapPanelPatches
         {
             LcInputActionApi.DisableForRebind();
             LcInputActionApi.LoadIntoUI(__instance);
+            
+            // TODO Replace current ui loading with the prefab entirely
+            var container =  Object.Instantiate(Assets.Load<GameObject>("Prefabs/InputUtilsRemapContainer.prefab"), __instance.transform);
+            __instance.transform.Find("Scroll View").gameObject.SetActive(false);
         }
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)

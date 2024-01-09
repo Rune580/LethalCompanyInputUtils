@@ -24,7 +24,14 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         FsUtils.EnsureControlsDir();
         
+        LoadAssetBundles();
+        
         Logger.LogInfo($"Plugin {ModId} is loaded!");
+    }
+
+    private void LoadAssetBundles()
+    {
+        Assets.AddBundle("ui-assets");
     }
 
     private static void OnSceneChanged(Scene current, Scene next)

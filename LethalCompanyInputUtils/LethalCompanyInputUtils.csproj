@@ -27,6 +27,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="AssetBundles\**\*"/>
+        <Content Include="AssetBundles\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 </Project>

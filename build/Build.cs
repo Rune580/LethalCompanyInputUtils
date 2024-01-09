@@ -148,7 +148,7 @@ public sealed class UpdateAssetBundles : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
     {
-        context.UnityAssetBundlesDir.GlobFiles()
+        context.UnityAssetBundlesDir.GlobFiles("ui-assets")
             .CopyFilesTo(context.Project.Directory / "AssetBundles");
     }
 }
