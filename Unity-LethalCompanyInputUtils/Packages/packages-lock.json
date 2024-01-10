@@ -15,6 +15,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
     "com.unity.animation.rigging": {
       "version": "1.2.1",
       "depth": 0,

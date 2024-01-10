@@ -12,6 +12,7 @@ namespace LethalCompanyInputUtils;
 public static class LcInputActionApi
 {
     private static readonly Dictionary<string, LcInputActions> InputActionsMap = new();
+    internal static bool PrefabLoaded;
     
     private static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
     
@@ -120,6 +121,8 @@ public static class LcInputActionApi
 
     internal static void ResetLoadedInputActions()
     {
+        PrefabLoaded = false;
+        
         foreach (var lcInputActions in InputActions)
             lcInputActions.Loaded = false;
     }
