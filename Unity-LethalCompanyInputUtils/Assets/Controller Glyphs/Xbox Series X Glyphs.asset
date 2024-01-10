@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1420432990, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+  m_Name: Xbox Series X Glyphs
+  m_EditorClassIdentifier: 
+  validGamepadTypes:
+  - XInputController
+  - Gamepad
+  glyphSet:
+  - {fileID: 11400000, guid: df30e90a5ccf1334694fab86061eec8c, type: 2}
+  - {fileID: 11400000, guid: f4ce8e139be2b9e44a6ed5d95a1ed312, type: 2}
+  - {fileID: 11400000, guid: 9a48f1d3d7aebc5459bbf18843aedb84, type: 2}
+  - {fileID: 11400000, guid: d00cd4a60333d5c43a0b2c9a8726784c, type: 2}
+  - {fileID: 11400000, guid: 716e79f660967ea48a7a0654554568ab, type: 2}
+  - {fileID: 11400000, guid: 116e34121ff8b394e8debc4436103176, type: 2}
+  - {fileID: 11400000, guid: 7d9a7dd71cbb7fa4fbf684c37df946ab, type: 2}
+  - {fileID: 11400000, guid: 196e6b7a47becea46a9074df40c64ef4, type: 2}
+  - {fileID: 11400000, guid: e725e78d6e2f52a4888e80118e1c6cb8, type: 2}
+  - {fileID: 11400000, guid: 177447f9eee619b488860feaa58a646c, type: 2}
+  - {fileID: 11400000, guid: 2ed438eac3b69294584573ca20942dd0, type: 2}
+  - {fileID: 11400000, guid: 74b3b17e15074904bacb57f139c5946a, type: 2}
+  - {fileID: 11400000, guid: c780e4f4c8eaced4ca13e51d312a8800, type: 2}
+  - {fileID: 11400000, guid: 9b774b7600f2b0e4abe4e19056cbe213, type: 2}
+  - {fileID: 11400000, guid: b7910edcc64b67249b91d3cb0b1f5895, type: 2}
+  - {fileID: 11400000, guid: 401b7b4f3f863474a9f8ba13f53d931c, type: 2}
+  - {fileID: 11400000, guid: 4388df1fa4d99c74fa573bb7c8eeca60, type: 2}
+  - {fileID: 11400000, guid: b821f2c73a39d094f9dbfefc9477cd43, type: 2}
+  - {fileID: 11400000, guid: 88d527089cbc71441bde0d97fb896b5c, type: 2}
+  - {fileID: 11400000, guid: 7ee6874fe774d224c86b7a19e13abc72, type: 2}
+  - {fileID: 11400000, guid: 29b73a1b9ee7c26408387524fab1d4a8, type: 2}
+  - {fileID: 11400000, guid: da9ba9334867d6948bdd79bfa4726fce, type: 2}
+  - {fileID: 11400000, guid: 2bddfcd1009692342b47fd02b6ea0480, type: 2}
+  - {fileID: 11400000, guid: d6de6d44b7492e248880626729a96e45, type: 2}
+  - {fileID: 11400000, guid: da69d0adb15082f42b2c6dfcee069dfd, type: 2}
+  - {fileID: 11400000, guid: 7715a8ac6462ad94ea3dbcccb10ed4e1, type: 2}

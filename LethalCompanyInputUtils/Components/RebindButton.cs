@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using HarmonyLib;
 using LethalCompanyInputUtils.Glyphs;
 using TMPro;
@@ -11,11 +13,12 @@ namespace LethalCompanyInputUtils.Components;
 public class RebindButton : MonoBehaviour
 {
     public TextMeshProUGUI? bindLabel;
-    public Image? glyphLabel; 
+    public Image? glyphLabel;
     private RemappableKey? _key;
     private bool _isBaseGame;
     
     private static MethodInfo? _setChangesNotAppliedMethodInfo;
+    private static readonly List<RebindButton> Instances = [];
 
     public void SetKey(RemappableKey key, bool isBaseGame)
     {
@@ -97,6 +100,16 @@ public class RebindButton : MonoBehaviour
         _key.currentInput.action.Enable();
         UpdateState();
     }
+    
+    private void OnEnable()
+    {
+        Instances.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        Instances.Remove(this);
+    }
 
     private void RebindKbm(InputActionReference inputActionRef, int rebindIndex)
     {
@@ -133,5 +146,13 @@ public class RebindButton : MonoBehaviour
         }
         
         instance.FinishRebinding();
+    }
+    
+    public static void ReloadGlyphs()
+    {
+        foreach (var rebindButton in Instances)
+        {
+            rebindButton.UpdateState();
+        }
     }
 }

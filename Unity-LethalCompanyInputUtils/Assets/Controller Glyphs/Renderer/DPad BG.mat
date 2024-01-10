@@ -59,7 +59,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseTexture:
-        m_Texture: {fileID: 2800000, guid: 5e6a81bb895e4f64483ad73f57a1d809, type: 3}
+        m_Texture: {fileID: 2800000, guid: 16b37c574ee1f644c9a1c0ba233a6732, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BentNormalMap:
@@ -232,7 +232,7 @@ Material:
     - _EnableFogOnTransparent: 1
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
-    - _Fuzziness: 0.26
+    - _Fuzziness: 0.14
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _HealthPercentage: 1
@@ -329,7 +329,7 @@ Material:
     - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
     - _IridescenceThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
-    - _MaskColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MaskColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}

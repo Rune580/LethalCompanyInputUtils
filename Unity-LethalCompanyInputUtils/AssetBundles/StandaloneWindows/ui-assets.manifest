@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 3392382350
+CRC: 2562089917
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3d3e82aa6487c97350b1be417cc1bfed
+    Hash: 9fd0707a7e67062c1e71fdb03cd021c9
   TypeTreeHash:
     serializedVersion: 2
     Hash: 88d04264155b3b32236c13a2abdea811
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 3d3e82aa6487c97350b1be417cc1bfed
+    Hash: 9fd0707a7e67062c1e71fdb03cd021c9
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -106,6 +106,7 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.SpriteState
 Assets:
+- Assets/Controller Glyphs/Xbox Series X Glyphs.asset
 - Assets/Controller Glyphs/Dualsense Glyphs.asset
 - Assets/Prefabs/InputUtilsRemapContainer.prefab
 Dependencies: []
