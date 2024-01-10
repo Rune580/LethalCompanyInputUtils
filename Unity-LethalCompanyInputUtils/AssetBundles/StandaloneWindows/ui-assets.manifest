@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1751544472
+CRC: 3392382350
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 4f7dae9aade81c1955f9b5dde55e7fd0
+    Hash: 3d3e82aa6487c97350b1be417cc1bfed
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 3d25f43bf7054eabd2159ce64adfc40f
+    Hash: 88d04264155b3b32236c13a2abdea811
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 4f7dae9aade81c1955f9b5dde55e7fd0
+    Hash: 3d3e82aa6487c97350b1be417cc1bfed
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -21,31 +21,35 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 - Class: 114
-  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+  Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
+  Script: {fileID: -614404434, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+- Class: 114
+  Script: {fileID: -1794111955, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 114
   Script: {fileID: 320464083, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 114
   Script: {fileID: -819378016, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 114
-  Script: {fileID: -1794111955, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+  Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
 - Class: 114
-  Script: {fileID: -614404434, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
+- Class: 114
+  Script: {fileID: -1420432990, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+- Class: 114
+  Script: {fileID: -2056571223, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 213
@@ -102,5 +106,6 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.SpriteState
 Assets:
+- Assets/Controller Glyphs/Dualsense Glyphs.asset
 - Assets/Prefabs/InputUtilsRemapContainer.prefab
 Dependencies: []

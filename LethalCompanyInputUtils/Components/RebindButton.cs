@@ -1,14 +1,17 @@
 ﻿using System.Reflection;
 using HarmonyLib;
+using LethalCompanyInputUtils.Glyphs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace LethalCompanyInputUtils.Components;
 
 public class RebindButton : MonoBehaviour
 {
     public TextMeshProUGUI? bindLabel;
+    public Image? glyphLabel; 
     private RemappableKey? _key;
     private bool _isBaseGame;
     
@@ -24,7 +27,7 @@ public class RebindButton : MonoBehaviour
 
     public void UpdateState()
     {
-        if (bindLabel is null)
+        if (bindLabel is null || glyphLabel is null)
             return;
 
         if (_key is null)
@@ -32,9 +35,29 @@ public class RebindButton : MonoBehaviour
 
         var bindingIndex = GetRebindingIndex();
         var action = _key.currentInput.action;
-        
-        var bindPath = InputControlPath.ToHumanReadableString(action.bindings[bindingIndex].effectivePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
-        bindLabel.SetText(bindPath);
+
+        var effectivePath = action.bindings[bindingIndex].effectivePath;
+        var bindPath = InputControlPath.ToHumanReadableString(effectivePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
+
+        if (_key.gamepadOnly)
+        {
+            bindLabel.SetText("");
+
+            var glyphSet = ControllerGlyph.GetBestMatching();
+            if (glyphSet is null)
+            {
+                bindLabel.SetText(bindPath);
+                return;
+            }
+
+            glyphLabel.sprite = glyphSet[effectivePath];
+            glyphLabel.enabled = true;
+        }
+        else
+        {
+            glyphLabel.enabled = false;
+            bindLabel.SetText(bindPath);
+        }
     }
 
     private int GetRebindingIndex()
