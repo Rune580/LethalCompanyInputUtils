@@ -34,7 +34,7 @@ internal static class FsUtils
                 "InputUtils can't find it's required AssetBundles! This will cause many issues!\nThis either means your mod manager incorrectly installed InputUtils" +
                 "or if you've manually installed InputUtils, you've done so incorrectly. If you manually installed don't bother reporting the issue, I only provide support to people who use mod managers.";
             
-            Logging.Logger.LogError(msg);
+            Logging.Error(msg);
             return msg;
         }
         

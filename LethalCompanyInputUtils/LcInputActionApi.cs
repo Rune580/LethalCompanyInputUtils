@@ -131,7 +131,7 @@ public static class LcInputActionApi
     {
         if (!InputActionsMap.TryAdd(lcInputActions.Id, lcInputActions))
         {
-            Logging.Logger.LogWarning(
+            Logging.Warn(
                 $"The mod [{lcInputActions.Plugin.GUID}] instantiated an Actions class [{lcInputActions.GetType().Name}] more than once!\n" +
                 $"\t These classes should be treated as singletons!, do not instantiate more than once!");
             

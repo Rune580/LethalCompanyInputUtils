@@ -26,12 +26,12 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         SceneManager.activeSceneChanged += OnSceneChanged;
         InputSystem.onDeviceChange += OnDeviceChanged;
         
-        FsUtils.EnsureControlsDir();
-        
         LoadAssetBundles();
         LoadControllerGlyphs();
         
-        Logger.LogInfo($"Plugin {ModId} is loaded!");
+        FsUtils.EnsureControlsDir();
+        
+        Logging.Info($"InputUtils {ModVersion} has finished loading!");
     }
 
     private void LoadAssetBundles()

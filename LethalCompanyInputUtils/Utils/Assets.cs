@@ -43,7 +43,7 @@ internal static class Assets
         }
         catch (Exception e)
         {
-            Logging.Logger.LogError($"Couldn't load asset [{assetName}] exception: {e}");
+            Logging.Error($"Couldn't load asset [{assetName}] exception: {e}");
             return null;
         }
     }
