@@ -44,6 +44,7 @@ public class RebindButton : MonoBehaviour
         }
 
         var bindingIndex = GetRebindingIndex();
+        
         var action = _key.currentInput.action;
 
         var effectivePath = action.bindings[bindingIndex].effectivePath;
@@ -53,7 +54,7 @@ public class RebindButton : MonoBehaviour
         {
             bindLabel.SetText("");
 
-            if (bindPath == LcInputActions.UnboundGamepadIdentifier)
+            if (effectivePath == LcInputActions.UnboundGamepadIdentifier)
             {
                 glyphLabel.enabled = false;
                 return;

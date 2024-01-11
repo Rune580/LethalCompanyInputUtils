@@ -14,7 +14,7 @@ public static class LcInputActionApi
     private static readonly Dictionary<string, LcInputActions> InputActionsMap = new();
     internal static bool PrefabLoaded;
     
-    private static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
+    internal static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
     
     internal static void LoadIntoUI(KepRemapPanel panel)
     {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LethalCompanyInputUtils.Components;
@@ -15,6 +16,7 @@ public class RemapContainerController : MonoBehaviour
     public void LoadUi()
     {
         GenerateBaseGameSection();
+        GenerateApiSections();
     }
 
     private void GenerateBaseGameSection()
@@ -59,6 +61,41 @@ public class RemapContainerController : MonoBehaviour
         NewSection("Lethal Company");
         foreach (var (_, (kbmKey, gamepadKey)) in pairedKeys)
             NewBind(kbmKey, gamepadKey, true);
+    }
+
+    private void GenerateApiSections()
+    {
+        foreach (var lcInputActions in LcInputActionApi.InputActions)
+        {
+            if (lcInputActions.Loaded)
+                continue;
+            
+            NewSection(lcInputActions.Plugin.Name);
+            
+            foreach (var actionRef in lcInputActions.ActionRefs)
+            {
+                var controlName = actionRef.action.bindings.First().name;
+                var kbmKey = new RemappableKey
+                {
+                    ControlName = controlName,
+                    currentInput = actionRef,
+                    rebindingIndex = 0,
+                    gamepadOnly = false
+                };
+                
+                var gamepadKey = new RemappableKey
+                {
+                    ControlName = controlName,
+                    currentInput = actionRef,
+                    rebindingIndex = 1,
+                    gamepadOnly = true
+                };
+                
+                NewBind(kbmKey, gamepadKey);
+            }
+            
+            lcInputActions.Loaded = true;
+        }
     }
 
     private void NewSection(string sectionName)
