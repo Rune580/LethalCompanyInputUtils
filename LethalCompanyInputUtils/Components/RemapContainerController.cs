@@ -14,6 +14,11 @@ public class RemapContainerController : MonoBehaviour
 
     public void LoadUi()
     {
+        GenerateBaseGameSection();
+    }
+
+    private void GenerateBaseGameSection()
+    {
         // <(Keyboard/Mouse Key, Gamepad Key)>
         var pairedKeys = new Dictionary<string, (RemappableKey?, RemappableKey?)>();
         foreach (var baseGameKey in baseGameKeys)
@@ -51,11 +56,6 @@ public class RemapContainerController : MonoBehaviour
             pairedKeys[controlName] = (kbmKey, gamepadKey);
         }
         
-        GenerateBaseGameSection(pairedKeys);
-    }
-
-    private void GenerateBaseGameSection(Dictionary<string, (RemappableKey?, RemappableKey?)> pairedKeys)
-    {
         NewSection("Lethal Company");
         foreach (var (_, (kbmKey, gamepadKey)) in pairedKeys)
             NewBind(kbmKey, gamepadKey, true);
