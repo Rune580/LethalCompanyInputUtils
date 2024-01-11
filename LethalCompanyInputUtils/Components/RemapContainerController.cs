@@ -20,8 +20,14 @@ public class RemapContainerController : MonoBehaviour
         {
             RemappableKey? kbmKey = null;
             RemappableKey? gamepadKey = null;
+
+            var controlName = baseGameKey.ControlName.ToLower();
+            if (controlName.StartsWith("walk"))
+                controlName = "move" + controlName[4..];
+
+            baseGameKey.ControlName = baseGameKey.ControlName.Replace("primary", "Primary");
             
-            if (pairedKeys.TryGetValue(baseGameKey.ControlName, out var keyPair))
+            if (pairedKeys.TryGetValue(controlName, out var keyPair))
             {
                 if (baseGameKey.gamepadOnly)
                 {
@@ -42,7 +48,7 @@ public class RemapContainerController : MonoBehaviour
                 kbmKey = baseGameKey;
             }
 
-            pairedKeys[baseGameKey.ControlName] = (kbmKey, gamepadKey);
+            pairedKeys[controlName] = (kbmKey, gamepadKey);
         }
         
         GenerateBaseGameSection(pairedKeys);

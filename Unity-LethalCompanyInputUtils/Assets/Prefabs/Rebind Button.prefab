@@ -300,6 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: -614404434, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  button: {fileID: 871277670479440999}
   bindLabel: {fileID: 3318658175311843322}
   glyphLabel: {fileID: 3655859880833090078}
 --- !u!114 &871277670479440999

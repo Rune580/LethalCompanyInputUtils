@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
+using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Glyphs;
 using TMPro;
 using UnityEngine;
@@ -12,6 +12,7 @@ namespace LethalCompanyInputUtils.Components;
 
 public class RebindButton : MonoBehaviour
 {
+    public Selectable? button;
     public TextMeshProUGUI? bindLabel;
     public Image? glyphLabel;
     private RemappableKey? _key;
@@ -20,7 +21,7 @@ public class RebindButton : MonoBehaviour
     private static MethodInfo? _setChangesNotAppliedMethodInfo;
     private static readonly List<RebindButton> Instances = [];
 
-    public void SetKey(RemappableKey key, bool isBaseGame)
+    public void SetKey(RemappableKey? key, bool isBaseGame)
     {
         _key = key;
         _isBaseGame = isBaseGame;
@@ -30,11 +31,17 @@ public class RebindButton : MonoBehaviour
 
     public void UpdateState()
     {
-        if (bindLabel is null || glyphLabel is null)
+        if (bindLabel is null || glyphLabel is null || button is null)
             return;
 
         if (_key is null)
+        {
+            button.interactable = false;
+            button.targetGraphic.enabled = false;
+            bindLabel.SetText("");
+            glyphLabel.enabled = false;
             return;
+        }
 
         var bindingIndex = GetRebindingIndex();
         var action = _key.currentInput.action;
@@ -46,14 +53,30 @@ public class RebindButton : MonoBehaviour
         {
             bindLabel.SetText("");
 
-            var glyphSet = ControllerGlyph.GetBestMatching();
-            if (glyphSet is null)
+            if (bindPath == LcInputActions.UnboundGamepadIdentifier)
             {
-                bindLabel.SetText(bindPath);
+                glyphLabel.enabled = false;
                 return;
             }
 
-            glyphLabel.sprite = glyphSet[effectivePath];
+            var glyphSet = ControllerGlyph.GetBestMatching();
+            if (glyphSet is null)
+            {
+                bindLabel.SetText(effectivePath);
+                glyphLabel.enabled = false;
+                return;
+            }
+            
+            var glyph = glyphSet[effectivePath];
+
+            if (glyph is null)
+            {
+                bindLabel.SetText(effectivePath);
+                glyphLabel.enabled = false;
+                return;
+            }
+
+            glyphLabel.sprite = glyph;
             glyphLabel.enabled = true;
         }
         else

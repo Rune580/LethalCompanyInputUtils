@@ -16,10 +16,10 @@ public class RebindItem : MonoBehaviour
         
         controlNameLabel.SetText(controlName);
 
-        if (kbmButton is not null && kbmKey is not null)
+        if (kbmButton is not null)
             kbmButton.SetKey(kbmKey, isBaseGame);
 
-        if (gamepadButton is not null && gamepadKey is not null)
+        if (gamepadButton is not null)
             gamepadButton.SetKey(gamepadKey, isBaseGame);
     }
 }
