@@ -1662,18 +1662,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5152990679117551109, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5152990679117551109, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5152990679117551109, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5611202599338702190, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
       propertyPath: m_Name
       value: InputUtilsRemapContainer
@@ -1686,21 +1674,9 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5761348566269016943, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5764425539211829406, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5764425539211829406, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5764425539211829406, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5873360773866897788, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1712,7 +1688,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5884306309091909148, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.0008881778
+      value: 0.00007710815
+      objectReference: {fileID: 0}
+    - target: {fileID: 6021619518007262637, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
+      propertyPath: m_Size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7737502243137256694, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8043432367796155372, guid: 44156584839a4ef41a8048fc469dc306, type: 3}
       propertyPath: m_AnchorMax.x
