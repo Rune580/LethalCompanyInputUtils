@@ -179,6 +179,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5884306309091909148}
+  - component: {fileID: 3731106464241320982}
+  - component: {fileID: 4354440760367095458}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -202,9 +204,49 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0006011087}
-  m_SizeDelta: {x: 0, y: 300}
+  m_AnchoredPosition: {x: 0, y: 0.0005372205}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &3731106464241320982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2941630574386261872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 5
+    m_Right: 5
+    m_Top: 5
+    m_Bottom: 5
+  m_ChildAlignment: 0
+  m_Spacing: 5
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 1
+  m_ReverseArrangement: 0
+--- !u!114 &4354440760367095458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2941630574386261872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 1
 --- !u!1 &2978682559716212624
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,9 +299,13 @@ MonoBehaviour:
   sectionHeaderPrefab: {fileID: 5932430907781845838, guid: 58a2ea4977c8492438316c0047ee069e, type: 3}
   sectionAnchorPrefab: {fileID: 5099924574640786232, guid: 5311916cbc5969c42a9a94513e442669, type: 3}
   rebindItemPrefab: {fileID: 6814090507138036253, guid: 4181071d95b179d49808bcbf9f281059, type: 3}
+  spacerPrefab: {fileID: 5099924574640786232, guid: 408b0f22fc6af9d41af9a734cf2d5f2c, type: 3}
   scrollRect: {fileID: 2534051772664171802}
   headerContainer: {fileID: 3273499120801150346}
   spacing: 5
+  OnSectionChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3426239430731414853
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,7 +506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 5884306309091909148}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -819,6 +865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bindsList: {fileID: 959233613323969431}
+  sectionList: {fileID: 8406673820927792296}
   baseGameKeys: []
 --- !u!1 &6001437274628202401
 GameObject:
@@ -906,6 +953,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7702349523982520276}
+  - component: {fileID: 8406673820927792296}
   m_Layer: 5
   m_Name: Categories
   m_TagString: Untagged
@@ -933,6 +981,22 @@ RectTransform:
   m_AnchoredPosition: {x: 15, y: 0}
   m_SizeDelta: {x: 180, y: 0}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &8406673820927792296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6050284857149263504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1791224802, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sectionEntryPrefab: {fileID: 6164228996295003816, guid: 2136a40993fa26f47bcbadb2690bc53a, type: 3}
+  scrollRect: {fileID: 4140245527030083570}
+  content: {fileID: 5884306309091909148}
+  remapContainer: {fileID: 2421997266305879974}
 --- !u!1 &6468310588203526482
 GameObject:
   m_ObjectHideFlags: 0
@@ -1023,7 +1087,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 5873360773866897788}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99996173
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

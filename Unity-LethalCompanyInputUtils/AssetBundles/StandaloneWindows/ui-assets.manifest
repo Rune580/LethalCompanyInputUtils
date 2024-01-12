@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 860246142
+CRC: 1331932227
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a83bbb6d01c4cc0dd007798e7c0b8aec
+    Hash: 8b209e4ce933f6f3dfc3498ca3d21883
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 2b34c2c8c95bc9d80a8fcc3e2fe56183
+    Hash: 6edd2db30c63b41fc51aa37b426fd873
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: a83bbb6d01c4cc0dd007798e7c0b8aec
+    Hash: 8b209e4ce933f6f3dfc3498ca3d21883
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -27,11 +27,17 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
 - Class: 114
+  Script: {fileID: 1389752971, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
+- Class: 114
+  Script: {fileID: 1590956476, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+- Class: 114
+  Script: {fileID: 1249654462, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 114
   Script: {fileID: -1420432990, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 114
@@ -43,17 +49,15 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 320464083, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 114
+  Script: {fileID: -762325398, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+- Class: 114
+  Script: {fileID: 1791224802, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
-- Class: 114
-  Script: {fileID: 1249654462, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
-- Class: 114
-  Script: {fileID: 1590956476, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
-- Class: 114
-  Script: {fileID: 1389752971, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 213
@@ -83,6 +87,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.Events.PersistentCallGroup
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.PersistentListenerMode
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.UnityEvent`1[System.Int32]
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.RectOffset
 - AssemblyName: UnityEngine.TextCoreFontEngineModule

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using LethalCompanyInputUtils.Components.Section;
 using UnityEngine;
 
 namespace LethalCompanyInputUtils.Components;
@@ -8,6 +8,7 @@ namespace LethalCompanyInputUtils.Components;
 public class RemapContainerController : MonoBehaviour
 {
     public BindsListController? bindsList;
+    public SectionListController? sectionList;
 
     public List<RemappableKey> baseGameKeys = [];
 
@@ -15,17 +16,31 @@ public class RemapContainerController : MonoBehaviour
     {
         if (bindsList is null)
             bindsList = GetComponentInChildren<BindsListController>();
+
+        if (sectionList is null)
+            sectionList = GetComponentInChildren<SectionListController>();
+        
+        bindsList.OnSectionChanged.AddListener(HandleSectionChanged);
+    }
+
+    public void JumpTo(int sectionIndex)
+    {
+        if (bindsList is null)
+            return;
+        
+        bindsList.JumpTo(sectionIndex);
     }
 
     public void LoadUi()
     {
         GenerateBaseGameSection();
         GenerateApiSections();
+        FinishUi();
     }
 
     private void GenerateBaseGameSection()
     {
-        if (bindsList is null)
+        if (bindsList is null || sectionList is null)
             return;
         
         // <Control Name, (Keyboard/Mouse Key, Gamepad Key)>
@@ -75,13 +90,14 @@ public class RemapContainerController : MonoBehaviour
         }
         
         bindsList.AddSection("Lethal Company");
+        sectionList.AddSection("Lethal Company");
         foreach (var (_, (kbmKey, gamepadKey)) in pairedKeys)
             bindsList.AddBinds(kbmKey, gamepadKey, true);
     }
 
     private void GenerateApiSections()
     {
-        if (bindsList is null)
+        if (bindsList is null || sectionList is null)
             return;
         
         foreach (var lcInputActions in LcInputActionApi.InputActions)
@@ -90,6 +106,7 @@ public class RemapContainerController : MonoBehaviour
                 continue;
             
             bindsList.AddSection(lcInputActions.Plugin.Name);
+            sectionList.AddSection(lcInputActions.Plugin.Name);
             
             foreach (var actionRef in lcInputActions.ActionRefs)
             {
@@ -115,5 +132,23 @@ public class RemapContainerController : MonoBehaviour
             
             lcInputActions.Loaded = true;
         }
+    }
+
+    private void FinishUi()
+    {
+        if (bindsList is null)
+            return;
+        
+        bindsList.AddFooter();
+    }
+    
+    private void HandleSectionChanged(int sectionIndex)
+    {
+        if (sectionList is null || bindsList is null)
+            return;
+        
+        sectionList.SelectSection(sectionIndex);
+        
+        
     }
 }

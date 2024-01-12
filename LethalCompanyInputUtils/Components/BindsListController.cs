@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LethalCompanyInputUtils.Components.Section;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace LethalCompanyInputUtils.Components;
@@ -13,16 +13,21 @@ public class BindsListController : MonoBehaviour
     public GameObject? sectionHeaderPrefab;
     public GameObject? sectionAnchorPrefab;
     public GameObject? rebindItemPrefab;
+    public GameObject? spacerPrefab;
     
     public ScrollRect? scrollRect;
     public RectTransform? headerContainer;
-    public float spacing;
+    
+    public UnityEvent<int> OnSectionChanged = new();
 
     private RectTransform? _rectTransform;
     private RectTransform? _scrollRectTransform;
     private RectTransform? _content;
+    private VerticalLayoutGroup? _verticalLayoutGroup;
 
     private int _currentSection;
+    private float _sectionHeight;
+    private float _spacing;
 
     private readonly List<SectionHeaderAnchor> _anchors = [];
 
@@ -34,6 +39,16 @@ public class BindsListController : MonoBehaviour
         if (scrollRect is null)
             scrollRect = GetComponentInChildren<ScrollRect>();
 
+        if (_verticalLayoutGroup is null)
+            _verticalLayoutGroup = scrollRect.content.GetComponent<VerticalLayoutGroup>();
+        
+        _spacing = _verticalLayoutGroup.spacing;
+
+        if (sectionAnchorPrefab is null || rebindItemPrefab is null || spacerPrefab is null)
+            return;
+
+        _sectionHeight = sectionAnchorPrefab.GetComponent<RectTransform>().sizeDelta.y;
+        
         _scrollRectTransform = scrollRect.GetComponent<RectTransform>();
         
         _content = scrollRect.content;
@@ -47,6 +62,7 @@ public class BindsListController : MonoBehaviour
         headerContainer.anchorMax = Vector2.one;
         
         scrollRect.onValueChanged.AddListener(OnScroll);
+        
         OnScroll(Vector2.zero);
     }
 
@@ -58,6 +74,38 @@ public class BindsListController : MonoBehaviour
     private void OnEnable()
     {
         OnScroll(Vector2.zero);
+    }
+
+    public void JumpTo(int sectionIndex)
+    {
+        if (_content is null || scrollRect is null || _scrollRectTransform is null)
+            return;
+        
+        int sectionCount = _anchors.Count;
+        if (sectionIndex >= sectionCount || sectionIndex < 0)
+            return;
+        
+        Canvas.ForceUpdateCanvases();
+        scrollRect.StopMovement();
+
+        if (sectionIndex == 0)
+        {
+            scrollRect.verticalNormalizedPosition = 1;
+        }
+        else
+        {
+            var targetAnchor = _anchors[sectionIndex];
+            Vector2 targetPos = _scrollRectTransform.InverseTransformPoint(_content.position) -
+                                _scrollRectTransform.InverseTransformPoint(targetAnchor.RectTransform.position);
+            var targetYPos = targetPos.y + (_sectionHeight / 2f) - _spacing;
+        
+            _content.SetAnchoredPosY(targetYPos);
+        }
+
+        if (_currentSection != sectionIndex)
+            OnSectionChanged.Invoke(sectionIndex);
+
+        _currentSection = sectionIndex;
     }
 
     public void AddSection(string sectionName)
@@ -87,9 +135,11 @@ public class BindsListController : MonoBehaviour
         sectionHeader.SetText(sectionName);
         
         OnScroll(Vector2.zero);
-        
+
         if (_anchors.Count == 0)
             sectionAnchor.RectTransform.sizeDelta = new Vector2();
+        
+        _currentSection = _anchors.Count;
         
         _anchors.Add(sectionAnchor);
     }
@@ -115,6 +165,17 @@ public class BindsListController : MonoBehaviour
         var rebindItem = rebindObject.GetComponent<RebindItem>();
         rebindItem.SetBind(controlName, kbmKey, gamepadKey, isBaseGame);
     }
+
+    public void AddFooter()
+    {
+        if (!isActiveAndEnabled)
+            return;
+
+        if (spacerPrefab is null)
+            return;
+
+        Instantiate(spacerPrefab, _content);
+    }
     
     private void OnScroll(Vector2 delta)
     {
@@ -123,6 +184,8 @@ public class BindsListController : MonoBehaviour
 
         var maxVisibleY = headerContainer.WorldCornersMaxY();
         var topSlotPos = maxVisibleY - headerContainer.transform.position.y;
+
+        var section = -1;
         
         for (var i = 0; i < _anchors.Count; i++)
         {
@@ -132,8 +195,8 @@ public class BindsListController : MonoBehaviour
             if (i == 0)
             {
                 
-                header.RectTransform.SetLocalPosY(topSlotPos - ((header.RectTransform.sizeDelta.y / 2f) - spacing));
-                _currentSection = i;
+                header.RectTransform.SetLocalPosY(topSlotPos - ((header.RectTransform.sizeDelta.y / 2f) - _spacing));
+                section = i;
                 continue;
             }
             
@@ -148,15 +211,20 @@ public class BindsListController : MonoBehaviour
             
             var prevYPos = prevHeader.RectTransform.anchoredPosition.y;
             
-            if (headerMaxY + spacing >= prevHeaderMinY)
-                prevHeader.RectTransform.SetLocalPosY(Mathf.Min(prevYPos, nextYPos + header.RectTransform.sizeDelta.y) + spacing);
+            if (headerMaxY + _spacing >= prevHeaderMinY)
+                prevHeader.RectTransform.SetLocalPosY(Mathf.Min(prevYPos, nextYPos + header.RectTransform.sizeDelta.y) + _spacing);
 
-            if (headerMaxY + spacing / 2f >= maxVisibleY)
+            if (headerMaxY + _spacing / 2f >= maxVisibleY)
             {
-                _currentSection = i;
-                header.RectTransform.SetLocalPosY(topSlotPos - ((header.RectTransform.sizeDelta.y / 2f) - spacing));
+                section = i;
+                header.RectTransform.SetLocalPosY(topSlotPos - ((header.RectTransform.sizeDelta.y / 2f) - _spacing));
             }
         }
+
+        if (_currentSection != section)
+            OnSectionChanged.Invoke(section);
+
+        _currentSection = section;
     }
 
     private float CalculateHeaderRawYPos(SectionHeaderAnchor anchor)
