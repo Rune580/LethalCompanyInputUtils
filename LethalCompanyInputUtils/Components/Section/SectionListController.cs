@@ -59,11 +59,6 @@ public class SectionListController : MonoBehaviour
             return;
 
         UpdateScrollPosToFit(sectionEntry);
-
-        // var normalizedPos = sectionIndex / (float)sectionCount;
-        //
-        // scrollRect.StopMovement();
-        // scrollRect.verticalNormalizedPosition = 1 - normalizedPos;
     }
 
     private void UpdateScrollPosToFit(SectionEntry sectionEntry)
