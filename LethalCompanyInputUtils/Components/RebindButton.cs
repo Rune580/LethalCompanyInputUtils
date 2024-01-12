@@ -15,8 +15,15 @@ public class RebindButton : MonoBehaviour
     public Selectable? button;
     public TextMeshProUGUI? bindLabel;
     public Image? glyphLabel;
+    public Image? notSupportedImage;
+    public RebindIndicator? rebindIndicator;
+    public float timeout = 5f;
+    
     private RemappableKey? _key;
     private bool _isBaseGame;
+    private InputActionRebindingExtensions.RebindingOperation? _rebindingOperation;
+    private bool _rebinding;
+    private float _timeoutTimer;
     
     private static MethodInfo? _setChangesNotAppliedMethodInfo;
     private static readonly List<RebindButton> Instances = [];
@@ -31,7 +38,7 @@ public class RebindButton : MonoBehaviour
 
     public void UpdateState()
     {
-        if (bindLabel is null || glyphLabel is null || button is null)
+        if (bindLabel is null || glyphLabel is null || button is null || notSupportedImage is null)
             return;
 
         if (_key is null)
@@ -40,6 +47,7 @@ public class RebindButton : MonoBehaviour
             button.targetGraphic.enabled = false;
             bindLabel.SetText("");
             glyphLabel.enabled = false;
+            notSupportedImage.enabled = true;
             return;
         }
 
@@ -99,7 +107,7 @@ public class RebindButton : MonoBehaviour
 
     public void StartRebinding()
     {
-        if (_key is null)
+        if (_key is null || bindLabel is null || glyphLabel is null || rebindIndicator is null)
             return;
 
         var rebindIndex = GetRebindingIndex();
@@ -108,20 +116,36 @@ public class RebindButton : MonoBehaviour
 
         if (_key.gamepadOnly)
         {
+            glyphLabel.enabled = false;
+            rebindIndicator.enabled = true;
+            
             RebindGamepad(_key.currentInput, rebindIndex);
         }
         else
         {
+            bindLabel.SetText("");
+            rebindIndicator.enabled = true;
+            
             RebindKbm(_key.currentInput, rebindIndex);
         }
+        
+        _timeoutTimer = timeout;
+        _rebinding = true;
     }
 
     private void FinishRebinding()
     {
-        if (_key is null)
+        if (_key is null || rebindIndicator is null)
             return;
         
         _key.currentInput.action.Enable();
+        
+        rebindIndicator.enabled = false;
+        _rebinding = false;
+
+        if (_rebindingOperation is not null)
+            _rebindingOperation = null;
+        
         UpdateState();
     }
     
@@ -132,23 +156,49 @@ public class RebindButton : MonoBehaviour
 
     private void OnDisable()
     {
+        if (_rebindingOperation is not null)
+        {
+            _rebindingOperation.Cancel();
+            _rebindingOperation = null;
+        }
+        
         Instances.Remove(this);
+    }
+
+    private void Update()
+    {
+        if (!_rebinding)
+            return;
+        
+        _timeoutTimer -= Time.deltaTime;
+        if (_timeoutTimer > 0f)
+            return;
+
+        if (_rebindingOperation is null)
+        {
+            FinishRebinding();
+            return;
+        }
+        
+        _rebindingOperation.Cancel();
+        FinishRebinding();
     }
 
     private void RebindKbm(InputActionReference inputActionRef, int rebindIndex)
     {
-        inputActionRef.action.PerformInteractiveRebinding(rebindIndex)
+        _rebindingOperation = inputActionRef.action.PerformInteractiveRebinding(rebindIndex)
             .OnMatchWaitForAnother(0.1f)
             .WithControlsHavingToMatchPath("<Keyboard>")
             .WithControlsHavingToMatchPath("<Mouse>")
             .WithCancelingThrough("<Keyboard>/escape")
             .OnComplete(operation => OnRebindComplete(operation, this))
+            .OnCancel(_ => FinishRebinding())
             .Start();
     }
 
     private void RebindGamepad(InputActionReference inputActionRef, int rebindIndex)
     {
-        inputActionRef.action.PerformInteractiveRebinding(rebindIndex)
+        _rebindingOperation = inputActionRef.action.PerformInteractiveRebinding(rebindIndex)
             .OnMatchWaitForAnother(0.1f)
             .WithControlsHavingToMatchPath("<Gamepad>")
             .OnComplete(operation => OnRebindComplete(operation, this))
