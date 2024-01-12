@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -6,12 +7,15 @@ namespace LethalCompanyInputUtils.Components;
 
 public class RemapContainerController : MonoBehaviour
 {
-    public GameObject? sectionHeaderPrefab;
-    public GameObject? rebindItemPrefab;
-
-    public RectTransform? bindsContentTransform;
+    public BindsListController? bindsList;
 
     public List<RemappableKey> baseGameKeys = [];
+
+    private void Awake()
+    {
+        if (bindsList is null)
+            bindsList = GetComponentInChildren<BindsListController>();
+    }
 
     public void LoadUi()
     {
@@ -21,17 +25,29 @@ public class RemapContainerController : MonoBehaviour
 
     private void GenerateBaseGameSection()
     {
-        // <(Keyboard/Mouse Key, Gamepad Key)>
+        if (bindsList is null)
+            return;
+        
+        // <Control Name, (Keyboard/Mouse Key, Gamepad Key)>
         var pairedKeys = new Dictionary<string, (RemappableKey?, RemappableKey?)>();
+        
         foreach (var baseGameKey in baseGameKeys)
         {
             RemappableKey? kbmKey = null;
             RemappableKey? gamepadKey = null;
-
+            
+            // For some reason LethalCompany has multiple controls that do the same thing but for either Kbm or Gamepad.
+            // So we try to de-duplicate the controls by *visually* merging them into the same entry.
+            // This results in the controls being functionally the exact same internally while also providing better UX.
+            
+            // Some of the control names have different casing.
             var controlName = baseGameKey.ControlName.ToLower();
-            if (controlName.StartsWith("walk"))
+            
+            if (controlName.StartsWith("walk")) // Kbm uses "walk" while gamepad uses "move", replace kbm name with gamepad name for matching.
                 controlName = "move" + controlName[4..];
 
+            // The control "Item primary use" uses different casing than the other 2 "Item ... use"s' ("Item Secondary use", "Item Tertiary use"),
+            // So I'm doing myself a favor and fixing its casing to match the other 2.
             baseGameKey.ControlName = baseGameKey.ControlName.Replace("primary", "Primary");
             
             if (pairedKeys.TryGetValue(controlName, out var keyPair))
@@ -58,19 +74,22 @@ public class RemapContainerController : MonoBehaviour
             pairedKeys[controlName] = (kbmKey, gamepadKey);
         }
         
-        NewSection("Lethal Company");
+        bindsList.AddSection("Lethal Company");
         foreach (var (_, (kbmKey, gamepadKey)) in pairedKeys)
-            NewBind(kbmKey, gamepadKey, true);
+            bindsList.AddBinds(kbmKey, gamepadKey, true);
     }
 
     private void GenerateApiSections()
     {
+        if (bindsList is null)
+            return;
+        
         foreach (var lcInputActions in LcInputActionApi.InputActions)
         {
             if (lcInputActions.Loaded)
                 continue;
             
-            NewSection(lcInputActions.Plugin.Name);
+            bindsList.AddSection(lcInputActions.Plugin.Name);
             
             foreach (var actionRef in lcInputActions.ActionRefs)
             {
@@ -91,40 +110,10 @@ public class RemapContainerController : MonoBehaviour
                     gamepadOnly = true
                 };
                 
-                NewBind(kbmKey, gamepadKey);
+                bindsList.AddBinds(kbmKey, gamepadKey);
             }
             
             lcInputActions.Loaded = true;
         }
-    }
-
-    private void NewSection(string sectionName)
-    {
-        if (sectionHeaderPrefab is null || bindsContentTransform is null)
-            return;
-
-        var sectionObject = Instantiate(sectionHeaderPrefab, bindsContentTransform);
-        var sectionHeader = sectionObject.GetComponent<SectionHeader>();
-        sectionHeader.SetText(sectionName);
-    }
-
-    private void NewBind(RemappableKey? kbmKey, RemappableKey? gamepadKey, bool isBaseGame = false)
-    {
-        if (rebindItemPrefab is null || bindsContentTransform is null)
-            return;
-        
-        string controlName = "";
-        if (kbmKey is not null)
-        {
-            controlName = kbmKey.ControlName;
-        }
-        else if (gamepadKey is not null)
-        {
-            controlName = gamepadKey.ControlName;
-        }
-
-        var rebindObject = Instantiate(rebindItemPrefab, bindsContentTransform);
-        var rebindItem = rebindObject.GetComponent<RebindItem>();
-        rebindItem.SetBind(controlName, kbmKey, gamepadKey, isBaseGame);
     }
 }

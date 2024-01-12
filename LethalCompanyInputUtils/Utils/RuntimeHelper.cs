@@ -29,4 +29,22 @@ internal static class RuntimeHelper
     {
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, y);
     }
+
+    public static float WorldCornersMaxY(this RectTransform rectTransform)
+    {
+        Vector3[] corners = new Vector3[4];
+        
+        rectTransform.GetWorldCorners(corners);
+
+        return corners[1].y;
+    }
+    
+    public static float WorldCornersMinY(this RectTransform rectTransform)
+    {
+        Vector3[] corners = new Vector3[4];
+        
+        rectTransform.GetWorldCorners(corners);
+
+        return corners[0].y;
+    }
 }
