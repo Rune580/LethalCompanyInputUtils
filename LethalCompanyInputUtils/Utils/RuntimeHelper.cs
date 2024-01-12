@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace LethalCompanyInputUtils.Utils;
 
@@ -46,5 +47,17 @@ internal static class RuntimeHelper
         rectTransform.GetWorldCorners(corners);
 
         return corners[0].y;
+    }
+
+    public static void DisableKeys(this IEnumerable<RemappableKey> keys)
+    {
+        foreach (var key in keys)
+            key.currentInput.action.Disable();
+    }
+    
+    public static void EnableKeys(this IEnumerable<RemappableKey> keys)
+    {
+        foreach (var key in keys)
+            key.currentInput.action.Enable();
     }
 }

@@ -174,4 +174,10 @@ public static class LcInputActionApi
         foreach (var lcInputAction in InputActions)
             lcInputAction.Save();
     }
+
+    internal static void LoadOverrides()
+    {
+        foreach (var lcInputAction in InputActions)
+            lcInputAction.Load();
+    }
 }

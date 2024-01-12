@@ -140,6 +140,8 @@ public class RemapContainerController : MonoBehaviour
             return;
         
         bindsList.AddFooter();
+        
+        JumpTo(0);
     }
     
     private void HandleSectionChanged(int sectionIndex)
@@ -148,7 +150,15 @@ public class RemapContainerController : MonoBehaviour
             return;
         
         sectionList.SelectSection(sectionIndex);
-        
-        
+    }
+
+    private void OnEnable()
+    {
+        JumpTo(0);
+    }
+
+    private void OnDisable()
+    {
+        LcInputActionApi.ReEnableFromRebind();
     }
 }

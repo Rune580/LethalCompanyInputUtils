@@ -129,6 +129,7 @@ public abstract class LcInputActions
         try
         {
             var overrides = BindingOverrides.FromJson(File.ReadAllText(_jsonPath));
+            Asset.RemoveAllBindingOverrides();
             overrides.LoadInto(Asset);
         }
         catch (Exception e)
