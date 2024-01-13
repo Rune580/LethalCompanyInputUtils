@@ -1,0 +1,21 @@
+{
+    "name": "InputUtilsUnityToolkit.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d10d9c9350fe77640a6fb3ae8ab8dc09"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "LethalCompanyInputUtils.dll",
+        "Assembly-CSharp.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

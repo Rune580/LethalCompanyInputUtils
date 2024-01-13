@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
 using BepInEx;
 using HarmonyLib;
+using LethalCompanyInputUtils.Components;
+using LethalCompanyInputUtils.Glyphs;
 using LethalCompanyInputUtils.Utils;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 namespace LethalCompanyInputUtils;
@@ -21,14 +24,36 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModId);
         SceneManager.activeSceneChanged += OnSceneChanged;
+        InputSystem.onDeviceChange += OnDeviceChanged;
+        
+        LoadAssetBundles();
+        LoadControllerGlyphs();
         
         FsUtils.EnsureControlsDir();
         
-        Logger.LogInfo($"Plugin {ModId} is loaded!");
+        Logging.Info($"InputUtils {ModVersion} has finished loading!");
+    }
+
+    private void LoadAssetBundles()
+    {
+        Assets.AddBundle("ui-assets");
+    }
+
+    private void LoadControllerGlyphs()
+    {
+        Assets.Load<ControllerGlyph>("controller glyphs/xbox series x glyphs.asset");
+        Assets.Load<ControllerGlyph>("controller glyphs/dualsense glyphs.asset");
     }
 
     private static void OnSceneChanged(Scene current, Scene next)
     {
         LcInputActionApi.ResetLoadedInputActions();
+
+        BindsListController.offsetCompensation = next.name != "MainMenu" ? 20 : 0;
+    }
+    
+    private static void OnDeviceChanged(InputDevice device, InputDeviceChange state)
+    {
+        RebindButton.ReloadGlyphs();
     }
 }

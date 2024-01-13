@@ -1,57 +1,64 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Emit;
-using HarmonyLib;
+﻿using HarmonyLib;
+using LethalCompanyInputUtils.Components;
+using LethalCompanyInputUtils.Utils;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace LethalCompanyInputUtils.Patches;
 
 public static class KeyRemapPanelPatches
 {
-    [HarmonyPatch(typeof(KepRemapPanel), nameof(KepRemapPanel.LoadKeybindsUI))]
+    [HarmonyPatch(typeof(KepRemapPanel), "OnEnable")]
     public static class LoadKeybindsUIPatch
     {
         // ReSharper disable once InconsistentNaming
-        public static void Prefix(KepRemapPanel __instance)
+        public static bool Prefix(KepRemapPanel __instance)
         {
             LcInputActionApi.DisableForRebind();
-            LcInputActionApi.LoadIntoUI(__instance);
-        }
 
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var matcher = new CodeMatcher(instructions);
+            if (LcInputActionApi.PrefabLoaded)
+            {
+                __instance.remappableKeys.DisableKeys();
+                LcInputActionApi.LayersDeep = 1;
+                return false;
+            }
+            
+            var container =  Object.Instantiate(Assets.Load<GameObject>("Prefabs/InputUtilsRemapContainer.prefab"), __instance.transform);
+            var legacyHolder = Object.Instantiate(Assets.Load<GameObject>("Prefabs/Legacy Holder.prefab"), __instance.transform);
+            if (container is null || legacyHolder is null)
+                return true;
 
-            var maxVerticalField = AccessTools.Field(typeof(KepRemapPanel), nameof(KepRemapPanel.maxVertical));
+            var legacySection = __instance.transform.Find("Scroll View");
+            if (legacySection is null)
+                return true;
+            
+            legacySection.SetParent(legacyHolder.transform);
+            __instance.LoadKeybindsUI();
+            legacyHolder.SetActive(false);
 
-            matcher
-                .MatchForward(true,
-                    new CodeMatch(code => code.IsLdarg(0)),
-                    new CodeMatch(code =>
-                        code.LoadsField(maxVerticalField)),
-                    // ReSharper disable once CompareOfFloatsByEqualityOperator
-                    new CodeMatch(code => code.opcode == OpCodes.Ldc_R4 && (float)code.operand == 2f),
-                    new CodeMatch(code => code.opcode == OpCodes.Add),
-                    new CodeMatch(code => code.opcode == OpCodes.Conv_I4),
-                    new CodeMatch(code => code.IsStloc())
-                    );
-                
-            matcher
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Call,
-                    AccessTools.Method(typeof(LcInputActionApi),
-                        nameof(LcInputActionApi.CalculateVerticalMaxForGamepad), new[] { typeof(KepRemapPanel) })));
-
-            return matcher.InstructionEnumeration();
+            var backButton = __instance.transform.Find("Back").GetComponent<Button>();
+            var controller = container.GetComponent<RemapContainerController>();
+            controller.baseGameKeys = __instance.remappableKeys;
+            controller.backButton = backButton;
+            controller.legacyHolder = legacyHolder;
+            controller.baseGameKeys.DisableKeys();
+            controller.LoadUi();
+            
+            LcInputActionApi.PrefabLoaded = true;
+            
+            return false;
         }
     }
     
-    [HarmonyPatch(typeof(KepRemapPanel), nameof(KepRemapPanel.UnloadKeybindsUI))]
+    [HarmonyPatch(typeof(KepRemapPanel), "OnDisable")]
     public static class UnloadKeybindsUIPatch
     {
         // ReSharper disable once InconsistentNaming
-        public static void Prefix()
+        public static bool Prefix(KepRemapPanel __instance)
         {
-            LcInputActionApi.SaveOverrides();
-            LcInputActionApi.ReEnableFromRebind();
+            __instance.remappableKeys.EnableKeys();
+            LcInputActionApi.LayersDeep = 0;
+            return false;
         }
     }
 }

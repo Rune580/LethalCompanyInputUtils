@@ -119,8 +119,8 @@ public abstract class LcInputActions
         }
         catch (Exception e)
         {
-            Logging.Logger.LogError("Got error when applying migrations, skipping...");
-            Logging.Logger.LogError(e);
+            Logging.Error("Got error when applying migrations, skipping...");
+            Logging.Error(e);
         }
 
         if (!File.Exists(_jsonPath))
@@ -129,11 +129,12 @@ public abstract class LcInputActions
         try
         {
             var overrides = BindingOverrides.FromJson(File.ReadAllText(_jsonPath));
+            Asset.RemoveAllBindingOverrides();
             overrides.LoadInto(Asset);
         }
         catch (Exception e)
         {
-            Logging.Logger.LogError(e);
+            Logging.Error(e);
         }
     }
 

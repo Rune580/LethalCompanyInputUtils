@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1420432990, guid: e3dd80ca9b1056144943c344e359f791, type: 3}
+  m_Name: Dualsense Glyphs
+  m_EditorClassIdentifier: 
+  validGamepadTypes:
+  - DualSenseGamepadHID
+  - DualShockGamepad
+  - DualShock4GamepadHID
+  glyphSet:
+  - {fileID: 11400000, guid: a7401deca4fe07743a33857105394fd7, type: 2}
+  - {fileID: 11400000, guid: 9302248ce7534b14a952a7a29402c1ba, type: 2}
+  - {fileID: 11400000, guid: 513b3e744fa79c741ac077651c958762, type: 2}
+  - {fileID: 11400000, guid: 43246ad177baa114fbd8f2a083a678af, type: 2}
+  - {fileID: 11400000, guid: 8844646de0bdd2c4a84b93f16f0a8d67, type: 2}
+  - {fileID: 11400000, guid: bb0b2fb14a1d0384580a47dd95d144de, type: 2}
+  - {fileID: 11400000, guid: 7e1eb33ff0ba5ab4a97f5022fc81076f, type: 2}
+  - {fileID: 11400000, guid: d8dcafd33052191489949c84ebab6c52, type: 2}
+  - {fileID: 11400000, guid: 794a1ba05aaf21645bdefafe8986d59a, type: 2}
+  - {fileID: 11400000, guid: d661613b9316a654fa862c2777baa48a, type: 2}
+  - {fileID: 11400000, guid: 86e1827c9c4dd764695e71975692d57c, type: 2}
+  - {fileID: 11400000, guid: 8a172f5d3956bfa4db392939fb03b670, type: 2}
+  - {fileID: 11400000, guid: b7910edcc64b67249b91d3cb0b1f5895, type: 2}
+  - {fileID: 11400000, guid: 401b7b4f3f863474a9f8ba13f53d931c, type: 2}
+  - {fileID: 11400000, guid: 4388df1fa4d99c74fa573bb7c8eeca60, type: 2}
+  - {fileID: 11400000, guid: b821f2c73a39d094f9dbfefc9477cd43, type: 2}
+  - {fileID: 11400000, guid: 88d527089cbc71441bde0d97fb896b5c, type: 2}
+  - {fileID: 11400000, guid: 7ee6874fe774d224c86b7a19e13abc72, type: 2}
+  - {fileID: 11400000, guid: 29b73a1b9ee7c26408387524fab1d4a8, type: 2}
+  - {fileID: 11400000, guid: da9ba9334867d6948bdd79bfa4726fce, type: 2}
+  - {fileID: 11400000, guid: 2bddfcd1009692342b47fd02b6ea0480, type: 2}
+  - {fileID: 11400000, guid: d6de6d44b7492e248880626729a96e45, type: 2}
+  - {fileID: 11400000, guid: da69d0adb15082f42b2c6dfcee069dfd, type: 2}
+  - {fileID: 11400000, guid: 7715a8ac6462ad94ea3dbcccb10ed4e1, type: 2}
+  - {fileID: 11400000, guid: 6f7563352794cef4fbb1ea4222e356b9, type: 2}
+  - {fileID: 11400000, guid: c1b8a5a3a746c8d4e83d45f126dda278, type: 2}
+  - {fileID: 11400000, guid: b739186f5f587834c8945203746f249d, type: 2}
+  - {fileID: 11400000, guid: 63074fb13c135df4b9ccd9129579f49c, type: 2}

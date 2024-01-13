@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using LethalCompanyInputUtils.Api;
+using LethalCompanyInputUtils.Components;
 using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;
@@ -12,8 +13,11 @@ namespace LethalCompanyInputUtils;
 public static class LcInputActionApi
 {
     private static readonly Dictionary<string, LcInputActions> InputActionsMap = new();
+    internal static bool PrefabLoaded;
+    internal static RemapContainerController? _containerInstance;
+    internal static int LayersDeep = 0;
     
-    private static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
+    internal static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
     
     internal static void LoadIntoUI(KepRemapPanel panel)
     {
@@ -60,6 +64,21 @@ public static class LcInputActionApi
 
         panel.maxVertical = kbmKeyCount / maxItemsInRow;
         layoutElement.minHeight += (panel.maxVertical + 1) * panel.verticalOffset;
+    }
+
+    internal static void CloseContainerLayer()
+    {
+        if (_containerInstance is null)
+            return;
+
+        if (LayersDeep == 1)
+        {
+            if (_containerInstance.backButton is null)
+                return;
+            
+            _containerInstance.backButton.onClick.Invoke();
+            LayersDeep--;
+        }
     }
 
     private static void UpdateFontScaling(KepRemapPanel panel)
@@ -120,6 +139,8 @@ public static class LcInputActionApi
 
     internal static void ResetLoadedInputActions()
     {
+        PrefabLoaded = false;
+        
         foreach (var lcInputActions in InputActions)
             lcInputActions.Loaded = false;
     }
@@ -128,7 +149,7 @@ public static class LcInputActionApi
     {
         if (!InputActionsMap.TryAdd(lcInputActions.Id, lcInputActions))
         {
-            Logging.Logger.LogWarning(
+            Logging.Warn(
                 $"The mod [{lcInputActions.Plugin.GUID}] instantiated an Actions class [{lcInputActions.GetType().Name}] more than once!\n" +
                 $"\t These classes should be treated as singletons!, do not instantiate more than once!");
             
@@ -170,5 +191,11 @@ public static class LcInputActionApi
     {
         foreach (var lcInputAction in InputActions)
             lcInputAction.Save();
+    }
+
+    internal static void LoadOverrides()
+    {
+        foreach (var lcInputAction in InputActions)
+            lcInputAction.Load();
     }
 }

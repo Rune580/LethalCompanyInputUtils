@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace LethalCompanyInputUtils.Utils;
 
@@ -28,5 +29,59 @@ internal static class RuntimeHelper
     public static void SetAnchoredPosY(this RectTransform rectTransform, float y)
     {
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, y);
+    }
+
+    public static Rect UiBounds(this RectTransform rectTransform)
+    {
+        var position = rectTransform.position;
+        var rect = rectTransform.rect;
+        var scale = rectTransform.lossyScale;
+
+        return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
+    }
+    
+    public static Rect UiBounds(this RectTransform rectTransform, Vector3 position)
+    {
+        var rect = rectTransform.rect;
+        var scale = rectTransform.lossyScale;
+
+        return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
+    }
+
+    public static float WorldMaxY(this RectTransform rectTransform)
+    {
+        return rectTransform.UiBounds().max.y;
+    }
+    
+    public static float WorldMinY(this RectTransform rectTransform)
+    {
+        return rectTransform.UiBounds().min.y;
+    }
+
+    public static Vector3 LocalPositionRelativeTo(this Transform transform, Transform parent)
+    {
+        var totalOffset = Vector3.zero;
+
+        Transform tempParent = transform;
+        do
+        {
+            totalOffset += transform.localPosition;
+            tempParent = tempParent.parent;
+        } while (tempParent != parent);
+
+
+        return totalOffset;
+    }
+
+    public static void DisableKeys(this IEnumerable<RemappableKey> keys)
+    {
+        foreach (var key in keys)
+            key.currentInput.action.Disable();
+    }
+    
+    public static void EnableKeys(this IEnumerable<RemappableKey> keys)
+    {
+        foreach (var key in keys)
+            key.currentInput.action.Enable();
     }
 }

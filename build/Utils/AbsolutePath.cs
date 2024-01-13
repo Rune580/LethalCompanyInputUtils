@@ -83,6 +83,8 @@ internal static class AbsolutePathUtils
 {
     public static void CopyFilesTo(this IEnumerable<AbsolutePath> files, AbsolutePath destDir)
     {
+        destDir.EnsureDirectoryExists();
+        
         foreach (var file in files)
         {
             var destFile = destDir / file.Name;

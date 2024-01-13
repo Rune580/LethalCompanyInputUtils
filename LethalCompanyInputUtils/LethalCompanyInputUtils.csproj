@@ -25,4 +25,10 @@
         <AssemblyFiles Include="$(AdditionalLibsDir)*.dll" InProject="false" />
         <Reference Include="@(AssemblyFiles)" Private="false" />
     </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="AssetBundles\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 </Project>
