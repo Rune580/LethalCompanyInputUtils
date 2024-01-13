@@ -1,3 +1,7 @@
+### [0.5.1]
+
+Hotfix for broken installs with mod managers, sorry that was my bad.
+
 ### [0.5.0]
 
 Highlights:
@@ -9,6 +13,8 @@ Highlights:
     - *Api to request controller glyphs for a control path will be available in a future update.*
 - Controls added by mods are seperated by mod.
 - Controls manually injected into the vanilla ui by mods are available in "Legacy Controls".
+
+Controls can now be unbound.
 
 *Controller navigation of the new UI is still a ***WIP***, hoping to improve it in a future update.*
 
