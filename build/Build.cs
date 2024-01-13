@@ -295,6 +295,7 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
         AbsolutePath manifestFile = "manifest.json";
         AbsolutePath iconFile = "icon.png";
         AbsolutePath readmeFile = "README.md";
+        AbsolutePath changelogFile = "CHANGELOG.md";
         
         var project = context.Project;
         
@@ -314,6 +315,7 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
         File.Copy("../" / manifestFile, publishDir / manifestFile, true);
         File.Copy("../" / iconFile, publishDir / iconFile, true);
         File.Copy("../" / readmeFile, publishDir / readmeFile, true);
+        File.Copy("../" / changelogFile, publishDir / changelogFile, true);
 
         var manifest = JsonSerializer.Deserialize<ThunderStoreManifest>(File.ReadAllText(publishDir / manifestFile));
 
@@ -342,6 +344,9 @@ public sealed class BuildNuGetPackage : FrostingTask<BuildContext>
         AbsolutePath readmeFile = (AbsolutePath)"../" / "README.md";
         File.Copy(readmeFile, context.BuildDir / "README.md", true);
         
+        AbsolutePath changelogFile = (AbsolutePath)"../" / "CHANGELOG.md";
+        File.Copy(changelogFile, context.BuildDir / "CHANGELOG.md", true);
+        
         AbsolutePath iconFile = (AbsolutePath)"../" / "icon.png";
         File.Copy(iconFile, context.BuildDir / "icon.png", true);
 
@@ -366,6 +371,7 @@ public sealed class BuildNuGetPackage : FrostingTask<BuildContext>
                                   <files>
                                       <file src="{dllFile}" target="lib/{dllFile}" />
                                       <file src="README.md" />
+                                      <file src="CHANGELOG.md" />
                                       <file src="icon.png" />
                                       <file src="LICENSE" />
                                   </files>
