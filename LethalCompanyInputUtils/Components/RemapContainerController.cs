@@ -26,7 +26,7 @@ public class RemapContainerController : MonoBehaviour
         
         bindsList.OnSectionChanged.AddListener(HandleSectionChanged);
 
-        LcInputActionApi._containerInstance = this;
+        LcInputActionApi.ContainerInstance = this;
         LcInputActionApi.LayersDeep = 1;
     }
 
@@ -172,6 +172,6 @@ public class RemapContainerController : MonoBehaviour
 
     private void OnDestroy()
     {
-        LcInputActionApi._containerInstance = null;
+        LcInputActionApi.ContainerInstance = null;
     }
 }

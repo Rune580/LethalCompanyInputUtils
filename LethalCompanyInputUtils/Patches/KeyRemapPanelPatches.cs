@@ -12,7 +12,7 @@ public static class KeyRemapPanelPatches
     public static class LoadKeybindsUIPatch
     {
         // ReSharper disable once InconsistentNaming
-        public static bool Prefix(KepRemapPanel __instance)
+        public static void Prefix(KepRemapPanel __instance)
         {
             LcInputActionApi.DisableForRebind();
 
@@ -20,33 +20,41 @@ public static class KeyRemapPanelPatches
             {
                 __instance.remappableKeys.DisableKeys();
                 LcInputActionApi.LayersDeep = 1;
-                return false;
+                return;
             }
             
             var container =  Object.Instantiate(Assets.Load<GameObject>("Prefabs/InputUtilsRemapContainer.prefab"), __instance.transform);
             var legacyHolder = Object.Instantiate(Assets.Load<GameObject>("Prefabs/Legacy Holder.prefab"), __instance.transform);
             if (container is null || legacyHolder is null)
-                return true;
+                return;
 
             var legacySection = __instance.transform.Find("Scroll View");
             if (legacySection is null)
-                return true;
+                return;
             
             legacySection.SetParent(legacyHolder.transform);
-            __instance.LoadKeybindsUI();
+            var keys = __instance.remappableKeys;
+            __instance.remappableKeys = [];
+            
             legacyHolder.SetActive(false);
 
-            var backButton = __instance.transform.Find("Back").GetComponent<Button>();
+            var backButtonObject = __instance.transform.Find("Back").gameObject;
+            var backButton = backButtonObject.GetComponent<Button>();
+            
             var controller = container.GetComponent<RemapContainerController>();
-            controller.baseGameKeys = __instance.remappableKeys;
+            controller.baseGameKeys = keys;
             controller.backButton = backButton;
             controller.legacyHolder = legacyHolder;
             controller.baseGameKeys.DisableKeys();
             controller.LoadUi();
             
             LcInputActionApi.PrefabLoaded = true;
-            
-            return false;
+        }
+        
+        // ReSharper disable once InconsistentNaming
+        public static void Postfix(KepRemapPanel __instance)
+        {
+            LcInputActionApi.LoadIntoUI(__instance);
         }
     }
     

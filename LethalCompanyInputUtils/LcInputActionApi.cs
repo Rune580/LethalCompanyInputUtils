@@ -3,7 +3,6 @@ using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Components;
 using LethalCompanyInputUtils.Utils;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -14,84 +13,70 @@ public static class LcInputActionApi
 {
     private static readonly Dictionary<string, LcInputActions> InputActionsMap = new();
     internal static bool PrefabLoaded;
-    internal static RemapContainerController? _containerInstance;
-    internal static int LayersDeep = 0;
+    internal static RemapContainerController? ContainerInstance;
+    internal static int LayersDeep;
     
     internal static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
     
     internal static void LoadIntoUI(KepRemapPanel panel)
     {
-        UpdateFontScaling(panel);
         AdjustSizeAndPos(panel);
         var layoutElement = EnsureLayoutElement(panel);
-        layoutElement.minHeight = 0;
         
-        var keys = panel.remappableKeys;
-        var kbmKeyCount = keys.Count(key => !key.gamepadOnly);
+        panel.LoadKeybindsUI();
         
-        foreach (var lcInputActions in InputActions)
-        {
-            if (lcInputActions.Loaded)
-                continue;
-            
-            foreach (var actionRef in lcInputActions.ActionRefs)
-            {
-                var name = actionRef.action.bindings.First().name;
-                var kbmKey = new RemappableKey
-                {
-                    ControlName = name,
-                    currentInput = actionRef,
-                    gamepadOnly = false
-                };
-                keys.Insert(kbmKeyCount++, kbmKey);
-                
-                var gamepadKey = new RemappableKey
-                {
-                    ControlName = name,
-                    currentInput = actionRef,
-                    rebindingIndex = 1,
-                    gamepadOnly = true
-                };
-                keys.Add(gamepadKey);
-            }
-            
-            lcInputActions.Loaded = true;
-        }
-
         var widthPerItem = panel.horizontalOffset;
         var maxVisibleWidth = panel.keyRemapContainer.parent.GetComponent<RectTransform>().rect.width;
         var maxItemsInRow = Mathf.Floor(maxVisibleWidth / widthPerItem);
+        
+        var keySlotCount = panel.keySlots.Count;
+        var actualKeyCount = NumberOfActualKeys(panel.keySlots);
+        var sectionCount = keySlotCount - actualKeyCount;
+        
+        panel.maxVertical = (actualKeyCount / maxItemsInRow) + sectionCount;
 
-        panel.maxVertical = kbmKeyCount / maxItemsInRow;
-        layoutElement.minHeight += (panel.maxVertical + 1) * panel.verticalOffset;
+        if (keySlotCount == 0)
+            return;
+
+        layoutElement.minHeight = (panel.maxVertical + 1) * panel.verticalOffset;
+
+        int row = 0;
+        foreach (var keySlot in panel.keySlots)
+        {
+            var rectTransform = keySlot.GetComponent<RectTransform>();
+            rectTransform.SetAnchoredPosY(-panel.verticalOffset * row);
+            
+            if (keySlot.GetComponentInChildren<SettingsOption>() is null) // is Section object
+                row++;
+        }
+    }
+
+    private static int NumberOfActualKeys(List<GameObject> keySlots)
+    {
+        int i = 0;
+        
+        foreach (var keySlot in keySlots)
+        {
+            if (keySlot.GetComponentInChildren<SettingsOption>() is not null)
+                i++;
+        }
+
+        return i;
     }
 
     internal static void CloseContainerLayer()
     {
-        if (_containerInstance is null)
+        if (ContainerInstance is null)
             return;
 
         if (LayersDeep == 1)
         {
-            if (_containerInstance.backButton is null)
+            if (ContainerInstance.backButton is null)
                 return;
             
-            _containerInstance.backButton.onClick.Invoke();
+            ContainerInstance.backButton.onClick.Invoke();
             LayersDeep--;
         }
-    }
-
-    private static void UpdateFontScaling(KepRemapPanel panel)
-    {
-        var textMeshPro = panel.keyRemapSlotPrefab.transform.Find("Text (1)")
-            .GetComponent<TextMeshProUGUI>();
-
-        if (textMeshPro.enableAutoSizing)
-            return;
-
-        textMeshPro.fontSizeMax = textMeshPro.fontSize;
-        textMeshPro.fontSizeMin = textMeshPro.fontSize - 4;
-        textMeshPro.enableAutoSizing = true;
     }
 
     private static void AdjustSizeAndPos(KepRemapPanel panel)
