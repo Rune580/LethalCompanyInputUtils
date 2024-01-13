@@ -18,7 +18,26 @@ internal static class FsUtils
     public static string Pre041ControlsDir { get; } = Path.Combine(Paths.BepInExRootPath, "controls");
     public static string ControlsDir { get; } = Path.Combine(Paths.ConfigPath, "controls");
 
-    public static string AssetBundlesDir { get; } = GetAssetBundlesDir();
+    private static string? _assetBundlesDir;
+
+    public static string AssetBundlesDir
+    {
+        get
+        {
+            _assetBundlesDir ??= GetAssetBundlesDir();
+
+            // This occurs when another mod depends on InputUtils without using a BepInDependency attribute.
+            if (string.IsNullOrEmpty(_assetBundlesDir))
+            {
+                var mods = BepInEx.Bootstrap.Chainloader.PluginInfos.ToPrettyString();
+                Logging.Warn($"InputUtils is loading in an invalid state!\n\tOne of the following mods may be the culprit:\n{mods}");
+                
+                return "";
+            }
+
+            return _assetBundlesDir;
+        }
+    }
 
     public static void EnsureControlsDir()
     {
@@ -26,7 +45,7 @@ internal static class FsUtils
             Directory.CreateDirectory(ControlsDir);
     }
 
-    private static string GetAssetBundlesDir()
+    private static string? GetAssetBundlesDir()
     {
         string BadInstallError()
         {
@@ -37,8 +56,11 @@ internal static class FsUtils
             Logging.Error(msg);
             return msg;
         }
+
+        if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(LethalCompanyInputUtilsPlugin.ModId, out var pluginInfo))
+            return null;
         
-        var dllLoc = BepInEx.Bootstrap.Chainloader.PluginInfos[LethalCompanyInputUtilsPlugin.ModId].Location;
+        var dllLoc = pluginInfo.Location;
         var parentDir = Directory.GetParent(dllLoc);
 
         if (parentDir is null)

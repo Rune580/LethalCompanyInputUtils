@@ -20,7 +20,7 @@ internal static class Logging
     {
         if (_logSource is null)
         {
-            Debug.LogError(msg);
+            Debug.LogError($"[{LethalCompanyInputUtilsPlugin.ModName}] [Error] {msg}");
         }
         else
         {
@@ -32,7 +32,7 @@ internal static class Logging
     {
         if (_logSource is null)
         {
-            Debug.LogWarning(msg);
+            Debug.LogWarning($"[{LethalCompanyInputUtilsPlugin.ModName}] [Warning] {msg}");
         }
         else
         {
@@ -44,7 +44,7 @@ internal static class Logging
     {
         if (_logSource is null)
         {
-            Debug.Log(msg);
+            Debug.Log($"[{LethalCompanyInputUtilsPlugin.ModName}] [Info] {msg}");
         }
         else
         {
