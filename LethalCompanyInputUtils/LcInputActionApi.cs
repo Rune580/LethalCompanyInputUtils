@@ -38,7 +38,7 @@ public static class LcInputActionApi
         if (ContainerInstance is not null && ContainerInstance.legacyButton is not null)
         {
             var label = ContainerInstance.legacyButton.GetComponentInChildren<TextMeshProUGUI>();
-            label.SetText($"> Show Legacy Controls ({actualKeyCount})");
+            label.SetText($"> Show Legacy Controls ({actualKeyCount} present)");
         }
 
         if (keySlotCount == 0)

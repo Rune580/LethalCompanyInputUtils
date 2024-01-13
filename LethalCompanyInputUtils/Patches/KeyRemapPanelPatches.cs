@@ -53,7 +53,12 @@ public static class KeyRemapPanelPatches
             
             var legacyButtonTransform = showLegacyButtonObject.GetComponent<RectTransform>();
             legacyButtonTransform.SetAnchoredPosY(legacyButtonTransform.anchoredPosition.y + 25);
-            legacyButtonTransform.SetSizeDeltaX(legacyButtonTransform.sizeDelta.x + 90);
+            legacyButtonTransform.SetSizeDeltaX(legacyButtonTransform.sizeDelta.x + 180);
+
+            var legacySelection = legacyButtonTransform.Find("SelectionHighlight").GetComponent<RectTransform>();
+            legacySelection.SetSizeDeltaX(410);
+            legacySelection.offsetMax = new Vector2(410, legacySelection.offsetMax.y);
+            legacySelection.offsetMin = new Vector2(0, legacySelection.offsetMin.y);
             
             var controller = container.GetComponent<RemapContainerController>();
             controller.baseGameKeys = keys;
