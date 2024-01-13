@@ -3,6 +3,7 @@ using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Components;
 using LethalCompanyInputUtils.Utils;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -14,7 +15,6 @@ public static class LcInputActionApi
     private static readonly Dictionary<string, LcInputActions> InputActionsMap = new();
     internal static bool PrefabLoaded;
     internal static RemapContainerController? ContainerInstance;
-    internal static int LayersDeep;
     
     internal static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
     
@@ -35,20 +35,48 @@ public static class LcInputActionApi
         
         panel.maxVertical = (actualKeyCount / maxItemsInRow) + sectionCount;
 
+        if (ContainerInstance is not null && ContainerInstance.legacyButton is not null)
+        {
+            var label = ContainerInstance.legacyButton.GetComponentInChildren<TextMeshProUGUI>();
+            label.SetText($"> Show Legacy Controls ({actualKeyCount})");
+        }
+
         if (keySlotCount == 0)
             return;
 
         layoutElement.minHeight = (panel.maxVertical + 1) * panel.verticalOffset;
 
         int row = 0;
+        int column = 0;
         foreach (var keySlot in panel.keySlots)
         {
+            if (column > maxItemsInRow)
+            {
+                row++;
+                column = 0;
+            }
+            
             var rectTransform = keySlot.GetComponent<RectTransform>();
-            rectTransform.SetAnchoredPosY(-panel.verticalOffset * row);
+            rectTransform.anchoredPosition = new Vector2(column * panel.horizontalOffset, row * -panel.verticalOffset);
             
             if (keySlot.GetComponentInChildren<SettingsOption>() is null) // is Section object
+            {
+                column = 0;
                 row++;
+            }
+            else // is KeyBind object
+            {
+                column++;
+            }
         }
+    }
+
+    public static bool RemapContainerVisible()
+    {
+        if (ContainerInstance is null)
+            return false;
+
+        return ContainerInstance.LayerShown > 0;
     }
 
     private static int NumberOfActualKeys(List<GameObject> keySlots)
@@ -68,15 +96,8 @@ public static class LcInputActionApi
     {
         if (ContainerInstance is null)
             return;
-
-        if (LayersDeep == 1)
-        {
-            if (ContainerInstance.backButton is null)
-                return;
-            
-            ContainerInstance.backButton.onClick.Invoke();
-            LayersDeep--;
-        }
+        
+        ContainerInstance.HideHighestLayer();
     }
 
     private static void AdjustSizeAndPos(KepRemapPanel panel)

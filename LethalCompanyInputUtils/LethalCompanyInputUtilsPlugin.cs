@@ -49,7 +49,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     {
         LcInputActionApi.ResetLoadedInputActions();
 
-        BindsListController.offsetCompensation = next.name != "MainMenu" ? 20 : 0;
+        BindsListController.OffsetCompensation = next.name != "MainMenu" ? 20 : 0;
     }
     
     private static void OnDeviceChanged(InputDevice device, InputDeviceChange state)

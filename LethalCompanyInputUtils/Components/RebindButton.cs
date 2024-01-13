@@ -299,4 +299,10 @@ public class RebindButton : MonoBehaviour
             rebindButton.UpdateState();
         }
     }
+
+    public static void ResetAllToDefaults()
+    {
+        foreach (var rebindButton in Instances)
+            rebindButton.ResetToDefault();
+    }
 }

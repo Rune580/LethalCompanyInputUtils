@@ -30,6 +30,11 @@ internal static class RuntimeHelper
     {
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, y);
     }
+    
+    public static void SetSizeDeltaX(this RectTransform rectTransform, float x)
+    {
+        rectTransform.sizeDelta = new Vector2(x, rectTransform.sizeDelta.y);
+    }
 
     public static Rect UiBounds(this RectTransform rectTransform)
     {

@@ -20,7 +20,7 @@ public class BindsListController : MonoBehaviour
     
     public UnityEvent<int> OnSectionChanged = new();
 
-    public static float offsetCompensation = 0;
+    public static float OffsetCompensation = 0;
 
     private RectTransform? _rectTransform;
     private RectTransform? _scrollRectTransform;
@@ -179,6 +179,7 @@ public class BindsListController : MonoBehaviour
         Instantiate(spacerPrefab, _content);
     }
     
+    // This function is such a mess right now, I promise to clean it up when I have more time.
     private void OnScroll(Vector2 delta)
     {
         if (_scrollRectTransform is null || headerContainer is null || _rectTransform is null)
@@ -232,7 +233,7 @@ public class BindsListController : MonoBehaviour
 
         var offset = GetMaxY(headerContainer) - GetMaxY(_scrollRectTransform);
         offset += _sectionHeight / 2f;
-        offset -= offsetCompensation;
+        offset -= OffsetCompensation;
         
         var yPos = (anchor.RectTransform.localPosition.y - (offset + 50)) + _content.localPosition.y;
         

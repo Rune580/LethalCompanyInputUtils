@@ -19,7 +19,6 @@ public static class KeyRemapPanelPatches
             if (LcInputActionApi.PrefabLoaded)
             {
                 __instance.remappableKeys.DisableKeys();
-                LcInputActionApi.LayersDeep = 1;
                 return;
             }
             
@@ -40,13 +39,39 @@ public static class KeyRemapPanelPatches
 
             var backButtonObject = __instance.transform.Find("Back").gameObject;
             var backButton = backButtonObject.GetComponent<Button>();
+
+            var legacyBackButtonObject = Object.Instantiate(backButtonObject, legacyHolder.transform, true);
+            Object.DestroyImmediate(legacyBackButtonObject.GetComponentInChildren<SettingsOption>());
+            var legacyBackButton = legacyBackButtonObject.GetComponent<Button>();
+            legacyBackButton.onClick = new Button.ButtonClickedEvent();
+            legacyBackButton.onClick.AddListener(LcInputActionApi.CloseContainerLayer);
+
+            var showLegacyButtonObject = Object.Instantiate(backButtonObject, backButtonObject.transform.parent);
+            Object.DestroyImmediate(showLegacyButtonObject.GetComponentInChildren<SettingsOption>());
+            var showLegacyButton = showLegacyButtonObject.GetComponent<Button>();
+            showLegacyButton.onClick = new Button.ButtonClickedEvent();
+            
+            var legacyButtonTransform = showLegacyButtonObject.GetComponent<RectTransform>();
+            legacyButtonTransform.SetAnchoredPosY(legacyButtonTransform.anchoredPosition.y + 25);
+            legacyButtonTransform.SetSizeDeltaX(legacyButtonTransform.sizeDelta.x + 90);
             
             var controller = container.GetComponent<RemapContainerController>();
             controller.baseGameKeys = keys;
             controller.backButton = backButton;
+            controller.legacyButton = showLegacyButton;
             controller.legacyHolder = legacyHolder;
             controller.baseGameKeys.DisableKeys();
+            
+            showLegacyButton.onClick.AddListener(controller.ShowLegacyUi);
+            
             controller.LoadUi();
+
+            var setDefaultObject = __instance.transform.Find("SetDefault").gameObject;
+            var setDefaultButton = setDefaultObject.GetComponent<Button>();
+            setDefaultButton.onClick.RemoveAllListeners();
+            setDefaultButton.onClick.AddListener(controller.OnSetToDefault);
+            
+            legacyHolder.transform.SetAsLastSibling();
             
             LcInputActionApi.PrefabLoaded = true;
         }
@@ -62,11 +87,12 @@ public static class KeyRemapPanelPatches
     public static class UnloadKeybindsUIPatch
     {
         // ReSharper disable once InconsistentNaming
-        public static bool Prefix(KepRemapPanel __instance)
+        public static void Prefix()
         {
-            __instance.remappableKeys.EnableKeys();
-            LcInputActionApi.LayersDeep = 0;
-            return false;
+            if (LcInputActionApi.ContainerInstance is null)
+                return;
+            
+            LcInputActionApi.ContainerInstance.baseGameKeys.EnableKeys();
         }
     }
 }

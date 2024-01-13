@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using LethalCompanyInputUtils.Components.Section;
 using UnityEngine;
@@ -12,9 +11,12 @@ public class RemapContainerController : MonoBehaviour
     public BindsListController? bindsList;
     public SectionListController? sectionList;
     public Button? backButton;
+    public Button? legacyButton;
     public GameObject? legacyHolder;
-
+    
     public List<RemappableKey> baseGameKeys = [];
+    
+    internal int LayerShown;
 
     private void Awake()
     {
@@ -27,7 +29,6 @@ public class RemapContainerController : MonoBehaviour
         bindsList.OnSectionChanged.AddListener(HandleSectionChanged);
 
         LcInputActionApi.ContainerInstance = this;
-        LcInputActionApi.LayersDeep = 1;
     }
 
     public void JumpTo(int sectionIndex)
@@ -102,6 +103,39 @@ public class RemapContainerController : MonoBehaviour
             bindsList.AddBinds(kbmKey, gamepadKey, true);
     }
 
+    public void OnSetToDefault()
+    {
+        RebindButton.ResetAllToDefaults();
+    }
+
+    public void HideHighestLayer()
+    {
+        if (backButton is null || legacyHolder is null)
+            return;
+        
+        if (LayerShown > 1)
+        {
+            legacyHolder.SetActive(false);
+            LayerShown--;
+            return;
+        }
+
+        if (LayerShown > 0)
+            backButton.onClick.Invoke();
+    }
+
+    public void ShowLegacyUi()
+    {
+        if (!isActiveAndEnabled)
+            return;
+
+        if (legacyHolder is null)
+            return;
+        
+        legacyHolder.SetActive(true);
+        LayerShown++;
+    }
+
     private void GenerateApiSections()
     {
         if (bindsList is null || sectionList is null)
@@ -158,20 +192,22 @@ public class RemapContainerController : MonoBehaviour
         
         sectionList.SelectSection(sectionIndex);
     }
-
+    
     private void OnEnable()
     {
         JumpTo(0);
+        LayerShown = 1;
     }
 
     private void OnDisable()
     {
         LcInputActionApi.ReEnableFromRebind();
-        LcInputActionApi.LayersDeep--;
+        LayerShown = 0;
     }
 
     private void OnDestroy()
     {
         LcInputActionApi.ContainerInstance = null;
+        LayerShown = 0;
     }
 }

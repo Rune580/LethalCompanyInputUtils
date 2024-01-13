@@ -10,7 +10,7 @@ public static class QuickMenuManagerPatches
         // ReSharper disable once InconsistentNaming
         public static bool Prefix(QuickMenuManager __instance)
         {
-            if (LcInputActionApi.LayersDeep > 0 && __instance.isMenuOpen)
+            if (LcInputActionApi.RemapContainerVisible() && __instance.isMenuOpen)
             {
                 LcInputActionApi.CloseContainerLayer();
                 return false;
