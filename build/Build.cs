@@ -302,7 +302,7 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
         AbsolutePath publishDir = context.BuildDir / "publish";
         publishDir.CleanAndCreateDirectory();
 
-        var modDir = publishDir / project.Name;
+        var modDir = publishDir / "plugins" / project.Name;
         modDir.CreateDirectory();
             
         context.BuildDir.GlobFiles("*.dll")
