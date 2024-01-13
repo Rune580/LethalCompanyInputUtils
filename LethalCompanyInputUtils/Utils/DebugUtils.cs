@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace LethalCompanyInputUtils.Utils;
 
@@ -17,5 +18,21 @@ internal static class DebugUtils
         builder.AppendLine("}");
         
         return builder.ToString();
+    }
+
+    public static void DrawGizmoUiRect(this RectTransform rectTransform)
+    {
+        var z = rectTransform.position.z;
+        var rect = rectTransform.UiBounds();
+        
+        var bl = new Vector3(rect.min.x, rect.min.y, z);
+        var tl = new Vector3(rect.min.x, rect.max.y, z);
+        var tr = new Vector3(rect.max.x, rect.max.y, z);
+        var br = new Vector3(rect.max.x, rect.min.y, z);
+        
+        Gizmos.DrawLine(bl, tl);
+        Gizmos.DrawLine(tl, tr);
+        Gizmos.DrawLine(tr, br);
+        Gizmos.DrawLine(br, bl);
     }
 }

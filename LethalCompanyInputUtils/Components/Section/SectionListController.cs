@@ -67,11 +67,11 @@ public class SectionListController : MonoBehaviour
             return;
         
         var entryTransform = sectionEntry.RectTransform;
-        var minEntryY = entryTransform.WorldCornersMinY();
-        var maxEntryY = entryTransform.WorldCornersMaxY();
+        var minEntryY = entryTransform.WorldMinY();
+        var maxEntryY = entryTransform.WorldMaxY();
         
-        var minVisibleY = _viewport.WorldCornersMinY();
-        var maxVisibleY = _viewport.WorldCornersMaxY();
+        var minVisibleY = _viewport.WorldMinY();
+        var maxVisibleY = _viewport.WorldMaxY();
 
         if (minEntryY > minVisibleY && maxEntryY < maxVisibleY)
             return;

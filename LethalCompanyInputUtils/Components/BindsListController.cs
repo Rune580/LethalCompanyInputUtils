@@ -20,6 +20,8 @@ public class BindsListController : MonoBehaviour
     
     public UnityEvent<int> OnSectionChanged = new();
 
+    public static float offsetCompensation = 0;
+
     private RectTransform? _rectTransform;
     private RectTransform? _scrollRectTransform;
     private RectTransform? _content;
@@ -181,9 +183,8 @@ public class BindsListController : MonoBehaviour
     {
         if (_scrollRectTransform is null || headerContainer is null || _rectTransform is null)
             return;
-
-        var maxVisibleY = headerContainer.WorldCornersMaxY();
-        var topSlotPos = maxVisibleY - headerContainer.transform.position.y;
+        
+        var maxVisibleY = GetMaxY(headerContainer);
 
         var section = -1;
         
@@ -194,8 +195,7 @@ public class BindsListController : MonoBehaviour
             
             if (i == 0)
             {
-                
-                header.RectTransform.SetLocalPosY(topSlotPos - ((header.RectTransform.sizeDelta.y / 2f) - _spacing));
+                header.RectTransform.SetLocalPosY(maxVisibleY - ((_sectionHeight / 2f) - _spacing));
                 section = i;
                 continue;
             }
@@ -206,18 +206,16 @@ public class BindsListController : MonoBehaviour
             var nextYPos = CalculateHeaderRawYPos(anchor);
             header.RectTransform.SetLocalPosY(nextYPos);
 
-            var headerMaxY = header.RectTransform.WorldCornersMaxY();
-            var prevHeaderMinY = prevHeader.RectTransform.WorldCornersMinY();
+            var headerMaxY = GetMaxY(header.RectTransform) + header.RectTransform.localPosition.y;
+            var prevHeaderMinY = GetMinY(prevHeader.RectTransform) + prevHeader.RectTransform.localPosition.y;
             
-            var prevYPos = prevHeader.RectTransform.anchoredPosition.y;
-            
-            if (headerMaxY + _spacing >= prevHeaderMinY)
-                prevHeader.RectTransform.SetLocalPosY(Mathf.Min(prevYPos, nextYPos + header.RectTransform.sizeDelta.y) + _spacing);
+            if (headerMaxY + (_sectionHeight / 2f) + _spacing >= prevHeaderMinY)
+                prevHeader.RectTransform.SetLocalPosY(nextYPos + _sectionHeight);
 
-            if (headerMaxY + _spacing / 2f >= maxVisibleY)
+            if (headerMaxY + _spacing / 2f >= maxVisibleY - _sectionHeight / 2f)
             {
                 section = i;
-                header.RectTransform.SetLocalPosY(topSlotPos - ((header.RectTransform.sizeDelta.y / 2f) - _spacing));
+                header.RectTransform.SetLocalPosY(maxVisibleY - ((_sectionHeight / 2f) - _spacing));
             }
         }
 
@@ -232,66 +230,40 @@ public class BindsListController : MonoBehaviour
         if (_content is null || headerContainer is null || _scrollRectTransform is null)
             return 0;
 
-        var offset = headerContainer.WorldCornersMaxY() - _scrollRectTransform.WorldCornersMaxY();
+        var offset = GetMaxY(headerContainer) - GetMaxY(_scrollRectTransform);
+        offset += _sectionHeight / 2f;
+        offset -= offsetCompensation;
         
-        var yPos = (anchor.RectTransform.anchoredPosition.y - (offset + 50)) + _content.anchoredPosition.y;
-
+        var yPos = (anchor.RectTransform.localPosition.y - (offset + 50)) + _content.localPosition.y;
+        
         return yPos;
     }
 
-    // private void OnDrawGizmos()
-    // {
-    //     if (_rectTransform is null || headerContainer is null)
-    //         return;
-    //     
-    //     var corners = new Vector3[4];
-    //     var prevColor = Gizmos.color;
-    //
-    //     Vector3 vecSpacing = new Vector3(0, spacing, 0);
-    //     
-    //     headerContainer!.GetWorldCorners(corners);
-    //     
-    //     Gizmos.color = Color.red;
-    //     Gizmos.DrawLine(corners[1], corners[2]);
-    //     Gizmos.color = Color.white;
-    //     Gizmos.DrawLine(corners[3], corners[0]);
-    //     
-    //     Gizmos.color = Color.magenta;
-    //     Gizmos.DrawLine(corners[1] - vecSpacing, corners[2] - vecSpacing);
-    //     Gizmos.DrawLine(corners[1] + vecSpacing, corners[2] + vecSpacing);
-    //     
-    //     foreach (var anchor in _anchors)
-    //     {
-    //         anchor.RectTransform.GetWorldCorners(corners);
-    //         
-    //         Gizmos.color = Color.yellow;
-    //         Gizmos.DrawLine(corners[0], corners[1]);
-    //         Gizmos.DrawLine(corners[1], corners[2]);
-    //         Gizmos.DrawLine(corners[2], corners[3]);
-    //         Gizmos.DrawLine(corners[3], corners[0]);
-    //         
-    //         Gizmos.color = Color.green;
-    //         Gizmos.DrawLine(corners[0] - vecSpacing, corners[1] + vecSpacing);
-    //         Gizmos.DrawLine(corners[1] + vecSpacing, corners[2] + vecSpacing);
-    //         Gizmos.DrawLine(corners[2] + vecSpacing, corners[3] - vecSpacing);
-    //         Gizmos.DrawLine(corners[3] - vecSpacing, corners[0] - vecSpacing);
-    //         
-    //         var header = anchor.sectionHeader!;
-    //         header.RectTransform.GetWorldCorners(corners);
-    //         
-    //         Gizmos.color = Color.cyan;
-    //         Gizmos.DrawLine(corners[0], corners[1]);
-    //         Gizmos.DrawLine(corners[1], corners[2]);
-    //         Gizmos.DrawLine(corners[2], corners[3]);
-    //         Gizmos.DrawLine(corners[3], corners[0]);
-    //         
-    //         Gizmos.color = Color.blue;
-    //         Gizmos.DrawLine(corners[0] - vecSpacing, corners[1] + vecSpacing);
-    //         Gizmos.DrawLine(corners[1] + vecSpacing, corners[2] + vecSpacing);
-    //         Gizmos.DrawLine(corners[2] + vecSpacing, corners[3] - vecSpacing);
-    //         Gizmos.DrawLine(corners[3] - vecSpacing, corners[0] - vecSpacing);
-    //     }
-    //
-    //     Gizmos.color = prevColor;
-    // }
+    private void OnDrawGizmos()
+    {
+        if (_rectTransform is null || headerContainer is null)
+            return;
+        
+        var prevColor = Gizmos.color;
+    
+        _rectTransform.DrawGizmoUiRect();
+    
+        Gizmos.color = prevColor;
+    }
+
+    private float GetMaxY(RectTransform element)
+    {
+        if (_rectTransform is null)
+            _rectTransform = GetComponent<RectTransform>();
+
+        return element.UiBounds(Vector3.zero).max.y;
+    }
+
+    private float GetMinY(RectTransform element)
+    {
+        if (_rectTransform is null)
+            _rectTransform = GetComponent<RectTransform>();
+        
+        return element.UiBounds(Vector3.zero).min.y;
+    }
 }

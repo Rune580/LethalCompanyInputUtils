@@ -31,22 +31,46 @@ internal static class RuntimeHelper
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, y);
     }
 
-    public static float WorldCornersMaxY(this RectTransform rectTransform)
+    public static Rect UiBounds(this RectTransform rectTransform)
     {
-        Vector3[] corners = new Vector3[4];
-        
-        rectTransform.GetWorldCorners(corners);
+        var position = rectTransform.position;
+        var rect = rectTransform.rect;
+        var scale = rectTransform.lossyScale;
 
-        return corners[1].y;
+        return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
     }
     
-    public static float WorldCornersMinY(this RectTransform rectTransform)
+    public static Rect UiBounds(this RectTransform rectTransform, Vector3 position)
     {
-        Vector3[] corners = new Vector3[4];
-        
-        rectTransform.GetWorldCorners(corners);
+        var rect = rectTransform.rect;
+        var scale = rectTransform.lossyScale;
 
-        return corners[0].y;
+        return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
+    }
+
+    public static float WorldMaxY(this RectTransform rectTransform)
+    {
+        return rectTransform.UiBounds().max.y;
+    }
+    
+    public static float WorldMinY(this RectTransform rectTransform)
+    {
+        return rectTransform.UiBounds().min.y;
+    }
+
+    public static Vector3 LocalPositionRelativeTo(this Transform transform, Transform parent)
+    {
+        var totalOffset = Vector3.zero;
+
+        Transform tempParent = transform;
+        do
+        {
+            totalOffset += transform.localPosition;
+            tempParent = tempParent.parent;
+        } while (tempParent != parent);
+
+
+        return totalOffset;
     }
 
     public static void DisableKeys(this IEnumerable<RemappableKey> keys)
