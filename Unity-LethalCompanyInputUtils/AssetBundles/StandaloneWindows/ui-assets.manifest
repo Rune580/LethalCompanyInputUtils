@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2061669915
+CRC: 462875691
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0d614f90f860f99a91b18851d27f899f
+    Hash: 0b3e57c0f934d8b70e7a10fa5ef3c8e7
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9c70fe5394a13155f09ac410cadf9290
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 0d614f90f860f99a91b18851d27f899f
+    Hash: 0b3e57c0f934d8b70e7a10fa5ef3c8e7
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -121,4 +121,5 @@ Assets:
 - Assets/Controller Glyphs/Xbox Series X Glyphs.asset
 - Assets/Controller Glyphs/Dualsense Glyphs.asset
 - Assets/Prefabs/InputUtilsRemapContainer.prefab
+- Assets/Prefabs/Legacy Holder.prefab
 Dependencies: []

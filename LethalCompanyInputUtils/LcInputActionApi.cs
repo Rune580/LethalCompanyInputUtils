@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using LethalCompanyInputUtils.Api;
+using LethalCompanyInputUtils.Components;
 using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;
@@ -13,6 +14,8 @@ public static class LcInputActionApi
 {
     private static readonly Dictionary<string, LcInputActions> InputActionsMap = new();
     internal static bool PrefabLoaded;
+    internal static RemapContainerController? _containerInstance;
+    internal static int LayersDeep = 0;
     
     internal static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
     
@@ -61,6 +64,21 @@ public static class LcInputActionApi
 
         panel.maxVertical = kbmKeyCount / maxItemsInRow;
         layoutElement.minHeight += (panel.maxVertical + 1) * panel.verticalOffset;
+    }
+
+    internal static void CloseContainerLayer()
+    {
+        if (_containerInstance is null)
+            return;
+
+        if (LayersDeep == 1)
+        {
+            if (_containerInstance.backButton is null)
+                return;
+            
+            _containerInstance.backButton.onClick.Invoke();
+            LayersDeep--;
+        }
     }
 
     private static void UpdateFontScaling(KepRemapPanel panel)

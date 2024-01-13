@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using LethalCompanyInputUtils.Components.Section;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace LethalCompanyInputUtils.Components;
 
@@ -9,6 +11,8 @@ public class RemapContainerController : MonoBehaviour
 {
     public BindsListController? bindsList;
     public SectionListController? sectionList;
+    public Button? backButton;
+    public GameObject? legacyHolder;
 
     public List<RemappableKey> baseGameKeys = [];
 
@@ -21,6 +25,9 @@ public class RemapContainerController : MonoBehaviour
             sectionList = GetComponentInChildren<SectionListController>();
         
         bindsList.OnSectionChanged.AddListener(HandleSectionChanged);
+
+        LcInputActionApi._containerInstance = this;
+        LcInputActionApi.LayersDeep = 1;
     }
 
     public void JumpTo(int sectionIndex)
@@ -160,5 +167,11 @@ public class RemapContainerController : MonoBehaviour
     private void OnDisable()
     {
         LcInputActionApi.ReEnableFromRebind();
+        LcInputActionApi.LayersDeep--;
+    }
+
+    private void OnDestroy()
+    {
+        LcInputActionApi._containerInstance = null;
     }
 }
