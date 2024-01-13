@@ -18,6 +18,7 @@ public static class LcInputActionApi
     
     internal static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
     
+    // Try and find any controls that were manually injected into the UI.
     internal static void LoadIntoUI(KepRemapPanel panel)
     {
         AdjustSizeAndPos(panel);

@@ -140,38 +140,43 @@ public class RemapContainerController : MonoBehaviour
     {
         if (bindsList is null || sectionList is null)
             return;
+
+        var pluginGroupedActions = LcInputActionApi.InputActions.GroupBy(lc => lc.Plugin.Name);
         
-        foreach (var lcInputActions in LcInputActionApi.InputActions)
+        foreach (var pluginActions in pluginGroupedActions)
         {
-            if (lcInputActions.Loaded)
-                continue;
+            bindsList.AddSection(pluginActions.Key);
+            sectionList.AddSection(pluginActions.Key);
             
-            bindsList.AddSection(lcInputActions.Plugin.Name);
-            sectionList.AddSection(lcInputActions.Plugin.Name);
-            
-            foreach (var actionRef in lcInputActions.ActionRefs)
+            foreach (var lcInputAction in pluginActions)
             {
-                var controlName = actionRef.action.bindings.First().name;
-                var kbmKey = new RemappableKey
-                {
-                    ControlName = controlName,
-                    currentInput = actionRef,
-                    rebindingIndex = 0,
-                    gamepadOnly = false
-                };
-                
-                var gamepadKey = new RemappableKey
-                {
-                    ControlName = controlName,
-                    currentInput = actionRef,
-                    rebindingIndex = 1,
-                    gamepadOnly = true
-                };
-                
-                bindsList.AddBinds(kbmKey, gamepadKey);
-            }
+                if (lcInputAction.Loaded)
+                    continue;
             
-            lcInputActions.Loaded = true;
+                foreach (var actionRef in lcInputAction.ActionRefs)
+                {
+                    var controlName = actionRef.action.bindings.First().name;
+                    var kbmKey = new RemappableKey
+                    {
+                        ControlName = controlName,
+                        currentInput = actionRef,
+                        rebindingIndex = 0,
+                        gamepadOnly = false
+                    };
+                
+                    var gamepadKey = new RemappableKey
+                    {
+                        ControlName = controlName,
+                        currentInput = actionRef,
+                        rebindingIndex = 1,
+                        gamepadOnly = true
+                    };
+                
+                    bindsList.AddBinds(kbmKey, gamepadKey);
+                }
+            
+                lcInputAction.Loaded = true;
+            }
         }
     }
 
