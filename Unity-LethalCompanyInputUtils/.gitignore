@@ -76,6 +76,7 @@ crashlytics-build.properties
 /[Pp]ackages/**/*.dll
 /[Pp]ackages/**/*.dll.meta
 !/[Pp]ackages/manifest.json
+!/[Pp]ackages/LethalCompanyInputUtils/**
 
 /[Aa]ssets/[Tt]hunder[Kk]it[Ss]ettings/
 /[Aa]ssets/[Tt]hunder[Kk]it[Ss]ettings/*
