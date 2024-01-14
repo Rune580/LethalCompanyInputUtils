@@ -1,3 +1,7 @@
+### [0.5.5]
+
+Fixes unbinding vanilla keys to no longer cause the UI to be permanently broken.
+
 ### [0.5.4]
 
 Hotfix for rebind ui breaking due to another oversight on my part.
