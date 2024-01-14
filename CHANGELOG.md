@@ -1,3 +1,7 @@
+### [0.5.4]
+
+Hotfix for rebind ui breaking due to another oversight on my part.
+
 ### [0.5.3]
 
 Fix issue with the runtime api causing errors when not defining a gamepad path.
