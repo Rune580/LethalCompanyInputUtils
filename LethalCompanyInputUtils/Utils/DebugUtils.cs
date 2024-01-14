@@ -23,7 +23,7 @@ internal static class DebugUtils
     public static void DrawGizmoUiRect(this RectTransform rectTransform)
     {
         var z = rectTransform.position.z;
-        var rect = rectTransform.UiBounds();
+        var rect = rectTransform.UiBoundsWorld();
         
         var bl = new Vector3(rect.min.x, rect.min.y, z);
         var tl = new Vector3(rect.min.x, rect.max.y, z);

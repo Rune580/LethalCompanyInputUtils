@@ -112,10 +112,11 @@ public class RebindButton : MonoBehaviour
             return;
         
         button.interactable = false;
+        button.targetGraphic.raycastTarget = false;
         button.targetGraphic.enabled = false;
         bindLabel.SetText("");
         glyphLabel.enabled = false;
-        notSupportedImage.enabled = true;
+        notSupportedImage.gameObject.SetActive(true);
             
         resetButton.gameObject.SetActive(false);
         removeButton.gameObject.SetActive(false);
