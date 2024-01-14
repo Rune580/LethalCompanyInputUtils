@@ -52,7 +52,7 @@ public class RebindButton : MonoBehaviour
         var bindingIndex = GetRebindingIndex();
         var action = _key.currentInput.action;
 
-        if (bindingIndex >= action.bindings.Count)
+        if (bindingIndex >= action.bindings.Count || bindingIndex < 0)
         {
             SetAsUnsupported();
             return;
