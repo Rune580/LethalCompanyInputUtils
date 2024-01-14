@@ -1,3 +1,7 @@
+### [0.5.2]
+
+Fix vanilla key rebinding being broken when re-opening the rebind UI.
+
 ### [0.5.1]
 
 Hotfix for broken installs with mod managers, sorry that was my bad.
