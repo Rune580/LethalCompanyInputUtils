@@ -1,3 +1,7 @@
+### [0.5.3]
+
+Fix issue with the runtime api causing errors when not defining a gamepad path.
+
 ### [0.5.2]
 
 Fix vanilla key rebinding being broken when re-opening the rebind UI.
