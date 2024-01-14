@@ -52,7 +52,7 @@ public class RebindButton : MonoBehaviour
         var bindingIndex = GetRebindingIndex();
         var action = _key.currentInput.action;
 
-        if (bindingIndex >= action.bindings.Count || bindingIndex < 0)
+        if (bindingIndex >= action.bindings.Count)
         {
             SetAsUnsupported();
             return;
@@ -129,7 +129,15 @@ public class RebindButton : MonoBehaviour
         var action = _key.currentInput.action;
 
         if (action.controls.Count == 0)
-            return -1;
+        {
+            if (action.bindings.Count == 0)
+                return -1;
+
+            if (_key.gamepadOnly)
+                return 1;
+            
+            return 0;
+        }
 
         return _key.rebindingIndex < 0 ? action.GetBindingIndexForControl(action.controls[0]) : _key.rebindingIndex;
     }

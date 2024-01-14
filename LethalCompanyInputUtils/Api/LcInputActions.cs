@@ -56,7 +56,7 @@ public abstract class LcInputActions
 
             attr.ActionId ??= prop.Name;
             attr.GamepadPath ??= UnboundGamepadIdentifier;
-            var kbmPath = string.IsNullOrEmpty(attr.KbmPath) ? UnboundKeyboardAndMouseIdentifier : attr.KbmPath;
+            var kbmPath = string.IsNullOrWhiteSpace(attr.KbmPath) ? UnboundKeyboardAndMouseIdentifier : attr.KbmPath;
 
             mapBuilder.NewActionBinding()
                 .WithActionId(attr.ActionId)
