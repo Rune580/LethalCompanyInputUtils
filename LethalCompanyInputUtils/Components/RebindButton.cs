@@ -45,19 +45,18 @@ public class RebindButton : MonoBehaviour
 
         if (_key is null)
         {
-            button.interactable = false;
-            button.targetGraphic.enabled = false;
-            bindLabel.SetText("");
-            glyphLabel.enabled = false;
-            notSupportedImage.enabled = true;
-            
-            resetButton.gameObject.SetActive(false);
-            removeButton.gameObject.SetActive(false);
+            SetAsUnsupported();
             return;
         }
 
         var bindingIndex = GetRebindingIndex();
         var action = _key.currentInput.action;
+
+        if (bindingIndex >= action.bindings.Count)
+        {
+            SetAsUnsupported();
+            return;
+        }
 
         resetButton.gameObject.SetActive(action.bindings[bindingIndex].hasOverrides);
 
@@ -107,6 +106,21 @@ public class RebindButton : MonoBehaviour
         }
     }
 
+    private void SetAsUnsupported()
+    {
+        if (button is null || bindLabel is null || glyphLabel is null || notSupportedImage is null || resetButton is null || removeButton is null)
+            return;
+        
+        button.interactable = false;
+        button.targetGraphic.enabled = false;
+        bindLabel.SetText("");
+        glyphLabel.enabled = false;
+        notSupportedImage.enabled = true;
+            
+        resetButton.gameObject.SetActive(false);
+        removeButton.gameObject.SetActive(false);
+    }
+
     private int GetRebindingIndex()
     {
         if (_key is null)
@@ -115,7 +129,7 @@ public class RebindButton : MonoBehaviour
         var action = _key.currentInput.action;
 
         if (action.controls.Count == 0)
-            return 0;
+            return -1;
 
         return _key.rebindingIndex < 0 ? action.GetBindingIndexForControl(action.controls[0]) : _key.rebindingIndex;
     }

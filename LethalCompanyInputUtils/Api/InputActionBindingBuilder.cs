@@ -33,10 +33,22 @@ public class InputActionBindingBuilder
         _kbmPath = kbmPath;
         return this;
     }
+
+    public InputActionBindingBuilder WithKbmPathUnbound()
+    {
+        _kbmPath = LcInputActions.UnboundKeyboardAndMouseIdentifier;
+        return this;
+    }
     
     public InputActionBindingBuilder WithGamepadPath(string gamepadPath)
     {
         _gamepadPath = gamepadPath;
+        return this;
+    }
+
+    public InputActionBindingBuilder WithGamepadPathUnbound()
+    {
+        _gamepadPath = LcInputActions.UnboundGamepadIdentifier;
         return this;
     }
 
