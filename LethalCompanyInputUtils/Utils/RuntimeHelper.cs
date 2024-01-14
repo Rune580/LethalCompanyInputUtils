@@ -36,13 +36,21 @@ internal static class RuntimeHelper
         rectTransform.sizeDelta = new Vector2(x, rectTransform.sizeDelta.y);
     }
 
-    public static Rect UiBounds(this RectTransform rectTransform)
+    public static Rect UiBoundsWorld(this RectTransform rectTransform)
     {
         var position = rectTransform.position;
         var rect = rectTransform.rect;
         var scale = rectTransform.lossyScale;
 
         return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
+    }
+    
+    public static Rect UiBounds(this RectTransform rectTransform)
+    {
+        var rect = rectTransform.rect;
+        var scale = rectTransform.lossyScale;
+
+        return new Rect(rect.x * scale.x, rect.y * scale.y, rect.width * scale.x, rect.height * scale.y);
     }
     
     public static Rect UiBounds(this RectTransform rectTransform, Vector3 position)
@@ -55,12 +63,12 @@ internal static class RuntimeHelper
 
     public static float WorldMaxY(this RectTransform rectTransform)
     {
-        return rectTransform.UiBounds().max.y;
+        return rectTransform.UiBoundsWorld().max.y;
     }
     
     public static float WorldMinY(this RectTransform rectTransform)
     {
-        return rectTransform.UiBounds().min.y;
+        return rectTransform.UiBoundsWorld().min.y;
     }
 
     public static Vector3 LocalPositionRelativeTo(this Transform transform, Transform parent)
