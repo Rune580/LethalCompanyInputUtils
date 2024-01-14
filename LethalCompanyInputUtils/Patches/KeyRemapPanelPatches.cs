@@ -16,9 +16,9 @@ public static class KeyRemapPanelPatches
         {
             LcInputActionApi.DisableForRebind();
 
-            if (LcInputActionApi.PrefabLoaded)
+            if (LcInputActionApi.PrefabLoaded && LcInputActionApi.ContainerInstance is not null)
             {
-                __instance.remappableKeys.DisableKeys();
+                LcInputActionApi.ContainerInstance.baseGameKeys.DisableKeys();
                 return;
             }
             
