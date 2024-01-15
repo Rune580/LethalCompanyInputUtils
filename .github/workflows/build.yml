@@ -12,10 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       USE_STUBBED_LIBS: 1
-      RELEASE_VERSION: ${{ github.ref_name }}
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v3
+      
+    - name: Output Short Sha Commit
+      run: |
+        export SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+        echo "RELEASE_VERSION=${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}-${SHORT_SHA}" >> "$GITHUB_ENV"
+      shell: bash
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
