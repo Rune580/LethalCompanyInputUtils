@@ -305,7 +305,7 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
         var modDir = publishDir / "plugins" / project.Name;
         modDir.CreateDirectory();
             
-        context.BuildDir.GlobFiles("*.dll")
+        context.BuildDir.GlobFiles("*.dll", "*.pdb")
             .CopyFilesTo(modDir);
 
         var assetBundlesDir = context.BuildDir / "AssetBundles";
