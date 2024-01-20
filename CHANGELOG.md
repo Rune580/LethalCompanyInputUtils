@@ -1,3 +1,7 @@
+### [0.5.6]
+
+Allow LcInputAction's to have NonPublic InputActions.
+
 ### [0.5.5]
 
 Fixes unbinding vanilla keys to no longer cause the UI to be permanently broken.
