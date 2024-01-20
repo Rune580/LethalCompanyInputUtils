@@ -49,7 +49,7 @@ public class PopOverManager : MonoBehaviour
             return;
         
         popOver.SetTarget(trigger.target, trigger.placement);
-        popOver.SetLabel(trigger.text);
+        popOver.SetText(trigger.text);
     }
 
     private void ClearPopOver()
