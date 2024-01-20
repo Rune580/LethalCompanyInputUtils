@@ -247,7 +247,7 @@ public class BindsListController : MonoBehaviour
         
         var prevColor = Gizmos.color;
     
-        _rectTransform.DrawGizmoUiRect();
+        _rectTransform.DrawGizmoUiRectWorld();
     
         Gizmos.color = prevColor;
     }

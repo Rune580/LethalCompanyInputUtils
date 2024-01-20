@@ -1,32 +1,49 @@
 ﻿using System;
-using TMPro;
+using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 
 namespace LethalCompanyInputUtils.Components.PopOvers;
 
+[RequireComponent(typeof(RectTransform))]
 public class PopOver : MonoBehaviour
 {
     public RectTransform? popOverLayer;
-    public TextMeshProUGUI? label;
+    public PopOverTextContainer? textContainer;
     public RectTransform? pivotPoint;
+    public GameObject? background;
+    public PopOverArrow? arrow;
+    public CanvasGroup? canvasGroup;
+    public float maxWidth = 300f;
 
+    private RectTransform? _rectTransform;
     private RectTransform? _target;
     private Placement _placement;
 
     public void SetTarget(RectTransform target, Placement placement)
     {
+        if (background is null || canvasGroup is null)
+            return;
+        
         ClearTarget();
+        
+        background.SetActive(true);
         
         _target = target;
         _placement = placement;
 
         SetPivot();
+        SetArrow();
     }
 
     public void ClearTarget()
     {
+        if (background is null || canvasGroup is null)
+            return;
+
+        canvasGroup.alpha = 0;
+        
         _target = null;
-        SetLabel("");
+        background.SetActive(false);
     }
 
     private void MoveTo(RectTransform target)
@@ -34,11 +51,9 @@ public class PopOver : MonoBehaviour
         if (pivotPoint is null)
             return;
 
-        var screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.current, target.position);
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(popOverLayer, screenPoint, Camera.current, out var localPoint))
-            return;
-        
-        pivotPoint.localPosition = localPoint;
+        var offset = (Vector3)GetTargetPivotOffset(target);
+        var labelOffset = (Vector3)GetLabelPivotOffset();
+        pivotPoint.position = target.position + offset + labelOffset;
     }
 
     private void SetPivot()
@@ -56,17 +71,77 @@ public class PopOver : MonoBehaviour
         };
     }
 
-    public void SetLabel(string text)
+    private void SetArrow()
     {
-        if (label is null)
+        if (arrow is null)
+            return;
+
+        switch (_placement)
+        {
+            case Placement.Top:
+                arrow.PointToBottom();
+                break;
+            case Placement.Bottom:
+                arrow.PointToTop();
+                break;
+            case Placement.Left:
+                arrow.PointToRight();
+                break;
+            case Placement.Right:
+                arrow.PointToLeft();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private Vector2 GetTargetPivotOffset(RectTransform target)
+    {
+        if (popOverLayer is null)
+            return Vector2.zero;
+
+        var targetRect = target.UiBounds();
+
+        return _placement switch {
+            Placement.Top => new Vector2(0f, 1f + targetRect.height / 2f),
+            Placement.Bottom => new Vector2(0f, -1f + -targetRect.height / 2f),
+            Placement.Left => new Vector2(-1f + -targetRect.width / 2f, 0f),
+            Placement.Right => new Vector2(1f + targetRect.width / 2f, 0f),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private Vector2 GetLabelPivotOffset()
+    {
+        if (textContainer is null || _rectTransform is null)
+            return Vector2.zero;
+
+        var rect = _rectTransform.UiBounds();
+
+        return _placement switch
+        {
+            Placement.Top => new Vector2(0f, -((rect.height - textContainer.Height) / 2f)),
+            Placement.Bottom => new Vector2(0f, (rect.height - textContainer.Height) / 2f),
+            Placement.Left => new Vector2((rect.width - textContainer.Width) / 2f, 0f),
+            Placement.Right => new Vector2(-((rect.width - textContainer.Width) / 2f), 0f),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    public void SetText(string text)
+    {
+        if (textContainer is null)
             return;
         
-        label.SetText(text);
+        textContainer.SetText(text);
     }
 
     private void Awake()
     {
-        SetLabel("");
+        _rectTransform = GetComponent<RectTransform>();
+        _rectTransform.SetSizeDeltaX(maxWidth);
+        
+        SetText("");
     }
 
     private void Update()
@@ -75,6 +150,15 @@ public class PopOver : MonoBehaviour
             return;
         
         MoveTo(_target);
+    }
+
+    private void LateUpdate()
+    {
+        if (_target is null || canvasGroup is null)
+            return;
+        
+        if (canvasGroup.alpha == 0)
+            canvasGroup.alpha = 1;
     }
 
     public enum Placement
