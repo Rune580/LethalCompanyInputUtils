@@ -48,6 +48,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     private static void OnSceneChanged(Scene current, Scene next)
     {
         LcInputActionApi.ResetLoadedInputActions();
+        CameraUtils.ClearUiCameraReference();
 
         BindsListController.OffsetCompensation = next.name != "MainMenu" ? 20 : 0;
     }

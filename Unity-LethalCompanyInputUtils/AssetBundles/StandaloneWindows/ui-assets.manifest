@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2533650451
+CRC: 1580269180
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c76d3408188d0ca21b511882a30cc1ab
+    Hash: 2431177ef007ba586e3cbe32dec5a1e1
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5f220b7a5cf227b953e07bf4183bdefd
+    Hash: 54787273360a15ba1e9d34d513cb39f2
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: c76d3408188d0ca21b511882a30cc1ab
+    Hash: 2431177ef007ba586e3cbe32dec5a1e1
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -23,11 +23,19 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 1389752971, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
+- Class: 114
+  Script: {fileID: 1590956476, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 - Class: 114
@@ -47,7 +55,11 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -233423930, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
+  Script: {fileID: 1950626328, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
   Script: {fileID: -1024439013, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
+  Script: {fileID: -2143283636, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
   Script: {fileID: -1443277361, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
@@ -61,13 +73,7 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -762325398, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
-  Script: {fileID: 1590956476, guid: de7f53af8e88288428b07212e8711754, type: 3}
-- Class: 114
-  Script: {fileID: 1389752971, guid: de7f53af8e88288428b07212e8711754, type: 3}
-- Class: 114
   Script: {fileID: 1791224802, guid: de7f53af8e88288428b07212e8711754, type: 3}
-- Class: 114
-  Script: {fileID: -2143283636, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 213
@@ -75,6 +81,8 @@ ClassTypes:
 - Class: 222
   Script: {instanceID: 0}
 - Class: 224
+  Script: {instanceID: 0}
+- Class: 225
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
 - AssemblyName: Unity.TextMeshPro
