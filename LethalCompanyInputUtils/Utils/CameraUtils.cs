@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +9,12 @@ internal static class CameraUtils
 {
     private static Camera? _uiCamera;
     
+    /// <summary>
+    /// Hacky solution to get the UICamera of the current active scene.
+    /// </summary>
+    /// <remarks>
+    /// Ignore the "Expensive method invocation" warning, it's only expensive the first time you call it after a scene load.
+    /// </remarks>
     public static Camera GetBestUiCamera()
     {
         if (_uiCamera is not null && _uiCamera)
