@@ -43,7 +43,7 @@ public abstract class LcInputActions
 
         var mapBuilder = new InputActionMapBuilder(Id);
 
-        var props = GetType().GetProperties();
+        var props = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         _inputProps = new Dictionary<PropertyInfo, InputActionAttribute>();
         foreach (var prop in props)
         {
