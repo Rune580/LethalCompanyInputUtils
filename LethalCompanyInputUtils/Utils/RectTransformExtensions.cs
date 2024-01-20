@@ -30,6 +30,11 @@ internal static class RectTransformExtensions
     {
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, y);
     }
+    
+    public static void SetAnchoredPosX(this RectTransform rectTransform, float x)
+    {
+        rectTransform.anchoredPosition = new Vector2(x, rectTransform.anchoredPosition.y);
+    }
 
     public static void SetSizeDeltaX(this RectTransform rectTransform, float x)
     {
@@ -54,7 +59,11 @@ internal static class RectTransformExtensions
 
         return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
     }
-
+    
+    
+    /// <remarks>
+    /// Ignore the "Expensive method invocation" warning, it's only expensive the first time you call it after a scene load.
+    /// </remarks>
     public static Rect GetRelativeRect(this RectTransform rectTransform, RectTransform worldRectTransform)
     {
         var camera = CameraUtils.GetBestUiCamera();
@@ -84,6 +93,25 @@ internal static class RectTransformExtensions
         var size = max - min;
         return new Rect(min.x, min.y, size.x, size.y);
     }
+
+    /// <remarks>
+    /// Ignore the "Expensive method invocation" warning, it's only expensive the first time you call it after a scene load.
+    /// </remarks>
+    public static Vector2 WorldToLocalPoint(this RectTransform rectTransform, Vector3 worldPoint)
+    {
+        var camera = CameraUtils.GetBestUiCamera();
+        
+        var screenPos = RectTransformUtility.WorldToScreenPoint(camera, worldPoint);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPos, camera, out var localPos);
+
+        return localPos;
+    }
+
+    /// <remarks>
+    /// Ignore the "Expensive method invocation" warning, it's only expensive the first time you call it after a scene load.
+    /// </remarks>
+    public static Vector2 WorldToLocalPoint(this RectTransform rectTransform, RectTransform other) =>
+        rectTransform.WorldToLocalPoint(other.position);
 
     public static float WorldMaxY(this RectTransform rectTransform)
     {
