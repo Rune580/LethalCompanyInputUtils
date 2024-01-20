@@ -51,9 +51,10 @@ public class PopOver : MonoBehaviour
         if (pivotPoint is null)
             return;
 
+        var targetPos = (Vector3)GetTargetPosition(target);
         var offset = (Vector3)GetTargetPivotOffset(target);
         var labelOffset = (Vector3)GetLabelPivotOffset();
-        pivotPoint.position = target.position + offset + labelOffset;
+        pivotPoint.localPosition = targetPos + offset + labelOffset;
     }
 
     private void SetPivot()
@@ -95,35 +96,50 @@ public class PopOver : MonoBehaviour
         }
     }
 
+    private Vector2 GetTargetPosition(RectTransform target)
+    {
+        if (popOverLayer is null)
+            return Vector2.zero;
+        
+        var camera = CameraUtils.GetBestUiCamera();
+
+        var screenPos = RectTransformUtility.WorldToScreenPoint(camera, target.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(popOverLayer, screenPos, camera, out var localPos);
+
+        return localPos;
+    }
+
     private Vector2 GetTargetPivotOffset(RectTransform target)
     {
         if (popOverLayer is null)
             return Vector2.zero;
-
-        var targetRect = target.UiBounds();
+        
+        var targetRect = popOverLayer.GetRelativeRect(target);
+        const float offset = 2f;
 
         return _placement switch {
-            Placement.Top => new Vector2(0f, 1f + targetRect.height / 2f),
-            Placement.Bottom => new Vector2(0f, -1f + -targetRect.height / 2f),
-            Placement.Left => new Vector2(-1f + -targetRect.width / 2f, 0f),
-            Placement.Right => new Vector2(1f + targetRect.width / 2f, 0f),
+            Placement.Top => new Vector2(0f, offset + targetRect.height / 2f),
+            Placement.Bottom => new Vector2(0f, -offset + -targetRect.height / 2f),
+            Placement.Left => new Vector2(-offset + -targetRect.width / 2f, 0f),
+            Placement.Right => new Vector2(offset + targetRect.width / 2f, 0f),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
 
     private Vector2 GetLabelPivotOffset()
     {
-        if (textContainer is null || _rectTransform is null)
+        if (textContainer is null || textContainer.rectTransform is null || _rectTransform is null || popOverLayer is null)
             return Vector2.zero;
 
-        var rect = _rectTransform.UiBounds();
+        var rect = popOverLayer.GetRelativeRect(_rectTransform);
+        var textRect = popOverLayer.GetRelativeRect(textContainer.rectTransform);
 
         return _placement switch
         {
-            Placement.Top => new Vector2(0f, -((rect.height - textContainer.Height) / 2f)),
-            Placement.Bottom => new Vector2(0f, (rect.height - textContainer.Height) / 2f),
-            Placement.Left => new Vector2((rect.width - textContainer.Width) / 2f, 0f),
-            Placement.Right => new Vector2(-((rect.width - textContainer.Width) / 2f), 0f),
+            Placement.Top => new Vector2(0f, -((rect.height - textRect.height) / 2f)),
+            Placement.Bottom => new Vector2(0f, (rect.height - textRect.height) / 2f),
+            Placement.Left => new Vector2((rect.width - textRect.width) / 2f, 0f),
+            Placement.Right => new Vector2(-((rect.width - textRect.width) / 2f), 0f),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

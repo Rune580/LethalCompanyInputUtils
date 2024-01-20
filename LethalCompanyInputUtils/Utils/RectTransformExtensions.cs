@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace LethalCompanyInputUtils.Utils;
 
@@ -35,6 +36,7 @@ internal static class RectTransformExtensions
         rectTransform.sizeDelta = new Vector2(x, rectTransform.sizeDelta.y);
     }
 
+    [Obsolete("Use GetRelativeRect")]
     public static Rect UiBoundsWorld(this RectTransform rectTransform)
     {
         var position = rectTransform.position;
@@ -44,20 +46,43 @@ internal static class RectTransformExtensions
         return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
     }
 
-    public static Rect UiBounds(this RectTransform rectTransform)
-    {
-        var rect = rectTransform.rect;
-        var scale = rectTransform.lossyScale;
-
-        return new Rect(rect.x * scale.x, rect.y * scale.y, rect.width * scale.x, rect.height * scale.y);
-    }
-
+    [Obsolete("Use GetRelativeRect")]
     public static Rect UiBounds(this RectTransform rectTransform, Vector3 position)
     {
         var rect = rectTransform.rect;
         var scale = rectTransform.lossyScale;
 
         return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
+    }
+
+    public static Rect GetRelativeRect(this RectTransform rectTransform, RectTransform worldRectTransform)
+    {
+        var camera = CameraUtils.GetBestUiCamera();
+        var corners = new Vector3[4];
+        worldRectTransform.GetWorldCorners(corners);
+
+        var screenCorners = new Vector2[4];
+        for (int i = 0; i < corners.Length; i++)
+            screenCorners[i] = RectTransformUtility.WorldToScreenPoint(camera, corners[i]);
+
+        var localCorners = new Vector2[4];
+        for (int i = 0; i < screenCorners.Length; i++)
+        {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenCorners[i], camera,
+                out localCorners[i]);
+        }
+
+        var min = localCorners[0];
+        var max = localCorners[0];
+
+        foreach (var corner in localCorners)
+        {
+            min = Vector2.Min(min, corner);
+            max = Vector2.Max(max, corner);
+        }
+
+        var size = max - min;
+        return new Rect(min.x, min.y, size.x, size.y);
     }
 
     public static float WorldMaxY(this RectTransform rectTransform)
