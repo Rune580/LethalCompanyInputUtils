@@ -1,7 +1,5 @@
 ﻿using System;
 using LethalCompanyInputUtils.Utils;
-using LethalCompanyInputUtils.Utils.Anim;
-using LethalCompanyInputUtils.Utils.Anim.TweenValues;
 using UnityEngine;
 
 namespace LethalCompanyInputUtils.Components.PopOvers;
@@ -9,8 +7,6 @@ namespace LethalCompanyInputUtils.Components.PopOvers;
 [RequireComponent(typeof(RectTransform))]
 public class PopOver : MonoBehaviour
 {
-    private readonly TweenRunner<Vector3Tween> _posTweenRunner = new();
-    
     public RectTransform? popOverLayer;
     public PopOverTextContainer? textContainer;
     public RectTransform? pivotPoint;
@@ -22,11 +18,6 @@ public class PopOver : MonoBehaviour
     private RectTransform? _rectTransform;
     private RectTransform? _target;
     private Placement _placement;
-
-    protected PopOver()
-    {
-        _posTweenRunner.Init(this);
-    }
 
     public void SetTarget(RectTransform target, Placement placement)
     {
@@ -62,62 +53,8 @@ public class PopOver : MonoBehaviour
         var offset = (Vector3)GetTargetPivotOffset(target);
         var labelOffset = (Vector3)GetLabelPivotOffset();
         
-        StartMovementTween(targetPos + offset + labelOffset);
-        AdjustArrowPosToTarget(targetPos);
-    }
-
-    private void StartMovementTween(Vector3 targetPos)
-    {
-        if (pivotPoint is null)
-            return;
-        
-        var tween = new Vector3Tween
-        {
-            Duration = 0.1f,
-            StartValue = pivotPoint.localPosition,
-            TargetValue = targetPos,
-            IgnoreTimeScale = true
-        };
-        tween.AddOnChangedCallback(OnPivotPosChanged);
-        _posTweenRunner.StartTween(tween);
-    }
-
-    private void OnPivotPosChanged(Vector3 localPos)
-    {
-        if (pivotPoint is null || popOverLayer is null || _rectTransform is null || arrow is null || arrow.rectTransform is null)
-            return;
-
-        var view = popOverLayer.rect;
-
-        var diff = localPos - pivotPoint.localPosition;
-        var movement = new Vector2(diff.x, diff.y);
-        
-        var popOverRect =  popOverLayer.GetRelativeRect(_rectTransform);
-        var nextMax = popOverRect.max + movement;
-        var nextMin = popOverRect.min + movement;
-        
-        if (nextMax.x > view.xMax)
-        {
-            var xOffset = nextMax.x - view.xMax;
-            movement = new Vector2(movement.x - xOffset, movement.y);
-        }
-        if (nextMin.x < view.xMin)
-        {
-            var xOffset = view.xMin - nextMin.x;
-            movement = new Vector2(movement.x + xOffset, movement.y);
-        }
-        if (nextMax.y > view.yMax)
-        {
-            var yOffset = nextMax.y - view.yMax;
-            movement = new Vector2(movement.x, movement.y - yOffset);
-        }
-        if (nextMin.y < view.yMin)
-        {
-            var yOffset = view.yMin - nextMin.y;
-            movement = new Vector2(movement.x, movement.y + yOffset);
-        }
-
-        pivotPoint.localPosition += (Vector3)movement;
+        MovePopOverToTarget(targetPos + offset + labelOffset);
+        AdjustArrowPosToTarget(target);
     }
 
     private void SetPivot()
@@ -202,26 +139,50 @@ public class PopOver : MonoBehaviour
         };
     }
     
-    private void AdjustArrowPosToTarget(Vector3 targetPos)
+    private void MovePopOverToTarget(Vector3 targetPos)
     {
-        if (popOverLayer is null || arrow is null || arrow.rectTransform is null ||  _rectTransform is null)
+        if (pivotPoint is null || popOverLayer is null || _rectTransform is null)
             return;
 
-        targetPos = arrow.rectTransform.WorldToLocalPoint(targetPos);
+        var view = popOverLayer.rect;
+
+        var diff = targetPos - pivotPoint.localPosition;
+        var movement = new Vector2(diff.x, diff.y);
         
-        switch (_placement)
+        var popOverRect =  popOverLayer.GetRelativeRect(_rectTransform);
+        var nextMax = popOverRect.max + movement;
+        var nextMin = popOverRect.min + movement;
+        
+        if (nextMax.x > view.xMax)
         {
-            case Placement.Top:
-            case Placement.Bottom:
-                arrow.SetXTarget(targetPos.x);
-                break;
-            case Placement.Left:
-            case Placement.Right:
-                arrow.SetYTarget(targetPos.y);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            var xOffset = nextMax.x - view.xMax;
+            movement = new Vector2(movement.x - xOffset, movement.y);
         }
+        if (nextMin.x < view.xMin)
+        {
+            var xOffset = view.xMin - nextMin.x;
+            movement = new Vector2(movement.x + xOffset, movement.y);
+        }
+        if (nextMax.y > view.yMax)
+        {
+            var yOffset = nextMax.y - view.yMax;
+            movement = new Vector2(movement.x, movement.y - yOffset);
+        }
+        if (nextMin.y < view.yMin)
+        {
+            var yOffset = view.yMin - nextMin.y;
+            movement = new Vector2(movement.x, movement.y + yOffset);
+        }
+
+        pivotPoint.localPosition += (Vector3)movement;
+    }
+    
+    private void AdjustArrowPosToTarget(RectTransform target)
+    {
+        if (arrow is null)
+            return;
+        
+        arrow.SetTargetPos(target.position);
     }
 
     public void SetText(string text)
