@@ -5,6 +5,12 @@ namespace LethalCompanyInputUtils.Utils;
 
 internal static class RectTransformExtensions
 {
+    public static void SetLocalPosX(this RectTransform rectTransform, float x)
+    {
+        var localPos = rectTransform.localPosition;
+        rectTransform.localPosition = new Vector3(x, localPos.y, localPos.z);
+    }
+    
     public static void SetLocalPosY(this RectTransform rectTransform, float y)
     {
         var localPos = rectTransform.localPosition;
@@ -25,15 +31,15 @@ internal static class RectTransformExtensions
     {
         rectTransform.anchorMax = new Vector2(rectTransform.anchorMax.x, y);
     }
-
-    public static void SetAnchoredPosY(this RectTransform rectTransform, float y)
-    {
-        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, y);
-    }
     
     public static void SetAnchoredPosX(this RectTransform rectTransform, float x)
     {
         rectTransform.anchoredPosition = new Vector2(x, rectTransform.anchoredPosition.y);
+    }
+
+    public static void SetAnchoredPosY(this RectTransform rectTransform, float y)
+    {
+        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, y);
     }
 
     public static void SetSizeDeltaX(this RectTransform rectTransform, float x)
