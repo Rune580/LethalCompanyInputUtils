@@ -275,6 +275,7 @@ public class RebindButton : MonoBehaviour
             .OnMatchWaitForAnother(0.1f)
             .WithControlsHavingToMatchPath("<Keyboard>")
             .WithControlsHavingToMatchPath("<Mouse>")
+            .WithControlsExcluding("<Mouse>/scroll/y")
             .WithCancelingThrough("<Keyboard>/escape")
             .OnComplete(operation => OnRebindComplete(operation, this))
             .OnCancel(_ => FinishRebinding())
