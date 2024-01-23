@@ -1,12 +1,15 @@
-﻿using UnityEngine;
+﻿using LethalCompanyInputUtils.Utils;
+using UnityEngine;
 
 namespace LethalCompanyInputUtils.Components.PopOvers;
 
 [RequireComponent(typeof(RectTransform))]
 public class PopOverArrow : MonoBehaviour
 {
+    public PopOver? popOver;
     public RectTransform? parent;
     public RectTransform? rectTransform;
+    public Vector2 arrowPadding = new(2f, 2f);
 
     private bool _lockX;
     private bool _lockY;
@@ -80,19 +83,48 @@ public class PopOverArrow : MonoBehaviour
         _lockY = false;
     }
 
-    public void SetTargetPos(Vector3 targetPos)
+    public void SetTargetPos(RectTransform target)
     {
-        if (rectTransform is null)
+        if (rectTransform is null || parent is null || popOver is null || popOver.popOverLayer is null)
             return;
+
+        var targetRect = popOver.popOverLayer.GetRelativeRect(target);
+        var arrowRect = popOver.popOverLayer.GetRelativeRect(rectTransform);
+
+        var diff = targetRect.CenteredPos() - arrowRect.CenteredPos();
+        var movement = diff;
+
+        var view = popOver.popOverLayer.GetRelativeRect(parent);
         
-        var pos = rectTransform.position;
+        var nextMin = (arrowRect.min - arrowPadding) + movement;
+        var nextMax = (arrowRect.max + arrowPadding) + movement;
+        
+        if (nextMax.x > view.xMax)
+        {
+            var xOffset = nextMax.x - view.xMax;
+            movement = new Vector2(movement.x - xOffset, movement.y);
+        }
+        if (nextMin.x < view.xMin)
+        {
+            var xOffset = view.xMin - nextMin.x;
+            movement = new Vector2(movement.x + xOffset, movement.y);
+        }
+        if (nextMax.y > view.yMax)
+        {
+            var yOffset = nextMax.y - view.yMax;
+            movement = new Vector2(movement.x, movement.y - yOffset);
+        }
+        if (nextMin.y < view.yMin)
+        {
+            var yOffset = view.yMin - nextMin.y;
+            movement = new Vector2(movement.x, movement.y + yOffset);
+        }
 
-        if (!_lockX)
-            pos = new Vector3(targetPos.x, pos.y, pos.z);
+        if (_lockX)
+            movement = new Vector2(0, movement.y);
+        if (_lockY)
+            movement = new Vector2(movement.x, 0);
 
-        if (!_lockY)
-            pos = new Vector3(pos.x, targetPos.y, pos.z);
-
-        rectTransform.position = pos;
+        rectTransform.localPosition += (Vector3)movement;
     }
 }
