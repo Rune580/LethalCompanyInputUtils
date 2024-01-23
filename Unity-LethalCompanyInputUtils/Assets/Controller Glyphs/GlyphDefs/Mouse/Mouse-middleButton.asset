@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2056571223, guid: de7f53af8e88288428b07212e8711754, type: 3}
+  m_Name: Mouse-middleButton
+  m_EditorClassIdentifier: 
+  controlPath: <Mouse>/middleButton
+  glyphSprite: {fileID: 21300000, guid: e1fd21b59c19b8c46a5a460dba44866c, type: 3}

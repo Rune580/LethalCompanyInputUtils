@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1420432990, guid: de7f53af8e88288428b07212e8711754, type: 3}
+  m_Name: Mouse Glyphs
+  m_EditorClassIdentifier: 
+  validGamepadTypes: []
+  glyphSet:
+  - {fileID: 11400000, guid: a45dbf4eb10f82644bb3c56796392002, type: 2}
+  - {fileID: 11400000, guid: 1f42e32686166514ab2b9d28d4431bbf, type: 2}
+  - {fileID: 11400000, guid: edbb0f39a0f9d2443a000cbba8e36eb1, type: 2}
+  - {fileID: 11400000, guid: d6041202c39f384449a81a18b3b89530, type: 2}
+  - {fileID: 11400000, guid: 2cf1e5c45f58fb949bcd74460b8cb999, type: 2}
+  - {fileID: 11400000, guid: afad58e2a2798614baca549a28350c7f, type: 2}
+  - {fileID: 11400000, guid: b64503e3915b042459b3cca12626d4a1, type: 2}
+  - {fileID: 11400000, guid: dc83976c847214147958058fac83e668, type: 2}
+  - {fileID: 11400000, guid: 9873d22400ac9a549b1eadbac6c88718, type: 2}
