@@ -4,6 +4,7 @@ using HarmonyLib;
 using LethalCompanyInputUtils.Components;
 using LethalCompanyInputUtils.Glyphs;
 using LethalCompanyInputUtils.Utils;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -30,6 +31,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         LoadControllerGlyphs();
         
         FsUtils.EnsureControlsDir();
+
+        RegisterExtendedMouseLayout();
         
         Logging.Info($"InputUtils {ModVersion} has finished loading!");
     }
@@ -56,5 +59,48 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     private static void OnDeviceChanged(InputDevice device, InputDeviceChange state)
     {
         RebindButton.ReloadGlyphs();
+    }
+    
+    private static void RegisterExtendedMouseLayout()
+    {
+        string extendedMouseJson = """
+                               {
+                                  "name": "InputUtilsExtendedMouse",
+                                  "extend": "Mouse",
+                                  "controls": [
+                                      {
+                                          "name": "scroll/up",
+                                          "layout": "Button",
+                                          "useStateFrom": "scroll/up",
+                                          "format": "BIT",
+                                          "synthetic": true
+                                      },
+                                      {
+                                          "name": "scroll/down",
+                                          "layout": "Button",
+                                          "useStateFrom": "scroll/down",
+                                          "format": "BIT",
+                                          "synthetic": true
+                                      },
+                                      {
+                                          "name": "scroll/left",
+                                          "layout": "Button",
+                                          "useStateFrom": "scroll/left",
+                                          "format": "BIT",
+                                          "synthetic": true
+                                      },
+                                      {
+                                          "name": "scroll/right",
+                                          "layout": "Button",
+                                          "useStateFrom": "scroll/right",
+                                          "format": "BIT",
+                                          "synthetic": true
+                                      }
+                                  ]
+                               }
+                               """;
+        
+        InputSystem.RegisterLayoutOverride(extendedMouseJson);
+        Logging.Info("Registered InputUtilsExtendedMouse Layout Override!");
     }
 }
