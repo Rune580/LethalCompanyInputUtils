@@ -1,3 +1,9 @@
+### [0.6.0]
+
+Features:
+- Scroll Wheel rebinding support.
+- Mouse button glyphs.
+
 ### [0.5.6]
 
 Allow LcInputAction's to have NonPublic InputActions.

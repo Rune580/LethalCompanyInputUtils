@@ -1,6 +1,6 @@
 {
     "name": "LethalCompany_InputUtils",
-    "version_number": "0.5.6",
+    "version_number": "0.6.0",
     "website_url": "https://github.com/Rune580/LethalCompanyInputUtils",
     "description": "Utilities for creating InputActions and providing an (opinionated) improved UI.",
     "dependencies": [
