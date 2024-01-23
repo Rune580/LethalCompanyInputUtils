@@ -4,7 +4,6 @@ using HarmonyLib;
 using LethalCompanyInputUtils.Components;
 using LethalCompanyInputUtils.Glyphs;
 using LethalCompanyInputUtils.Utils;
-using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -28,7 +27,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         InputSystem.onDeviceChange += OnDeviceChanged;
         
         LoadAssetBundles();
-        LoadControllerGlyphs();
+        
+        ControllerGlyph.LoadGlyphs();
         
         FsUtils.EnsureControlsDir();
 
@@ -40,12 +40,6 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     private void LoadAssetBundles()
     {
         Assets.AddBundle("ui-assets");
-    }
-
-    private void LoadControllerGlyphs()
-    {
-        Assets.Load<ControllerGlyph>("controller glyphs/xbox series x glyphs.asset");
-        Assets.Load<ControllerGlyph>("controller glyphs/dualsense glyphs.asset");
     }
 
     private static void OnSceneChanged(Scene current, Scene next)

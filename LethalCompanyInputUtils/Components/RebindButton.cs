@@ -101,9 +101,31 @@ public class RebindButton : MonoBehaviour
         {
             removeButton.gameObject.SetActive(!string.Equals(effectivePath, LcInputActions.UnboundKeyboardAndMouseIdentifier));
             
-            glyphLabel.enabled = false;
-            bindLabel.SetText(bindPath);
+            HandleKbmGlyphOrLabel(effectivePath, bindPath);
         }
+    }
+
+    private void HandleKbmGlyphOrLabel(string effectivePath, string bindPath)
+    {
+        if (bindLabel is null || glyphLabel is null)
+            return;
+
+        if (ControllerGlyph.MouseGlyphs is not null)
+        {
+            var glyph = ControllerGlyph.MouseGlyphs[effectivePath];
+
+            if (glyph is not null)
+            {
+                bindLabel.SetText("");
+                
+                glyphLabel.sprite = glyph;
+                glyphLabel.enabled = true;
+                return;
+            }
+        }
+        
+        glyphLabel.enabled = false;
+        bindLabel.SetText(bindPath);
     }
 
     private void SetAsUnsupported()

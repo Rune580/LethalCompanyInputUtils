@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,8 +14,12 @@ public class ControllerGlyph : ScriptableObject
     public List<GlyphDef> glyphSet = [];
 
     private readonly Dictionary<string, Sprite?> _glyphLut = new();
-
+    
     private static readonly List<ControllerGlyph> Instances = [];
+    
+    private static bool _loaded;
+
+    public static ControllerGlyph? MouseGlyphs { get; private set; }
 
     public static ControllerGlyph? GetBestMatching()
     {
@@ -28,6 +33,19 @@ public class ControllerGlyph : ScriptableObject
         }
 
         return Instances[0];
+    }
+
+    internal static void LoadGlyphs()
+    {
+        if (_loaded)
+            return;
+        
+        Assets.Load<ControllerGlyph>("controller glyphs/xbox series x glyphs.asset");
+        Assets.Load<ControllerGlyph>("controller glyphs/dualsense glyphs.asset");
+        
+        MouseGlyphs = Assets.Load<ControllerGlyph>("controller glyphs/mouse glyphs.asset");
+        
+        _loaded = true;
     }
 
     public bool IsCurrent
