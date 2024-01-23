@@ -174,10 +174,11 @@ public class RebindButton : MonoBehaviour
 
         resetButton.interactable = false;
         removeButton.interactable = false;
+        
+        glyphLabel.enabled = false;
 
         if (_key.gamepadOnly)
         {
-            glyphLabel.enabled = false;
             rebindIndicator.enabled = true;
             
             RebindGamepad(_key.currentInput, rebindIndex);
@@ -299,6 +300,7 @@ public class RebindButton : MonoBehaviour
             .WithControlsHavingToMatchPath("<Mouse>")
             .WithControlsHavingToMatchPath("<InputUtilsExtendedMouse>")
             .WithControlsExcluding("<Mouse>/scroll/y")
+            .WithControlsExcluding("<Mouse>/scroll/x")
             .WithCancelingThrough("<Keyboard>/escape")
             .OnComplete(operation => OnRebindComplete(operation, this))
             .OnCancel(_ => FinishRebinding())
