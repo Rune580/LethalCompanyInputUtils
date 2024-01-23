@@ -46,8 +46,7 @@ internal static class RectTransformExtensions
     {
         rectTransform.sizeDelta = new Vector2(x, rectTransform.sizeDelta.y);
     }
-
-    [Obsolete("Use GetRelativeRect")]
+    
     public static Rect UiBoundsWorld(this RectTransform rectTransform)
     {
         var position = rectTransform.position;
@@ -65,7 +64,6 @@ internal static class RectTransformExtensions
 
         return new Rect((rect.x * scale.x) + position.x, (rect.y * scale.y) + position.y, rect.width * scale.x, rect.height * scale.y);
     }
-    
     
     /// <remarks>
     /// Ignore the "Expensive method invocation" warning, it's only expensive the first time you call it after a scene load.

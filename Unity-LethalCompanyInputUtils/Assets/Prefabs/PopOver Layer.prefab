@@ -869,7 +869,10 @@ MonoBehaviour:
   m_Script: {fileID: 1950626328, guid: de7f53af8e88288428b07212e8711754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  popOver: {fileID: 6117068881828800985}
+  parent: {fileID: 7666104697917076092}
   rectTransform: {fileID: 243098410441182375}
+  arrowPadding: {x: 3, y: 3}
 --- !u!1 &7234136220518972611
 GameObject:
   m_ObjectHideFlags: 0

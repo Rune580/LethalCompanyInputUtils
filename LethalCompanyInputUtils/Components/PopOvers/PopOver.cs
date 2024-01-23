@@ -52,8 +52,10 @@ public class PopOver : MonoBehaviour
         var targetPos = (Vector3)GetTargetPosition(target);
         var offset = (Vector3)GetTargetPivotOffset(target);
         var labelOffset = (Vector3)GetLabelPivotOffset();
+
+        var pivotTarget = targetPos + offset + labelOffset;
         
-        MovePopOverToTarget(targetPos + offset + labelOffset);
+        MovePopOverToTarget(pivotTarget);
         AdjustArrowPosToTarget(target);
     }
 
@@ -182,7 +184,7 @@ public class PopOver : MonoBehaviour
         if (arrow is null)
             return;
         
-        arrow.SetTargetPos(target.position);
+        arrow.SetTargetPos(target);
     }
 
     public void SetText(string text)
