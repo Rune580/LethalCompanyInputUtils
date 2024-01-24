@@ -19,6 +19,9 @@ Read and fill in the following:
 <!-- Required -->
 - [ ] I acknowledge that InputUtils only officially supports the latest version of Lethal Company.
 
+<!-- Required if related to hosting or joining lobbies -->
+- [ ] I acknowledge that this issue may be closed if all players in the lobby don't have the exact same mod list and versions.
+
 <!-- Required -->
 - [ ] I have filled or marked all fields marked with `<!-- Required -->` including this checkbox and acknowledge that failure to do so may result in my issue being closed immediately and deleted in 24 hours if I fail to fill or mark the required fields. Failure to mark this checkbox **Doesn't** mean you can ignore the requirements.
 
