@@ -31,6 +31,10 @@ public class InputActionBindingBuilder
     public InputActionBindingBuilder WithKbmPath(string kbmPath)
     {
         _kbmPath = kbmPath;
+
+        if (string.IsNullOrWhiteSpace(_kbmPath))
+            return WithKbmPathUnbound();
+        
         return this;
     }
 
@@ -43,6 +47,10 @@ public class InputActionBindingBuilder
     public InputActionBindingBuilder WithGamepadPath(string gamepadPath)
     {
         _gamepadPath = gamepadPath;
+
+        if (string.IsNullOrWhiteSpace(_gamepadPath))
+            return WithGamepadPathUnbound();
+        
         return this;
     }
 
