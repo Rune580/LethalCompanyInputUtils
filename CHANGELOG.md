@@ -1,3 +1,8 @@
+### [0.6.1]
+
+Fixes:
+- Empty bind paths for InputActions created using the builder now properly resolve.
+
 ### [0.6.0]
 
 Features:
