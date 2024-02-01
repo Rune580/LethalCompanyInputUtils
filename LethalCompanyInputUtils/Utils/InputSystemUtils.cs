@@ -10,7 +10,7 @@ internal static class InputSystemUtils
 
     public static bool IsKbmBind(this InputBinding binding)
     {
-        var path = binding.effectivePath;
+        var path = binding.path;
         
         if (string.Equals(path, LcInputActions.UnboundKeyboardAndMouseIdentifier))
             return true;
