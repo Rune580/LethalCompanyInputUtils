@@ -156,7 +156,7 @@ public class RebindButton : MonoBehaviour
             if (action.bindings.Count == 0)
                 return -1;
 
-            if (_key.gamepadOnly)
+            if (_key.gamepadOnly && action.bindings.Count > 1)
                 return 1;
             
             return 0;

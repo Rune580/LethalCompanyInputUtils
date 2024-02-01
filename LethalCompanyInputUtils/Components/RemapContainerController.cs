@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using LethalCompanyInputUtils.Components.Section;
+using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -155,7 +156,9 @@ public class RemapContainerController : MonoBehaviour
             
                 foreach (var actionRef in lcInputAction.ActionRefs)
                 {
-                    var controlName = actionRef.action.bindings.First().name;
+                    var action = actionRef.action;
+                    var controlName = action.bindings.First().name;
+                    
                     var kbmKey = new RemappableKey
                     {
                         ControlName = controlName,
@@ -171,6 +174,14 @@ public class RemapContainerController : MonoBehaviour
                         rebindingIndex = 1,
                         gamepadOnly = true
                     };
+                    
+                    if (action.IsGamepadOnly())
+                    {
+                        gamepadKey.rebindingIndex = 0;
+                        
+                        bindsList.AddBinds(null, gamepadKey);
+                        continue;
+                    }
                 
                     bindsList.AddBinds(kbmKey, gamepadKey);
                 }
