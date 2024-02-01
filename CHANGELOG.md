@@ -1,3 +1,8 @@
+### [0.6.2]
+
+Fixes:
+- Gamepad only binds now only allow gamepads.
+
 ### [0.6.1]
 
 Fixes:
