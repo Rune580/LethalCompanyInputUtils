@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using LethalCompanyInputUtils.Api;
 using UnityEngine.InputSystem;
 
@@ -15,10 +16,10 @@ internal static class InputSystemUtils
         if (string.Equals(path, LcInputActions.UnboundKeyboardAndMouseIdentifier))
             return true;
 
-        if (path.StartsWith("<Keyboard>"))
+        if (path.StartsWith("<Keyboard>", StringComparison.InvariantCultureIgnoreCase))
             return true;
 
-        if (path.StartsWith("<Mouse>"))
+        if (path.StartsWith("<Mouse>", StringComparison.InvariantCultureIgnoreCase))
             return true;
 
         return false;
