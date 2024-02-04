@@ -9,19 +9,51 @@ internal static class InputSystemUtils
 {
     public static bool IsGamepadOnly(this InputAction action) => action.bindings.All(binding => !binding.IsKbmBind());
 
-    public static bool IsKbmBind(this InputBinding binding)
+    public static bool IsKbmBind(this InputBinding binding) => string.Equals(binding.groups, DeviceGroups.KeyboardAndMouse);
+
+    public static bool IsGamepadBind(this InputBinding binding) => string.Equals(binding.groups, DeviceGroups.Gamepad);
+
+    public static RemappableKey? GetKbmKey(this InputActionReference actionRef)
     {
-        var path = binding.path;
+        var bindings = actionRef.action.bindings;
         
-        if (string.Equals(path, LcInputActions.UnboundKeyboardAndMouseIdentifier))
-            return true;
+        for (var i = 0; i < bindings.Count; i++)
+        {
+            var binding = bindings[i];
+            if (!binding.IsKbmBind())
+                continue;
+            
+            return new RemappableKey
+            {
+                ControlName = binding.name,
+                currentInput = actionRef,
+                rebindingIndex = i,
+                gamepadOnly = false
+            };
+        }
 
-        if (path.StartsWith("<Keyboard>", StringComparison.InvariantCultureIgnoreCase))
-            return true;
+        return null;
+    }
 
-        if (path.StartsWith("<Mouse>", StringComparison.InvariantCultureIgnoreCase))
-            return true;
+    public static RemappableKey? GetGamepadKey(this InputActionReference actionRef)
+    {
+        var bindings = actionRef.action.bindings;
 
-        return false;
+        for (int i = 0; i < bindings.Count; i++)
+        {
+            var binding = bindings[i];
+            if (!binding.IsGamepadBind())
+                continue;
+
+            return new RemappableKey
+            {
+                ControlName = binding.name,
+                currentInput = actionRef,
+                rebindingIndex = i,
+                gamepadOnly = true
+            };
+        }
+
+        return null;
     }
 }

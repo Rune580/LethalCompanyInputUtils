@@ -28,7 +28,8 @@ public class BindingOverrides
             {
                 action = binding.action,
                 origPath = binding.path,
-                path = binding.overridePath
+                path = binding.overridePath,
+                groups = binding.groups
             };
             
             overrides.Add(bindingOverride);
@@ -41,7 +42,7 @@ public class BindingOverrides
         {
             var action = asset.FindAction(bindingOverride.action);
 
-            action?.ApplyBindingOverride(bindingOverride.path, path: bindingOverride.origPath);
+            action?.ApplyBindingOverride(bindingOverride.path, group: bindingOverride.groups);
         }
     }
 
