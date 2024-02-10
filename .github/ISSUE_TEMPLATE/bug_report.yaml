@@ -1,13 +1,5 @@
----
-name: Bug report
-about: Use this when reporting bugs caused by InputUtils
-title: ''
-labels: ''
-assignees: ''
-
----
 name: Bug Report
-description: Use this when reporting bugs caused by InputUtils
+description: "Use this when reporting bugs caused by InputUtils"
 title: "[Bug]: "
 labels: ["bug"]
 assignees:
@@ -25,7 +17,7 @@ body:
   - type: dropdown
     attributes:
       label: Lobby Related
-      description: Is this issue related to lobby joining/hosting?
+      description: "Is this issue related to lobby joining/hosting?"
       multiple: false
       options:
         - No
@@ -41,81 +33,63 @@ body:
       label: Lobby Acknowledgements
       options:
         - label: I understand that all players must have the exact same mod list and have made sure that all players have the exact same modlist.
-  - type: textarea
+  - type: input
     id: inpututils-version
     attributes:
       label: InputUtils Version
-      description: What version of InputUtils are you using?
+      description: "What version of InputUtils are you using?"
       placeholder: "Example: 0.6.3"
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: game-version
     attributes:
       label: Game Version
-      description: What version of LethalCompany are you using?
+      description: "What version of LethalCompany are you using?"
       placeholder: "Example: v49"
     validations:
       required: true
-
-<!-- Checkboxes can be marked by filling the `[ ]` with `[x]` -->
-Read and fill in the following:
-
-<!-- Required -->
-- [ ] I use r2modman/thunderstore.
-
-<!-- Required if manually installed -->
-- [ ] I acknowledge that issues from manual installs may not get resolved as they are difficult for mod developers to debug.
-
-<!-- Required -->
-- [ ] I acknowledge that InputUtils only officially supports the latest version of Lethal Company.
-
-<!-- Required if related to hosting or joining lobbies -->
-- [ ] I acknowledge that this issue may be closed if all players in the lobby don't have the exact same mod list and versions.
-
-<!-- Required -->
-- [ ] I have filled or marked all fields marked with `<!-- Required -->` including this checkbox and acknowledge that failure to do so may result in my issue being closed immediately and deleted in 24 hours if I fail to fill or mark the required fields. Failure to mark this checkbox **Doesn't** mean you can ignore the requirements.
-
----
-
-<!-- Required -->
-**Versions**
-InputUtils Version:  ex: 0.6.0
-Lethal Company Version: ex: v49
-
-<!-- Required -->
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-<!-- Required -->
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-<!-- Optional but helpful -->
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-<!-- Optional -->
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-<!-- Required -->
-**Logs**
-Please attach any relevant logs, this makes it far easier for us to fix your issue.
-Finding Logs (r2modman/thunderstore):
-1. Go to your profile in r2modman/thunderstore.
-2. Click `Settings>Locations>Browse profile folder`
-3. Open the `BepInEx` folder
-4. The log file we want is called `LogOutput.log`
-
-<!-- Required -->
-**ModPack Code or File**
-<!-- Having a ModPack code or file also makes it easier for us to test for the issue. -->
-
-<!-- Optional -->
-**Additional context**
-Add any other context about the problem here.
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: "A clear and concise description of what the bug is."
+      placeholder: "A clear and concise description of what the bug is."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Reproduction steps
+      description: "How do you trigger this bug? Please walk us through it step by step."
+      placeholder: |
+        1. 
+        2. 
+        3. 
+        ...
+    validations:
+      required: true
+  - type: input
+    id: modpack
+    attributes:
+      label: ModPack code or file
+      description: "Provide an r2modman/thunderstore ModPack code or file where the issue occurs."
+    validations:
+      required: true
+  - type: input
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        "Please attach any relevant logs, this makes it far easier for us to fix your issue. Finding Logs (r2modman/thunderstore):
+        1. Go to your profile in r2modman/thunderstore.
+        2. Click `Settings>Locations>Browse profile folder`
+        3. Open the `BepInEx` folder
+        4. The log file we want is called `LogOutput.log`"
+    validations:
+      required: true
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional context
+      description: "Add any other context about the problem here."
