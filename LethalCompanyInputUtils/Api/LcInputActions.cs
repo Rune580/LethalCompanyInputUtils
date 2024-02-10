@@ -167,7 +167,8 @@ public abstract class LcInputActions
                 if (bindingOverride.path is null)
                     continue;
 
-                if (bindingOverride.path.StartsWith("<Keyboard>") || bindingOverride.path.StartsWith("<Mouse>"))
+                if (bindingOverride.path.StartsWith("<Keyboard>", StringComparison.InvariantCultureIgnoreCase)
+                    || bindingOverride.path.StartsWith("<Mouse>", StringComparison.InvariantCultureIgnoreCase))
                 {
                     bindingOverride.origPath = UnboundKeyboardAndMouseIdentifier;
                 }
@@ -181,6 +182,38 @@ public abstract class LcInputActions
                 overrides.overrides[i] = bindingOverride;
             }
 
+            File.WriteAllText(_jsonPath, JsonConvert.SerializeObject(overrides));
+        }
+        
+        // 0.7.0 added groups to the BindingOverride schema for better device specific bind detection.
+        var hasPre070Overrides = !File.ReadAllText(_jsonPath)
+            .Replace(" ", "")
+            .Contains("\"groups\":");
+
+        if (hasPre070Overrides)
+        {
+            var overrides = BindingOverrides.FromJson(File.ReadAllText(_jsonPath));
+
+            for (int i = 0; i < overrides.overrides.Count; i++)
+            {
+                var bindingOverride = overrides.overrides[i];
+                if (string.IsNullOrEmpty(bindingOverride.origPath))
+                    continue;
+
+                if (bindingOverride.origPath.StartsWith("<Keyboard>", StringComparison.InvariantCultureIgnoreCase)
+                    || bindingOverride.origPath.StartsWith("<Mouse>", StringComparison.InvariantCultureIgnoreCase)
+                    || string.Equals(bindingOverride.origPath, UnboundKeyboardAndMouseIdentifier))
+                {
+                    bindingOverride.groups = DeviceGroups.KeyboardAndMouse;
+                }
+                else
+                {
+                    bindingOverride.groups = DeviceGroups.Gamepad;
+                }
+
+                overrides.overrides[i] = bindingOverride;
+            }
+            
             File.WriteAllText(_jsonPath, JsonConvert.SerializeObject(overrides));
         }
     }

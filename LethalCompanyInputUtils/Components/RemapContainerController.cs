@@ -156,32 +156,8 @@ public class RemapContainerController : MonoBehaviour
             
                 foreach (var actionRef in lcInputAction.ActionRefs)
                 {
-                    var action = actionRef.action;
-                    var controlName = action.bindings.First().name;
-                    
-                    var kbmKey = new RemappableKey
-                    {
-                        ControlName = controlName,
-                        currentInput = actionRef,
-                        rebindingIndex = 0,
-                        gamepadOnly = false
-                    };
-                
-                    var gamepadKey = new RemappableKey
-                    {
-                        ControlName = controlName,
-                        currentInput = actionRef,
-                        rebindingIndex = 1,
-                        gamepadOnly = true
-                    };
-                    
-                    if (action.IsGamepadOnly())
-                    {
-                        gamepadKey.rebindingIndex = 0;
-                        
-                        bindsList.AddBinds(null, gamepadKey);
-                        continue;
-                    }
+                    var kbmKey = actionRef.GetKbmKey();
+                    var gamepadKey = actionRef.GetGamepadKey();
                 
                     bindsList.AddBinds(kbmKey, gamepadKey);
                 }

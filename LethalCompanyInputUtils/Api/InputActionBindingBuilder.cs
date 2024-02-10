@@ -1,4 +1,5 @@
-﻿using UnityEngine.InputSystem;
+﻿using LethalCompanyInputUtils.Utils;
+using UnityEngine.InputSystem;
 
 namespace LethalCompanyInputUtils.Api;
 
@@ -92,10 +93,10 @@ public class InputActionBindingBuilder
         _mapBuilder.WithAction(action);
 
         if (_kbmPath is not null)
-            _mapBuilder.WithBinding(new InputBinding(_kbmPath, _actionId, interactions: _kbmInteractions, name: _name));
+            _mapBuilder.WithBinding(new InputBinding(_kbmPath, _actionId, interactions: _kbmInteractions, name: _name, groups: DeviceGroups.KeyboardAndMouse));
         
         if (_gamepadPath is not null)
-            _mapBuilder.WithBinding(new InputBinding(_gamepadPath, _actionId, interactions: _gamepadInteractions, name: _name));
+            _mapBuilder.WithBinding(new InputBinding(_gamepadPath, _actionId, interactions: _gamepadInteractions, name: _name, groups: DeviceGroups.Gamepad));
 
         return action;
     }
