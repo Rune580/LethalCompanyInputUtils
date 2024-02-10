@@ -42,12 +42,12 @@ public class RemapContainerController : MonoBehaviour
         LcInputActionApi.ContainerInstance = this;
     }
 
-    public void JumpTo(int sectionIndex)
+    public void JumpTo(int sectionIndex, bool forceUpdate = false)
     {
         if (bindsList is null)
             return;
         
-        bindsList.JumpTo(sectionIndex);
+        bindsList.JumpTo(sectionIndex, forceUpdate);
     }
 
     public void LoadUi()
@@ -213,7 +213,7 @@ public class RemapContainerController : MonoBehaviour
     {
         yield return KeyBindSearchManager.Instance.FilterWithSearch(searchText);
         
-        JumpTo(0);
+        JumpTo(0, true);
         yield return null;
     }
     

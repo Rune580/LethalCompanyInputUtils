@@ -82,7 +82,7 @@ public class BindsListController : MonoBehaviour
         OnScroll(Vector2.zero);
     }
 
-    public void JumpTo(int sectionIndex)
+    public void JumpTo(int sectionIndex, bool forceUpdate = false)
     {
         if (_content is null || scrollRect is null || _scrollRectTransform is null)
             return;
@@ -111,7 +111,7 @@ public class BindsListController : MonoBehaviour
             _content.SetAnchoredPosY(targetYPos);
         }
 
-        if (_currentSection != sectionIndex)
+        if (_currentSection != sectionIndex || forceUpdate)
             OnSectionChanged.Invoke(sectionIndex);
 
         _currentSection = sectionIndex;

@@ -57,7 +57,10 @@ public class SectionListController : MonoBehaviour
         foreach (var entry in _sectionEntries)
             entry.SetIndicator(false);
         
-        var sectionEntry = _sectionEntries[sectionIndex];
+        var sectionEntry = GetSectionEntry(sectionIndex);
+        if (sectionEntry is null)
+            return;
+        
         sectionEntry.SetIndicator(true);
 
         if (scrollRect is null)
@@ -99,5 +102,11 @@ public class SectionListController : MonoBehaviour
             return;
         
         remapContainer.JumpTo(sectionIndex);
+    }
+
+    private SectionEntry? GetSectionEntry(int index)
+    {
+        return _sectionEntries.Where(entry => entry.isActiveAndEnabled)
+            .ElementAtOrDefault(index);
     }
 }
