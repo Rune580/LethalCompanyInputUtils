@@ -69,14 +69,14 @@ body:
         ...
     validations:
       required: true
-  - type: input
+  - type: textarea
     id: modpack
     attributes:
       label: ModPack code or file
       description: "Provide an r2modman/thunderstore ModPack code or file where the issue occurs."
     validations:
       required: true
-  - type: input
+  - type: textarea
     id: logs
     attributes:
       label: Logs
