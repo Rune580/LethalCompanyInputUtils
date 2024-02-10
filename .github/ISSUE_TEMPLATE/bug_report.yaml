@@ -6,6 +6,57 @@ labels: ''
 assignees: ''
 
 ---
+name: Bug Report
+description: Use this when reporting bugs caused by InputUtils
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - Rune580
+body:
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I use r2modman/thunderstore and will provide a modpack code or zip
+          required: true
+        - label: I understand that InputUtils only officially supports the latest version of Lethal Company
+          required: true
+  - type: dropdown
+    attributes:
+      label: Lobby Related
+      description: Is this issue related to lobby joining/hosting?
+      multiple: false
+      options:
+        - No
+        - Yes
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "The following is required if this issue is related to lobby joining/hosting"
+  - type: checkboxes
+    id: lobby-acknowledgements
+    attributes:
+      label: Lobby Acknowledgements
+      options:
+        - label: I understand that all players must have the exact same mod list and have made sure that all players have the exact same modlist.
+  - type: textarea
+    id: inpututils-version
+    attributes:
+      label: InputUtils Version
+      description: What version of InputUtils are you using?
+      placeholder: "Example: 0.6.3"
+    validations:
+      required: true
+  - type: textarea
+    id: game-version
+    attributes:
+      label: Game Version
+      description: What version of LethalCompany are you using?
+      placeholder: "Example: v49"
+    validations:
+      required: true
 
 <!-- Checkboxes can be marked by filling the `[ ]` with `[x]` -->
 Read and fill in the following:
