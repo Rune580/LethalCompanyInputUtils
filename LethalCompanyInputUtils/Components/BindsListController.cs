@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using LethalCompanyInputUtils.Components.Section;
+using LethalCompanyInputUtils.Data;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 using UnityEngine.Events;
@@ -32,6 +34,8 @@ public class BindsListController : MonoBehaviour
     private float _spacing;
 
     private readonly List<SectionHeaderAnchor> _anchors = [];
+
+    public int ActiveAnchorCount => _anchors.Sum(anchor => anchor.isActiveAndEnabled ? 1 : 0);
 
     private void Awake()
     {
@@ -83,7 +87,7 @@ public class BindsListController : MonoBehaviour
         if (_content is null || scrollRect is null || _scrollRectTransform is null)
             return;
         
-        int sectionCount = _anchors.Count;
+        int sectionCount = ActiveAnchorCount;
         if (sectionIndex >= sectionCount || sectionIndex < 0)
             return;
         
@@ -96,7 +100,10 @@ public class BindsListController : MonoBehaviour
         }
         else
         {
-            var targetAnchor = _anchors[sectionIndex];
+            var targetAnchor = GetAnchor(sectionIndex);
+            if (targetAnchor is null)
+                return;
+            
             Vector2 targetPos = _scrollRectTransform.InverseTransformPoint(_content.position) -
                                 _scrollRectTransform.InverseTransformPoint(targetAnchor.RectTransform.position);
             var targetYPos = targetPos.y + (_sectionHeight / 2f) - _spacing;
@@ -138,12 +145,14 @@ public class BindsListController : MonoBehaviour
         
         OnScroll(Vector2.zero);
 
-        if (_anchors.Count == 0)
+        var anchorCount = ActiveAnchorCount;
+        if (anchorCount == 0)
             sectionAnchor.RectTransform.sizeDelta = new Vector2();
         
-        _currentSection = _anchors.Count;
+        _currentSection = anchorCount;
         
         _anchors.Add(sectionAnchor);
+        KeyBindSearchManager.Instance.AddAnchor(sectionName, sectionAnchor);
     }
 
     public void AddBinds(RemappableKey? kbmKey, RemappableKey? gamepadKey, bool isBaseGame = false, string controlName = "")
@@ -166,6 +175,12 @@ public class BindsListController : MonoBehaviour
         var rebindObject = Instantiate(rebindItemPrefab, _content);
         var rebindItem = rebindObject.GetComponent<RebindItem>();
         rebindItem.SetBind(controlName, kbmKey, gamepadKey, isBaseGame);
+
+        var sectionName = GetCurrentSectionName();
+        if (string.IsNullOrWhiteSpace(sectionName))
+            return;
+        
+        KeyBindSearchManager.Instance.AddBind(sectionName, controlName, rebindObject);
     }
 
     public void AddFooter()
@@ -189,9 +204,12 @@ public class BindsListController : MonoBehaviour
 
         var section = -1;
         
-        for (var i = 0; i < _anchors.Count; i++)
+        for (var i = 0; i < ActiveAnchorCount; i++)
         {
-            var anchor = _anchors[i];
+            var anchor = GetAnchor(i);
+            if (anchor is null)
+                continue;
+            
             var header = anchor.sectionHeader!;
             
             if (i == 0)
@@ -201,7 +219,10 @@ public class BindsListController : MonoBehaviour
                 continue;
             }
             
-            var prevAnchor = _anchors[i - 1];
+            var prevAnchor = GetAnchor(i - 1);
+            if (prevAnchor is null)
+                continue;
+            
             var prevHeader = prevAnchor.sectionHeader!;
             
             var nextYPos = CalculateHeaderRawYPos(anchor);
@@ -250,6 +271,32 @@ public class BindsListController : MonoBehaviour
         _rectTransform.DrawGizmoUiRectWorld();
     
         Gizmos.color = prevColor;
+    }
+
+    private string? GetCurrentSectionName()
+    {
+        if (ActiveAnchorCount == 0)
+            return null;
+
+        var anchor = GetAnchor(_currentSection);
+        if (anchor is null)
+            return null;
+
+        var header = anchor.sectionHeader;
+        if (header is null)
+            return null;
+
+        var label = header.label;
+        if (label is null)
+            return null;
+
+        return label.text;
+    }
+
+    private SectionHeaderAnchor? GetAnchor(int index)
+    {
+        return _anchors.Where(anchor => anchor.isActiveAndEnabled)
+            .ElementAtOrDefault(index);
     }
 
     private float GetMaxY(RectTransform element)

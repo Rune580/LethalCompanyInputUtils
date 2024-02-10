@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1700276884
+CRC: 501724107
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0fb8234f2b0889109bf02c1a3641d3a3
+    Hash: 6cdc6059fa554516a754afd15f298b35
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c39139dffb649f6bf00e3c03b7ae28a3
+    Hash: bd7bbb89eaf8eca5fae942dbbc2b7610
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 0fb8234f2b0889109bf02c1a3641d3a3
+    Hash: 6cdc6059fa554516a754afd15f298b35
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -43,6 +43,10 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
@@ -71,6 +75,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 320464083, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
+  Script: {fileID: -1319206779, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
   Script: {fileID: -762325398, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
   Script: {fileID: 1791224802, guid: de7f53af8e88288428b07212e8711754, type: 3}
@@ -97,6 +103,16 @@ SerializeReferenceClassIdentifiers:
   ClassName: TMPro.TMP_FontFeatureTable
 - AssemblyName: Unity.TextMeshPro
   ClassName: TMPro.TMP_FontWeightPair
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_InputField/OnChangeEvent
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_InputField/SelectionEvent
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_InputField/SubmitEvent
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_InputField/TextSelectionEvent
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_InputField/TouchScreenKeyboardEvent
 - AssemblyName: Unity.TextMeshPro
   ClassName: TMPro.VertexGradient
 - AssemblyName: UnityEngine.CoreModule

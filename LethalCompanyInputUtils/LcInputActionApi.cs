@@ -2,6 +2,7 @@
 using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Components;
+using LethalCompanyInputUtils.Data;
 using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;
@@ -150,6 +151,8 @@ public static class LcInputActionApi
         
         foreach (var lcInputActions in InputActions)
             lcInputActions.Loaded = false;
+        
+        KeyBindSearchManager.Instance.Clear();
     }
 
     internal static void RegisterInputActions(LcInputActions lcInputActions, InputActionMapBuilder builder)
