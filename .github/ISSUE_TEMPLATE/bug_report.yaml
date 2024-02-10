@@ -20,8 +20,8 @@ body:
       description: "Is this issue related to lobby joining/hosting?"
       multiple: false
       options:
-        - No
-        - Yes
+        - "No"
+        - "Yes"
     validations:
       required: true
   - type: markdown
