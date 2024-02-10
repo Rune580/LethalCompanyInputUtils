@@ -45,7 +45,7 @@ public class SectionListController : MonoBehaviour
         sectionEntry.OnEntrySelected.AddListener(OnSectionEntryPressed);
         
         _sectionEntries.Add(sectionEntry);
-        KeyBindSearchManager.Instance.AddSection(sectionName, sectionEntry.gameObject);
+        KeyBindSearchManager.Instance.AddSection(sectionName, sectionEntry);
     }
 
     public void SelectSection(int sectionIndex)

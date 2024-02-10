@@ -19,15 +19,15 @@ public class KeyBindSearchManager
         }
     }
     
-    private readonly Dictionary<string, GameObject?> _sectionGameObjectLut = new();
+    private readonly Dictionary<string, SectionEntry?> _sectionGameObjectLut = new();
     private readonly Dictionary<string, SectionHeaderAnchor?> _anchorGameObjectLut = new();
     private readonly Dictionary<string, Dictionary<string, GameObject?>> _sectionBindGameObjectLut = new();
 
     private KeyBindSearchManager() { }
 
-    public void AddSection(string sectionName, GameObject section)
+    public void AddSection(string sectionName, SectionEntry entry)
     {
-        _sectionGameObjectLut[sectionName] = section;
+        _sectionGameObjectLut[sectionName] = entry;
     }
 
     public void AddAnchor(string sectionName, SectionHeaderAnchor anchor)
@@ -102,10 +102,29 @@ public class KeyBindSearchManager
 
     private void SetSectionObjectsActive(string sectionName, bool active)
     {
-        if (_sectionGameObjectLut.TryGetValue(sectionName, out var section))
+        if (_sectionGameObjectLut.TryGetValue(sectionName, out var entry))
         {
-            if (section is not null)
-                section.SetActive(active);
+            if (entry is not null)
+            {
+                entry.gameObject.SetActive(active);
+                
+                var index = 0;
+                foreach (var (key, lutEntry) in _sectionGameObjectLut)
+                {
+                    if (key == sectionName)
+                        break;
+
+                    if (lutEntry is null)
+                        continue;
+
+                    if (!lutEntry.isActiveAndEnabled)
+                        continue;
+
+                    index++;
+                }
+
+                entry.sectionIndex = index;
+            }
         }
 
         if (_anchorGameObjectLut.TryGetValue(sectionName, out var anchor))
