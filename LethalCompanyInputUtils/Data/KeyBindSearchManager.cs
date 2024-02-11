@@ -48,33 +48,29 @@ public class KeyBindSearchManager
 
     public IEnumerator FilterWithSearch(string searchText)
     {
+        var results = 0;
         foreach (var (sectionName, bindGameObjectLut) in _sectionBindGameObjectLut)
         {
-            var sectionActive = MatchesFilter(sectionName, searchText);
-            if (sectionActive)
-                SetSectionActive(sectionName, true);
-            
             var keepSection = false;
             
             foreach (var (controlName, _) in bindGameObjectLut)
             {
                 var bindActive = MatchesFilter(controlName, searchText);
                 if (bindActive)
+                {
                     keepSection = true;
+                    results++;
+                }
                 
                 SetBindActive(sectionName, controlName, bindActive);
             }
 
-            if (!sectionActive && !keepSection)
-                SetSectionActive(sectionName, false);
-
-            if (!sectionActive && keepSection)
-                SetSectionObjectsActive(sectionName, true);
+            SetSectionObjectsActive(sectionName, keepSection);
             
             yield return null;
         }
 
-        yield return null;
+        yield return results;
     }
 
     public void Clear()

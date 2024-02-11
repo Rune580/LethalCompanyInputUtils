@@ -5,6 +5,7 @@ using LethalCompanyInputUtils.Components.Search;
 using LethalCompanyInputUtils.Components.Section;
 using LethalCompanyInputUtils.Data;
 using LethalCompanyInputUtils.Utils;
+using LethalCompanyInputUtils.Utils.Coroutines;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -211,9 +212,19 @@ public class RemapContainerController : MonoBehaviour
 
     private IEnumerator HandleSearch(string searchText)
     {
-        yield return KeyBindSearchManager.Instance.FilterWithSearch(searchText);
+        if (searchBar is null)
+            yield break;
+        
+        var searchCoroutine = new CoroutineWithResult(this, KeyBindSearchManager.Instance.FilterWithSearch(searchText));
+        yield return searchCoroutine;
+
+        var result = searchCoroutine.GetResult<int>();
         
         JumpTo(0, true);
+
+        if (result.TryGetValue(out var count))
+            searchBar.WithResults(count);
+        
         yield return null;
     }
     
