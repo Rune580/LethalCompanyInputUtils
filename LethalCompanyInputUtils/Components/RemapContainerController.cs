@@ -22,7 +22,7 @@ public class RemapContainerController : MonoBehaviour
     
     public List<RemappableKey> baseGameKeys = [];
     
-    internal int LayerShown;
+    internal int layerShown;
 
     private IEnumerator? _searchCoroutine;
 
@@ -40,7 +40,7 @@ public class RemapContainerController : MonoBehaviour
         bindsList.OnSectionChanged.AddListener(HandleSectionChanged);
         searchBar.onValueChanged.AddListener(OnSearchChanged);
 
-        LcInputActionApi.ContainerInstance = this;
+        LcInputActionApi.containerInstance = this;
     }
 
     public void JumpTo(int sectionIndex, bool forceUpdate = false)
@@ -127,14 +127,14 @@ public class RemapContainerController : MonoBehaviour
         if (backButton is null || legacyHolder is null)
             return;
         
-        if (LayerShown > 1)
+        if (layerShown > 1)
         {
             legacyHolder.SetActive(false);
-            LayerShown--;
+            layerShown--;
             return;
         }
 
-        if (LayerShown > 0)
+        if (layerShown > 0)
             backButton.onClick.Invoke();
     }
 
@@ -147,7 +147,7 @@ public class RemapContainerController : MonoBehaviour
             return;
         
         legacyHolder.SetActive(true);
-        LayerShown++;
+        layerShown++;
     }
 
     private void GenerateApiSections()
@@ -205,6 +205,9 @@ public class RemapContainerController : MonoBehaviour
             StopCoroutine(_searchCoroutine);
             _searchCoroutine = null;
         }
+        
+        if (!isActiveAndEnabled)
+            return;
 
         _searchCoroutine = HandleSearch(searchText);
         StartCoroutine(_searchCoroutine);
@@ -231,18 +234,18 @@ public class RemapContainerController : MonoBehaviour
     private void OnEnable()
     {
         JumpTo(0);
-        LayerShown = 1;
+        layerShown = 1;
     }
 
     private void OnDisable()
     {
         LcInputActionApi.ReEnableFromRebind();
-        LayerShown = 0;
+        layerShown = 0;
     }
 
     private void OnDestroy()
     {
-        LcInputActionApi.ContainerInstance = null;
-        LayerShown = 0;
+        LcInputActionApi.containerInstance = null;
+        layerShown = 0;
     }
 }

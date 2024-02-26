@@ -14,8 +14,9 @@ namespace LethalCompanyInputUtils;
 public static class LcInputActionApi
 {
     private static readonly Dictionary<string, LcInputActions> InputActionsMap = new();
-    internal static bool PrefabLoaded;
-    internal static RemapContainerController? ContainerInstance;
+    internal static bool prefabLoaded;
+    internal static RemapContainerController? containerInstance;
+    internal static bool exitLock;
     
     internal static IReadOnlyCollection<LcInputActions> InputActions => InputActionsMap.Values;
     
@@ -37,9 +38,9 @@ public static class LcInputActionApi
         
         panel.maxVertical = (actualKeyCount / maxItemsInRow) + sectionCount;
 
-        if (ContainerInstance is not null && ContainerInstance.legacyButton is not null)
+        if (containerInstance is not null && containerInstance.legacyButton is not null)
         {
-            var label = ContainerInstance.legacyButton.GetComponentInChildren<TextMeshProUGUI>();
+            var label = containerInstance.legacyButton.GetComponentInChildren<TextMeshProUGUI>();
             label.SetText($"> Show Legacy Controls ({actualKeyCount} present)");
         }
 
@@ -75,10 +76,10 @@ public static class LcInputActionApi
 
     public static bool RemapContainerVisible()
     {
-        if (ContainerInstance is null)
+        if (containerInstance is null)
             return false;
 
-        return ContainerInstance.LayerShown > 0;
+        return containerInstance.layerShown > 0;
     }
 
     private static int NumberOfActualKeys(List<GameObject> keySlots)
@@ -96,10 +97,13 @@ public static class LcInputActionApi
 
     internal static void CloseContainerLayer()
     {
-        if (ContainerInstance is null)
+        if (containerInstance is null)
+            return;
+
+        if (exitLock)
             return;
         
-        ContainerInstance.HideHighestLayer();
+        containerInstance.HideHighestLayer();
     }
 
     private static void AdjustSizeAndPos(KepRemapPanel panel)
@@ -147,7 +151,7 @@ public static class LcInputActionApi
 
     internal static void ResetLoadedInputActions()
     {
-        PrefabLoaded = false;
+        prefabLoaded = false;
         
         foreach (var lcInputActions in InputActions)
             lcInputActions.Loaded = false;

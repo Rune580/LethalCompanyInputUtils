@@ -16,9 +16,9 @@ public static class KeyRemapPanelPatches
         {
             LcInputActionApi.DisableForRebind();
 
-            if (LcInputActionApi.PrefabLoaded && LcInputActionApi.ContainerInstance is not null)
+            if (LcInputActionApi.prefabLoaded && LcInputActionApi.containerInstance is not null)
             {
-                LcInputActionApi.ContainerInstance.baseGameKeys.DisableKeys();
+                LcInputActionApi.containerInstance.baseGameKeys.DisableKeys();
                 return;
             }
             
@@ -78,7 +78,7 @@ public static class KeyRemapPanelPatches
             
             legacyHolder.transform.SetAsLastSibling();
             
-            LcInputActionApi.PrefabLoaded = true;
+            LcInputActionApi.prefabLoaded = true;
         }
         
         // ReSharper disable once InconsistentNaming
@@ -94,10 +94,10 @@ public static class KeyRemapPanelPatches
         // ReSharper disable once InconsistentNaming
         public static void Prefix()
         {
-            if (LcInputActionApi.ContainerInstance is null)
+            if (LcInputActionApi.containerInstance is null)
                 return;
             
-            LcInputActionApi.ContainerInstance.baseGameKeys.EnableKeys();
+            LcInputActionApi.containerInstance.baseGameKeys.EnableKeys();
         }
     }
 }

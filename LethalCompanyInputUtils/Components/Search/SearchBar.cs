@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using LethalCompanyInputUtils.Patches;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -37,6 +38,23 @@ public class SearchBar : MonoBehaviour
         UpdateState();
     }
 
+    public void OnSearchBarFocused()
+    {
+        LcInputActionApi.exitLock = true;
+        QuickMenuManagerPatches.OnExitMenuRequested += DeSelectSearchBar;
+    }
+
+    public void DeSelectSearchBar()
+    {
+        LcInputActionApi.exitLock = false;
+        QuickMenuManagerPatches.OnExitMenuRequested -= DeSelectSearchBar;
+        
+        if (searchInputField is null)
+            return;
+        
+        searchInputField.DeactivateInputField();
+    }
+    
     private void UpdateState()
     {
         if (searchInputField is null)
@@ -45,7 +63,7 @@ public class SearchBar : MonoBehaviour
         searchInputField.textComponent.color = _hasResults ? normalColor : noResultsColor;
     }
 
-    private void OnDisable()
+    private void OnEnable()
     {
         Clear();
     }
