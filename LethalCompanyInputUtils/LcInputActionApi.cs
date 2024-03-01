@@ -2,7 +2,7 @@
 using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Components;
-using LethalCompanyInputUtils.Data;
+using LethalCompanyInputUtils.Lib.Search;
 using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;

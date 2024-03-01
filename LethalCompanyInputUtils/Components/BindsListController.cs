@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using LethalCompanyInputUtils.Components.Section;
-using LethalCompanyInputUtils.Data;
+using LethalCompanyInputUtils.Lib.Search;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 using UnityEngine.Events;

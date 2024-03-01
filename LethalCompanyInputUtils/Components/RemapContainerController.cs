@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LethalCompanyInputUtils.Components.Search;
 using LethalCompanyInputUtils.Components.Section;
-using LethalCompanyInputUtils.Data;
+using LethalCompanyInputUtils.Lib.Search;
 using LethalCompanyInputUtils.Utils;
 using LethalCompanyInputUtils.Utils.Coroutines;
 using UnityEngine;

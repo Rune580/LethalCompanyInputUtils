@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using LethalCompanyInputUtils.Components.Section;
 using UnityEngine;
 
-namespace LethalCompanyInputUtils.Data;
+namespace LethalCompanyInputUtils.Lib.Search;
 
 public class KeyBindSearchManager
 {
