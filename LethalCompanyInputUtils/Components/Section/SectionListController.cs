@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using LethalCompanyInputUtils.Lib.Search;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +17,8 @@ public class SectionListController : MonoBehaviour
     private RectTransform? _content;
     
     private readonly List<SectionEntry> _sectionEntries = [];
+
+    public int ActiveSectionCount => _sectionEntries.Sum(section => section.isActiveAndEnabled ? 1 : 0);
 
     private void Awake()
     {
@@ -37,22 +41,26 @@ public class SectionListController : MonoBehaviour
         var sectionEntry = sectionObject.GetComponent<SectionEntry>();
         
         sectionEntry.SetText(sectionName);
-        sectionEntry.sectionIndex = _sectionEntries.Count;
+        sectionEntry.sectionIndex = ActiveSectionCount;
         sectionEntry.OnEntrySelected.AddListener(OnSectionEntryPressed);
         
         _sectionEntries.Add(sectionEntry);
+        KeyBindSearchManager.Instance.AddSection(sectionName, sectionEntry);
     }
 
     public void SelectSection(int sectionIndex)
     {
-        int sectionCount = _sectionEntries.Count;
+        int sectionCount = ActiveSectionCount;
         if (sectionIndex >= sectionCount || sectionIndex < 0)
             return;
 
         foreach (var entry in _sectionEntries)
             entry.SetIndicator(false);
         
-        var sectionEntry = _sectionEntries[sectionIndex];
+        var sectionEntry = GetSectionEntry(sectionIndex);
+        if (sectionEntry is null)
+            return;
+        
         sectionEntry.SetIndicator(true);
 
         if (scrollRect is null)
@@ -94,5 +102,11 @@ public class SectionListController : MonoBehaviour
             return;
         
         remapContainer.JumpTo(sectionIndex);
+    }
+
+    private SectionEntry? GetSectionEntry(int index)
+    {
+        return _sectionEntries.Where(entry => entry.isActiveAndEnabled)
+            .ElementAtOrDefault(index);
     }
 }

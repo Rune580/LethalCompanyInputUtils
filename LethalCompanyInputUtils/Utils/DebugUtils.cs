@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -6,6 +7,22 @@ namespace LethalCompanyInputUtils.Utils;
 
 internal static class DebugUtils
 {
+    public static string ToPrettyString<TItem>(this IEnumerable<TItem> enumerable)
+    {
+        var array = enumerable.ToArray();
+        
+        var builder = new StringBuilder();
+        builder.AppendLine("{");
+
+        for (var i = 0; i < array.Length; i++)
+            builder.AppendLine($"\t[{i}]: \"{array[i]?.ToString()}\",");
+        
+        builder.Remove(builder.Length - 1, 1);
+        builder.AppendLine("}");
+
+        return builder.ToString();
+    }
+    
     public static string ToPrettyString<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
     {
         var builder = new StringBuilder();

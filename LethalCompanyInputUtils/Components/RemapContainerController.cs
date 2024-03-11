@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using LethalCompanyInputUtils.Components.Search;
 using LethalCompanyInputUtils.Components.Section;
+using LethalCompanyInputUtils.Lib.Search;
 using LethalCompanyInputUtils.Utils;
+using LethalCompanyInputUtils.Utils.Coroutines;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +13,7 @@ namespace LethalCompanyInputUtils.Components;
 
 public class RemapContainerController : MonoBehaviour
 {
+    public SearchBar? searchBar;
     public BindsListController? bindsList;
     public SectionListController? sectionList;
     public Button? backButton;
@@ -17,10 +22,15 @@ public class RemapContainerController : MonoBehaviour
     
     public List<RemappableKey> baseGameKeys = [];
     
-    internal int LayerShown;
+    internal int layerShown;
+
+    private IEnumerator? _searchCoroutine;
 
     private void Awake()
     {
+        if (searchBar is null)
+            searchBar = GetComponentInChildren<SearchBar>();
+        
         if (bindsList is null)
             bindsList = GetComponentInChildren<BindsListController>();
 
@@ -28,16 +38,17 @@ public class RemapContainerController : MonoBehaviour
             sectionList = GetComponentInChildren<SectionListController>();
         
         bindsList.OnSectionChanged.AddListener(HandleSectionChanged);
+        searchBar.onValueChanged.AddListener(OnSearchChanged);
 
-        LcInputActionApi.ContainerInstance = this;
+        LcInputActionApi.containerInstance = this;
     }
 
-    public void JumpTo(int sectionIndex)
+    public void JumpTo(int sectionIndex, bool forceUpdate = false)
     {
         if (bindsList is null)
             return;
         
-        bindsList.JumpTo(sectionIndex);
+        bindsList.JumpTo(sectionIndex, forceUpdate);
     }
 
     public void LoadUi()
@@ -97,9 +108,11 @@ public class RemapContainerController : MonoBehaviour
 
             pairedKeys[controlName] = (kbmKey, gamepadKey);
         }
+
+        var sectionName = "Lethal Company";
+        bindsList.AddSection(sectionName);
+        sectionList.AddSection(sectionName);
         
-        bindsList.AddSection("Lethal Company");
-        sectionList.AddSection("Lethal Company");
         foreach (var (_, (kbmKey, gamepadKey)) in pairedKeys)
             bindsList.AddBinds(kbmKey, gamepadKey, true);
     }
@@ -114,14 +127,14 @@ public class RemapContainerController : MonoBehaviour
         if (backButton is null || legacyHolder is null)
             return;
         
-        if (LayerShown > 1)
+        if (layerShown > 1)
         {
             legacyHolder.SetActive(false);
-            LayerShown--;
+            layerShown--;
             return;
         }
 
-        if (LayerShown > 0)
+        if (layerShown > 0)
             backButton.onClick.Invoke();
     }
 
@@ -134,7 +147,7 @@ public class RemapContainerController : MonoBehaviour
             return;
         
         legacyHolder.SetActive(true);
-        LayerShown++;
+        layerShown++;
     }
 
     private void GenerateApiSections()
@@ -185,21 +198,54 @@ public class RemapContainerController : MonoBehaviour
         sectionList.SelectSection(sectionIndex);
     }
     
+    private void OnSearchChanged(string searchText)
+    {
+        if (_searchCoroutine is not null)
+        {
+            StopCoroutine(_searchCoroutine);
+            _searchCoroutine = null;
+        }
+        
+        if (!isActiveAndEnabled)
+            return;
+
+        _searchCoroutine = HandleSearch(searchText);
+        StartCoroutine(_searchCoroutine);
+    }
+
+    private IEnumerator HandleSearch(string searchText)
+    {
+        if (searchBar is null)
+            yield break;
+        
+        var searchCoroutine = new CoroutineWithResult(this, KeyBindSearchManager.Instance.FilterWithSearch(searchText));
+        yield return searchCoroutine;
+
+        var result = searchCoroutine.GetResult<int>();
+        
+        JumpTo(0, true);
+
+        if (result.TryGetValue(out var count))
+            searchBar.WithResults(count);
+        
+        yield return null;
+    }
+    
     private void OnEnable()
     {
         JumpTo(0);
-        LayerShown = 1;
+        layerShown = 1;
     }
 
     private void OnDisable()
     {
         LcInputActionApi.ReEnableFromRebind();
-        LayerShown = 0;
+        layerShown = 0;
     }
 
     private void OnDestroy()
     {
-        LcInputActionApi.ContainerInstance = null;
-        LayerShown = 0;
+        LcInputActionApi.containerInstance = null;
+        layerShown = 0;
     }
 }
