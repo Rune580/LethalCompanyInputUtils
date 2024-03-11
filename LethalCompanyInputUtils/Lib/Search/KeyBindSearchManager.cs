@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LethalCompanyInputUtils.Lib.Search;
 
-public class KeyBindSearchManager
+internal class KeyBindSearchManager
 {
     private static KeyBindSearchManager? _instance;
 

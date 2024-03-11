@@ -1,8 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using BepInEx;
 using HarmonyLib;
 using LethalCompanyInputUtils.Components;
 using LethalCompanyInputUtils.Glyphs;
+using LethalCompanyInputUtils.Lib.Search;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -33,6 +35,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         FsUtils.EnsureControlsDir();
 
         RegisterExtendedMouseLayout();
+        
+        ControlsDb.Init();
         
         Logging.Info($"InputUtils {ModVersion} has finished loading!");
     }
@@ -96,5 +100,11 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         InputSystem.RegisterLayoutOverride(extendedMouseJson);
         Logging.Info("Registered InputUtilsExtendedMouse Layout Override!");
+
+        // Logging.Info(InputSystem.ListLayouts().ToPrettyString());
+
+        var keyboardLayout = InputSystem.LoadLayout("Keyboard");
+        
+        Logging.Info(keyboardLayout.controls.Select(control => control.name).ToPrettyString());
     }
 }
