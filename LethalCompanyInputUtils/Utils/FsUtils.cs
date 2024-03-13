@@ -14,9 +14,13 @@ internal static class FsUtils
 
         return Path.Combine(userDir, "AppData", "LocalLow", "ZeekerssRBLX", "Lethal Company");
     }
+    
+    public static string PersistentDir { get; } = Path.Combine(SaveDir, "InputUtils");
+    public static string PersistentConfigPath { get; } = Path.Combine(PersistentDir, "Settings.cfg");
 
     public static string Pre041ControlsDir { get; } = Path.Combine(Paths.BepInExRootPath, "controls");
     public static string ControlsDir { get; } = Path.Combine(Paths.ConfigPath, "controls");
+    public static string PersistentControlsDir { get; } = Path.Combine(PersistentDir, "controls");
 
     private static string? _assetBundlesDir;
 
@@ -39,10 +43,19 @@ internal static class FsUtils
         }
     }
 
-    public static void EnsureControlsDir()
+    public static void EnsureRequiredDirs()
     {
         if (!Directory.Exists(ControlsDir))
             Directory.CreateDirectory(ControlsDir);
+
+        if (!Directory.Exists(SaveDir))
+        {
+            Logging.Warn("LethalCompany save directory doesn't exist!\n Persistent settings will fail!");
+            return;
+        }
+
+        if (!Directory.Exists(PersistentControlsDir))
+            Directory.CreateDirectory(PersistentControlsDir);
     }
 
     private static string? GetAssetBundlesDir()

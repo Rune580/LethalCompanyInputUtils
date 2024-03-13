@@ -2,6 +2,7 @@
 using BepInEx;
 using HarmonyLib;
 using LethalCompanyInputUtils.Components;
+using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Glyphs;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
@@ -30,14 +31,16 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         ControllerGlyph.LoadGlyphs();
         
-        FsUtils.EnsureControlsDir();
+        FsUtils.EnsureRequiredDirs();
+        
+        InputUtilsConfig.Init(Info.Metadata);
 
         RegisterExtendedMouseLayout();
         
         Logging.Info($"InputUtils {ModVersion} has finished loading!");
     }
 
-    private void LoadAssetBundles()
+    private static void LoadAssetBundles()
     {
         Assets.AddBundle("ui-assets");
     }

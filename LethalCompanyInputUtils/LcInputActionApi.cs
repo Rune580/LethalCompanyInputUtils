@@ -2,6 +2,7 @@
 using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Components;
+using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;
@@ -171,7 +172,7 @@ public static class LcInputActionApi
             .Enable();
         
         lcInputActions.OnAssetLoaded();
-        lcInputActions.Load();
+        lcInputActions.Load(InputUtilsConfig.BindingOverridePriority);
         
         lcInputActions.BuildActionRefs();
     }
@@ -196,13 +197,15 @@ public static class LcInputActionApi
 
     internal static void SaveOverrides()
     {
-        foreach (var lcInputAction in InputActions)
-            lcInputAction.Save();
+        // TODO
+        // foreach (var lcInputAction in InputActions)
+        //     lcInputAction.Save();
     }
 
     internal static void LoadOverrides()
     {
-        foreach (var lcInputAction in InputActions)
-            lcInputAction.Load();
+        // TODO
+        // foreach (var lcInputAction in InputActions)
+        //     lcInputAction.Load();
     }
 }
