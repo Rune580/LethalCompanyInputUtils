@@ -18,7 +18,7 @@ public static class InGamePlayerSettingsPatches
     {
         public static void Prefix()
         {
-            LcInputActionApi.LoadOverrides();
+            LcInputActionApi.DiscardOverrides();
         }
     }
 }

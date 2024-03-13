@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1700276884
+CRC: 2879283559
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0fb8234f2b0889109bf02c1a3641d3a3
+    Hash: 2b45b047fa316d5f28299927963645bb
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c39139dffb649f6bf00e3c03b7ae28a3
+    Hash: da87fca393b1fee12eacbd91cb776a85
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 0fb8234f2b0889109bf02c1a3641d3a3
+    Hash: 2b45b047fa316d5f28299927963645bb
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -29,9 +29,9 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1389752971, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
-- Class: 114
   Script: {fileID: 1590956476, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
 - Class: 114
@@ -74,6 +74,12 @@ ClassTypes:
   Script: {fileID: -762325398, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
   Script: {fileID: 1791224802, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
+  Script: {fileID: 442016175, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
+  Script: {fileID: 57291077, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
+  Script: {fileID: 1949583106, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 213
@@ -105,6 +111,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.Events.PersistentCallGroup
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.PersistentListenerMode
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.UnityEvent
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.UnityEvent`1[System.Int32]
 - AssemblyName: UnityEngine.CoreModule

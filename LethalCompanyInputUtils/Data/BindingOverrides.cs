@@ -11,7 +11,7 @@ public class BindingOverrides
 {
     public List<BindingOverride> overrides;
 
-    private BindingOverrides()
+    public BindingOverrides()
     {
         overrides = new List<BindingOverride>();
     }
@@ -45,6 +45,23 @@ public class BindingOverrides
             action?.ApplyBindingOverride(bindingOverride.path, group: bindingOverride.groups);
         }
     }
+
+    public void LoadInto(IReadOnlyCollection<InputActionReference> actionRefs)
+    {
+        foreach (var bindingOverride in overrides)
+        {
+            foreach (var actionRef in actionRefs)
+            {
+                if (actionRef.action.name != bindingOverride.action)
+                    continue;
+                
+                actionRef.action.ApplyBindingOverride(bindingOverride.path, group: bindingOverride.groups);
+                break;
+            }
+        }
+    }
+
+    public string AsJson() => JsonConvert.SerializeObject(this);
 
     public static BindingOverrides FromJson(string json)
     {

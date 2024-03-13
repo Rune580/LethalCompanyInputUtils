@@ -103,14 +103,39 @@ public abstract class LcInputActions
         Asset.Disable();
     }
 
+    internal string GetBindingOverridesPath(BindingOverrideType overrideType) => overrideType.GetJsonPath(Id);
+
+    internal BindingOverrides GetCurrentBindingOverrides() => new(Asset.bindings);
+
+    internal BindingOverrides GetBindingOverrides(BindingOverrideType overrideType)
+    {
+        var jsonPath = overrideType.GetJsonPath(Id);
+
+        if (!File.Exists(jsonPath))
+            return new BindingOverrides();
+
+        try
+        {
+            return BindingOverrides.FromJson(File.ReadAllText(jsonPath));
+        }
+        catch (Exception e)
+        {
+            Logging.Error(e);
+        }
+
+        return new BindingOverrides();
+    }
+
     internal void Save(BindingOverrideType overrideType)
     {
         var overrides = new BindingOverrides(Asset.bindings);
-        File.WriteAllText(overrideType.GetJsonPath(Id), JsonConvert.SerializeObject(overrides));
+        File.WriteAllText(overrideType.GetJsonPath(Id), overrides.AsJson());
     }
 
-    internal void Load(BindingOverridePriority overridePriority)
+    internal void Load()
     {
+        var overridePriority = InputUtilsConfig.BindingOverridePriority;
+        
         switch (overridePriority)
         {
             case BindingOverridePriority.GlobalThenLocal:
