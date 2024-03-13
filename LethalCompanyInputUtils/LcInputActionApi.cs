@@ -172,7 +172,7 @@ public static class LcInputActionApi
             .Enable();
         
         lcInputActions.OnAssetLoaded();
-        lcInputActions.Load(InputUtilsConfig.BindingOverridePriority);
+        lcInputActions.Load();
         
         lcInputActions.BuildActionRefs();
     }
@@ -197,15 +197,17 @@ public static class LcInputActionApi
 
     internal static void SaveOverrides()
     {
-        // TODO
-        // foreach (var lcInputAction in InputActions)
-        //     lcInputAction.Save();
+        if (ContainerInstance is null)
+            return;
+        
+        ContainerInstance.SaveOverrides();
     }
 
-    internal static void LoadOverrides()
+    internal static void DiscardOverrides()
     {
-        // TODO
-        // foreach (var lcInputAction in InputActions)
-        //     lcInputAction.Load();
+        if (ContainerInstance is null)
+            return;
+        
+        ContainerInstance.DiscardOverrides();
     }
 }
