@@ -236,6 +236,11 @@ public class RemapContainerController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (contextSwitch is null)
+            return;
+        
+        contextSwitch.SwitchToGlobal();
+        
         LcInputActionApi.ReEnableFromRebind();
         LayerShown = 0;
     }
