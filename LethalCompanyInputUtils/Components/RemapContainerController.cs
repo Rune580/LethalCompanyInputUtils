@@ -201,7 +201,9 @@ public class RemapContainerController : MonoBehaviour
         JumpTo(0);
 
         foreach (var binding in _contextBindingOverrides)
-            binding.LoadOverrides(BindingOverrideType.Global, false);
+            binding.LoadOverrides(BindingOverrideType.Global);
+        
+        RebindButton.ReloadGlyphs();
     }
     
     private void HandleSectionChanged(int sectionIndex)
@@ -229,19 +231,27 @@ public class RemapContainerController : MonoBehaviour
 
     internal void SaveOverrides()
     {
-        foreach (var binding in _contextBindingOverrides)
+        for (var i = 0; i < _contextBindingOverrides.Count; i++)
         {
+            var binding = _contextBindingOverrides[i];
+            
             binding.SaveOverrides();
             binding.inputActions.Load();
+            
+            _contextBindingOverrides[i] = new ContextBindingOverride(binding.inputActions);
         }
     }
 
     internal void DiscardOverrides()
     {
-        foreach (var binding in _contextBindingOverrides)
+        for (var i = 0; i < _contextBindingOverrides.Count; i++)
         {
+            var binding = _contextBindingOverrides[i];
+            
             binding.DiscardOverrides();
             binding.inputActions.Load();
+
+            _contextBindingOverrides[i] = new ContextBindingOverride(binding.inputActions);
         }
     }
     
@@ -252,12 +262,6 @@ public class RemapContainerController : MonoBehaviour
         
         if (contextSwitch is null)
             return;
-
-        foreach (var binding in _contextBindingOverrides)
-        {
-            binding.ReloadOverrides();
-            // binding.currentType = BindingOverrideType.Global;
-        }
         
         contextSwitch.SwitchToGlobal();
 
@@ -300,19 +304,19 @@ public class RemapContainerController : MonoBehaviour
             _globalOverrides = this.inputActions.GetBindingOverrides(BindingOverrideType.Global);
         }
 
-        public void LoadOverrides(BindingOverrideType overrideType, bool savePrev = true)
+        public void LoadOverrides(BindingOverrideType overrideType)
         {
             switch (overrideType)
             {
                 case BindingOverrideType.Global:
-                    if (savePrev && currentType != overrideType && _dirty)
+                    if (currentType != overrideType && _dirty)
                         _localOverrides = inputActions.GetCurrentBindingOverrides();
                     
                     inputActions.Asset.RemoveAllBindingOverrides();
                     _globalOverrides.LoadInto(inputActions.ActionRefs);
                     break;
                 case BindingOverrideType.Local:
-                    if (savePrev && currentType != overrideType && _dirty)
+                    if (currentType != overrideType && _dirty)
                         _globalOverrides = inputActions.GetCurrentBindingOverrides();
                     
                     inputActions.Asset.RemoveAllBindingOverrides();
@@ -326,20 +330,8 @@ public class RemapContainerController : MonoBehaviour
             _dirty = true;
         }
 
-        public void ReloadOverrides()
-        {
-            if (_dirty)
-                return;
-            
-            _localOverrides = inputActions.GetBindingOverrides(BindingOverrideType.Local);
-            _globalOverrides = inputActions.GetBindingOverrides(BindingOverrideType.Global);
-        }
-
         public void SaveOverrides()
         {
-            if (!_dirty)
-                return;
-            
             switch (currentType)
             {
                 case BindingOverrideType.Global:
