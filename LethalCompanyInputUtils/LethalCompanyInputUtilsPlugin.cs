@@ -16,7 +16,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
 {
     public const string ModId = "com.rune580.LethalCompanyInputUtils";
     public const string ModName = "Lethal Company Input Utils";
-    public const string ModVersion = "0.6.3";
+    public const string ModVersion = "0.7.0";
 
     private Harmony? _harmony;
     

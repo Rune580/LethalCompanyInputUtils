@@ -1,6 +1,6 @@
 {
     "name": "LethalCompany_InputUtils",
-    "version_number": "0.6.3",
+    "version_number": "0.7.0",
     "website_url": "https://github.com/Rune580/LethalCompanyInputUtils",
     "description": "API/Library for creating Unity InputActions with in-game re-binding support. Provides an alternative UI that allows for supporting mods to have in-game re-bindable keybinds.",
     "dependencies": [
