@@ -1,3 +1,10 @@
+### [0.7.1]
+
+It wouldn't be an InputUtils update without a hotfix for bug I never noticed.
+
+Fixes:
+- Binds actually save instead of gaslighting you into thinking they saved.
+
 ### [0.7.0]
 
 **Highlights:**
