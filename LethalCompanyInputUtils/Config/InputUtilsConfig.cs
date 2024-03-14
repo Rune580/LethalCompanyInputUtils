@@ -6,15 +6,13 @@ namespace LethalCompanyInputUtils.Config;
 
 public static class InputUtilsConfig
 {
-    private static ConfigEntry<BindingOverridePriority>? _bindingOverridePriority;
-
-    public static BindingOverridePriority BindingOverridePriority => _bindingOverridePriority!.Value;
+    public static ConfigEntry<BindingOverridePriority> bindingOverridePriority = null!;
     
     internal static void Init(BepInPlugin plugin)
     {
         var persistentConfig = new ConfigFile(FsUtils.PersistentConfigPath, true, plugin);
 
-        _bindingOverridePriority = persistentConfig.Bind(
+        bindingOverridePriority = persistentConfig.Bind(
             "General",
             "Binding Overrides Priority",
             BindingOverridePriority.GlobalThenLocal,

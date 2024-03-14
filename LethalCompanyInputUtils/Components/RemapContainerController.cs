@@ -8,6 +8,7 @@ using LethalCompanyInputUtils.Components.Switch;
 using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Data;
 using LethalCompanyInputUtils.Utils;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ namespace LethalCompanyInputUtils.Components;
 public class RemapContainerController : MonoBehaviour
 {
     public BindingOverrideContextSwitch? contextSwitch;
+    public TMP_Dropdown? overridePriorityDropdown;
     public BindsListController? bindsList;
     public SectionListController? sectionList;
     public Button? backButton;
@@ -39,10 +41,15 @@ public class RemapContainerController : MonoBehaviour
 
         if (sectionList is null)
             sectionList = GetComponentInChildren<SectionListController>();
+
+        if (overridePriorityDropdown is null)
+            return;
         
         bindsList.OnSectionChanged.AddListener(HandleSectionChanged);
         
         contextSwitch.onBindingOverrideContextChanged.AddListener(OnBindingOverrideContextChanged);
+        
+        overridePriorityDropdown.onValueChanged.AddListener(OnOverridePriorityChanged);
 
         LcInputActionApi.ContainerInstance = this;
     }
@@ -213,6 +220,13 @@ public class RemapContainerController : MonoBehaviour
         RebindButton.ReloadGlyphs();
     }
 
+    private void OnOverridePriorityChanged(int value)
+    {
+        var priority = (BindingOverridePriority)value;
+
+        InputUtilsConfig.bindingOverridePriority.Value = priority;
+    }
+
     internal void SaveOverrides()
     {
         foreach (var binding in _contextBindingOverrides)
@@ -225,21 +239,33 @@ public class RemapContainerController : MonoBehaviour
     internal void DiscardOverrides()
     {
         foreach (var binding in _contextBindingOverrides)
+        {
             binding.DiscardOverrides();
+            binding.inputActions.Load();
+        }
     }
     
     private void OnEnable()
     {
         JumpTo(0);
         LayerShown = 1;
+        
+        if (contextSwitch is null)
+            return;
+
+        foreach (var binding in _contextBindingOverrides)
+        {
+            binding.ReloadOverrides();
+            // binding.currentType = BindingOverrideType.Global;
+        }
+        
+        contextSwitch.SwitchToGlobal();
     }
 
     private void OnDisable()
     {
         if (contextSwitch is null)
             return;
-        
-        contextSwitch.SwitchToGlobal();
         
         LcInputActionApi.ReEnableFromRebind();
         LayerShown = 0;
@@ -258,7 +284,8 @@ public class RemapContainerController : MonoBehaviour
         private BindingOverrides _localOverrides;
         private BindingOverrides _globalOverrides;
         
-        private BindingOverrideType _currentType;
+        public BindingOverrideType currentType;
+        private bool _dirty;
         
         public ContextBindingOverride(LcInputActions inputActions)
         {
@@ -273,14 +300,14 @@ public class RemapContainerController : MonoBehaviour
             switch (overrideType)
             {
                 case BindingOverrideType.Global:
-                    if (savePrev && _currentType != overrideType)
+                    if (savePrev && currentType != overrideType && _dirty)
                         _localOverrides = inputActions.GetCurrentBindingOverrides();
                     
                     inputActions.Asset.RemoveAllBindingOverrides();
                     _globalOverrides.LoadInto(inputActions.ActionRefs);
                     break;
                 case BindingOverrideType.Local:
-                    if (savePrev && _currentType != overrideType)
+                    if (savePrev && currentType != overrideType && _dirty)
                         _globalOverrides = inputActions.GetCurrentBindingOverrides();
                     
                     inputActions.Asset.RemoveAllBindingOverrides();
@@ -290,19 +317,48 @@ public class RemapContainerController : MonoBehaviour
                     throw new ArgumentOutOfRangeException(nameof(overrideType), overrideType, null);
             }
 
-            _currentType = overrideType;
+            currentType = overrideType;
+            _dirty = true;
+        }
+
+        public void ReloadOverrides()
+        {
+            if (_dirty)
+                return;
+            
+            _localOverrides = inputActions.GetBindingOverrides(BindingOverrideType.Local);
+            _globalOverrides = inputActions.GetBindingOverrides(BindingOverrideType.Global);
         }
 
         public void SaveOverrides()
         {
+            if (!_dirty)
+                return;
+            
+            switch (currentType)
+            {
+                case BindingOverrideType.Global:
+                    _globalOverrides = inputActions.GetCurrentBindingOverrides();
+                    break;
+                case BindingOverrideType.Local:
+                    _localOverrides = inputActions.GetCurrentBindingOverrides();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
             File.WriteAllText(inputActions.GetBindingOverridesPath(BindingOverrideType.Local), _localOverrides.AsJson());
             File.WriteAllText(inputActions.GetBindingOverridesPath(BindingOverrideType.Global), _globalOverrides.AsJson());
+
+            _dirty = false;
         }
 
         public void DiscardOverrides()
         {
             _localOverrides = inputActions.GetBindingOverrides(BindingOverrideType.Local);
             _globalOverrides = inputActions.GetBindingOverrides(BindingOverrideType.Global);
+
+            _dirty = false;
         }
     }
 }

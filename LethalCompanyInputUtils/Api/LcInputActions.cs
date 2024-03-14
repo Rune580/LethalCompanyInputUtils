@@ -134,7 +134,7 @@ public abstract class LcInputActions
 
     internal void Load()
     {
-        var overridePriority = InputUtilsConfig.BindingOverridePriority;
+        var overridePriority = InputUtilsConfig.bindingOverridePriority.Value;
         
         switch (overridePriority)
         {
