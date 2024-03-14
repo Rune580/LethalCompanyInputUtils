@@ -2,6 +2,7 @@
 using BepInEx;
 using HarmonyLib;
 using LethalCompanyInputUtils.Components;
+using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Glyphs;
 using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
@@ -29,18 +30,20 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         LoadAssetBundles();
         
-        LocaleManager.Init();
-        
         ControllerGlyph.LoadGlyphs();
         
-        FsUtils.EnsureControlsDir();
+        FsUtils.EnsureRequiredDirs();
+        
+        InputUtilsConfig.Init(this);
+        
+        LocaleManager.LoadLocaleData();
 
         RegisterExtendedMouseLayout();
         
         Logging.Info($"InputUtils {ModVersion} has finished loading!");
     }
 
-    private void LoadAssetBundles()
+    private static void LoadAssetBundles()
     {
         Assets.AddBundle("ui-assets");
     }

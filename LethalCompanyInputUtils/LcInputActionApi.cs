@@ -2,6 +2,7 @@
 using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Components;
+using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;
@@ -196,13 +197,17 @@ public static class LcInputActionApi
 
     internal static void SaveOverrides()
     {
-        foreach (var lcInputAction in InputActions)
-            lcInputAction.Save();
+        if (ContainerInstance is null)
+            return;
+        
+        ContainerInstance.SaveOverrides();
     }
 
-    internal static void LoadOverrides()
+    internal static void DiscardOverrides()
     {
-        foreach (var lcInputAction in InputActions)
-            lcInputAction.Load();
+        if (ContainerInstance is null)
+            return;
+        
+        ContainerInstance.DiscardOverrides();
     }
 }

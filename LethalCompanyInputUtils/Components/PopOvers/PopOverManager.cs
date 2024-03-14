@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 
@@ -49,7 +50,7 @@ public class PopOverManager : MonoBehaviour
             return;
         
         popOver.SetTarget(trigger.target, trigger.placement);
-        popOver.SetText(trigger.text);
+        popOver.SetText(trigger.textIsLangToken ? LocaleManager.GetString(trigger.text) : trigger.text);
     }
 
     private void ClearPopOver()

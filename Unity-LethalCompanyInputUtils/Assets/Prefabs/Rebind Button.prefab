@@ -317,7 +317,8 @@ MonoBehaviour:
   m_Script: {fileID: -1443277361, guid: de7f53af8e88288428b07212e8711754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: Reset to default
+  text: RebindButton.ResetToDefault.PopOver
+  textIsLangToken: 1
   placement: 2
   target: {fileID: 6223799714491543377}
 --- !u!1 &1720111751474937187
@@ -466,7 +467,8 @@ MonoBehaviour:
   m_Script: {fileID: -1443277361, guid: de7f53af8e88288428b07212e8711754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: Remove bind
+  text: RebindButton.RemoveBind.PopOver
+  textIsLangToken: 1
   placement: 2
   target: {fileID: 1146753386460668446}
 --- !u!1 &2163377352292117153
@@ -954,7 +956,8 @@ MonoBehaviour:
   m_Script: {fileID: -1443277361, guid: de7f53af8e88288428b07212e8711754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: Doesn't support binding to this device
+  text: RebindButton.NotSupportedDeviceBind.PopOver
+  textIsLangToken: 1
   placement: 0
   target: {fileID: 7420694265410190807}
 --- !u!1 &6173638890088405445

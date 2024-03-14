@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1700276884
+CRC: 919054470
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0fb8234f2b0889109bf02c1a3641d3a3
+    Hash: b975dc79bf3f226df26f0f383878a7ee
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c39139dffb649f6bf00e3c03b7ae28a3
+    Hash: 45e4f8a7d4d6a43c7637ba2755aa76b2
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 0fb8234f2b0889109bf02c1a3641d3a3
+    Hash: b975dc79bf3f226df26f0f383878a7ee
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -29,23 +29,29 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1389752971, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
-- Class: 114
   Script: {fileID: 1590956476, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
+- Class: 114
+  Script: {fileID: 442016175, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
   Script: {fileID: 1249654462, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
@@ -74,6 +80,10 @@ ClassTypes:
   Script: {fileID: -762325398, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 114
   Script: {fileID: 1791224802, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
+  Script: {fileID: 57291077, guid: de7f53af8e88288428b07212e8711754, type: 3}
+- Class: 114
+  Script: {fileID: 1949583106, guid: de7f53af8e88288428b07212e8711754, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 213
@@ -94,6 +104,12 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Unity.TextMeshPro
   ClassName: TMPro.TMP_Character
 - AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_Dropdown/DropdownEvent
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_Dropdown/OptionData
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_Dropdown/OptionDataList
+- AssemblyName: Unity.TextMeshPro
   ClassName: TMPro.TMP_FontFeatureTable
 - AssemblyName: Unity.TextMeshPro
   ClassName: TMPro.TMP_FontWeightPair
@@ -105,6 +121,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.Events.PersistentCallGroup
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.PersistentListenerMode
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.UnityEvent
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.UnityEvent`1[System.Int32]
 - AssemblyName: UnityEngine.CoreModule
@@ -133,10 +151,13 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.UI.Scrollbar/ScrollEvent
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.SpriteState
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Toggle/ToggleEvent
 Assets:
 - Assets/Controller Glyphs/Xbox Series X Glyphs.asset
 - Assets/Controller Glyphs/Dualsense Glyphs.asset
 - Assets/Prefabs/InputUtilsRemapContainer.prefab
 - Assets/Controller Glyphs/Mouse Glyphs.asset
 - Assets/Prefabs/Legacy Holder.prefab
+- Assets/Prefabs/PopOver Layer.prefab
 Dependencies: []

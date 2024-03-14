@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
+using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Data;
 using LethalCompanyInputUtils.Utils;
 using Newtonsoft.Json;
@@ -17,7 +18,6 @@ public abstract class LcInputActions
     public const string UnboundKeyboardAndMouseIdentifier = "<InputUtils-Kbm-Not-Bound>";
     public const string UnboundGamepadIdentifier = "<InputUtils-Gamepad-Not-Bound>";
     
-    private readonly string _jsonPath;
     private readonly List<InputActionReference> _actionRefs = [];
 
     public InputActionAsset Asset { get; }
@@ -38,8 +38,6 @@ public abstract class LcInputActions
     {
         Asset = ScriptableObject.CreateInstance<InputActionAsset>();
         Plugin = Assembly.GetCallingAssembly().GetBepInPlugin() ?? throw new InvalidOperationException();
-
-        _jsonPath = Path.Combine(FsUtils.ControlsDir, $"{Id}.json");
 
         var mapBuilder = new InputActionMapBuilder(Id);
 
@@ -105,13 +103,61 @@ public abstract class LcInputActions
         Asset.Disable();
     }
 
-    internal void Save()
+    internal string GetBindingOverridesPath(BindingOverrideType overrideType) => overrideType.GetJsonPath(Id);
+
+    internal BindingOverrides GetCurrentBindingOverrides() => new(Asset.bindings);
+
+    internal BindingOverrides GetBindingOverrides(BindingOverrideType overrideType)
+    {
+        var jsonPath = overrideType.GetJsonPath(Id);
+
+        if (!File.Exists(jsonPath))
+            return new BindingOverrides();
+
+        try
+        {
+            return BindingOverrides.FromJson(File.ReadAllText(jsonPath));
+        }
+        catch (Exception e)
+        {
+            Logging.Error(e);
+        }
+
+        return new BindingOverrides();
+    }
+
+    internal void Save(BindingOverrideType overrideType)
     {
         var overrides = new BindingOverrides(Asset.bindings);
-        File.WriteAllText(_jsonPath, JsonConvert.SerializeObject(overrides));
+        File.WriteAllText(overrideType.GetJsonPath(Id), overrides.AsJson());
     }
 
     internal void Load()
+    {
+        var overridePriority = InputUtilsConfig.bindingOverridePriority.Value;
+        
+        switch (overridePriority)
+        {
+            case BindingOverridePriority.GlobalThenLocal:
+                Load(BindingOverrideType.Local, true);
+                Load(BindingOverrideType.Global, false);
+                break;
+            case BindingOverridePriority.LocalThenGlobal:
+                Load(BindingOverrideType.Global, true);
+                Load(BindingOverrideType.Local, false);
+                break;
+            case BindingOverridePriority.GlobalOnly:
+                Load(BindingOverrideType.Global, true);
+                break;
+            case BindingOverridePriority.LocalOnly:
+                Load(BindingOverrideType.Local, true);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(overridePriority), overridePriority, null);
+        }
+    }
+
+    internal void Load(BindingOverrideType overrideType, bool removeExistingOverrides)
     {
         try
         {
@@ -123,13 +169,18 @@ public abstract class LcInputActions
             Logging.Error(e);
         }
 
-        if (!File.Exists(_jsonPath))
+        var jsonPath = overrideType.GetJsonPath(Id);
+
+        if (!File.Exists(jsonPath))
             return;
 
         try
         {
-            var overrides = BindingOverrides.FromJson(File.ReadAllText(_jsonPath));
-            Asset.RemoveAllBindingOverrides();
+            var overrides = BindingOverrides.FromJson(File.ReadAllText(jsonPath));
+
+            if (removeExistingOverrides)
+                Asset.RemoveAllBindingOverrides();
+            
             overrides.LoadInto(Asset);
         }
         catch (Exception e)
@@ -140,23 +191,26 @@ public abstract class LcInputActions
 
     private void ApplyMigrations()
     {
+        // 0.7.0 added a global overrides locations, anything beforehand should assume local path.
+        var pre070JsonPath = BindingOverrideType.Local.GetJsonPath(Id);
+        
         // The overrides json path was changed to be nested in the config folder so that they could be packaged with modpacks.
         var pre041JsonPath = Path.Combine(FsUtils.Pre041ControlsDir, $"{Id}.json");
-        if (File.Exists(pre041JsonPath) && !File.Exists(_jsonPath))
-            File.Move(pre041JsonPath, _jsonPath);
+        if (File.Exists(pre041JsonPath) && !File.Exists(pre070JsonPath))
+            File.Move(pre041JsonPath, pre070JsonPath);
 
         // If there isn't an existing overrides json then there is no need to apply any migrations
-        if (!File.Exists(_jsonPath))
+        if (!File.Exists(pre070JsonPath))
             return;
 
         // Unbound binds now use a special identifier as leaving them blank prevented the overrides from actually taking effect.
-        var hasPre043Overrides = File.ReadAllText(_jsonPath)
+        var hasPre043Overrides = File.ReadAllText(pre070JsonPath)
             .Replace(" ", "")
             .Contains("\"origPath\":\"\"");
 
         if (hasPre043Overrides)
         {
-            var overrides = BindingOverrides.FromJson(File.ReadAllText(_jsonPath));
+            var overrides = BindingOverrides.FromJson(File.ReadAllText(pre070JsonPath));
 
             for (var i = 0; i < overrides.overrides.Count; i++)
             {
@@ -182,17 +236,17 @@ public abstract class LcInputActions
                 overrides.overrides[i] = bindingOverride;
             }
 
-            File.WriteAllText(_jsonPath, JsonConvert.SerializeObject(overrides));
+            File.WriteAllText(pre070JsonPath, JsonConvert.SerializeObject(overrides));
         }
         
         // 0.7.0 added groups to the BindingOverride schema for better device specific bind detection.
-        var hasPre070Overrides = !File.ReadAllText(_jsonPath)
+        var hasPre070Overrides = !File.ReadAllText(pre070JsonPath)
             .Replace(" ", "")
             .Contains("\"groups\":");
 
         if (hasPre070Overrides)
         {
-            var overrides = BindingOverrides.FromJson(File.ReadAllText(_jsonPath));
+            var overrides = BindingOverrides.FromJson(File.ReadAllText(pre070JsonPath));
 
             for (int i = 0; i < overrides.overrides.Count; i++)
             {
@@ -214,7 +268,7 @@ public abstract class LcInputActions
                 overrides.overrides[i] = bindingOverride;
             }
             
-            File.WriteAllText(_jsonPath, JsonConvert.SerializeObject(overrides));
+            File.WriteAllText(pre070JsonPath, JsonConvert.SerializeObject(overrides));
         }
     }
 }
