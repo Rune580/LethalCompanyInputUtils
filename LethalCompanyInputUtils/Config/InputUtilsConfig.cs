@@ -10,9 +10,9 @@ public static class InputUtilsConfig
     public static ConfigEntry<BindingOverridePriority> bindingOverridePriority = null!;
     public static ConfigEntry<string> localeKey = null!;
     
-    internal static void Init(BepInPlugin plugin)
+    internal static void Init(BaseUnityPlugin plugin)
     {
-        var persistentConfig = new ConfigFile(FsUtils.PersistentConfigPath, true, plugin);
+        var persistentConfig = new ConfigFile(FsUtils.PersistentConfigPath, true, plugin.Info.Metadata);
 
         bindingOverridePriority = persistentConfig.Bind(
             "General",
@@ -25,7 +25,7 @@ public static class InputUtilsConfig
             "\tLocalOnly: Only loads Local/Profile/ModPack defined controls\n"
         );
 
-        localeKey = persistentConfig.Bind(
+        localeKey = plugin.Config.Bind(
             "General",
             "Locale",
             "en_US",

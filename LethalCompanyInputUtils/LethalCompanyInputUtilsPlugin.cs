@@ -34,7 +34,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         FsUtils.EnsureRequiredDirs();
         
-        InputUtilsConfig.Init(Info.Metadata);
+        InputUtilsConfig.Init(this);
         
         LocaleManager.LoadLocaleData();
 
