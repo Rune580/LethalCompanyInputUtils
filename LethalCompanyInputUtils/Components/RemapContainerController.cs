@@ -260,6 +260,11 @@ public class RemapContainerController : MonoBehaviour
         }
         
         contextSwitch.SwitchToGlobal();
+
+        if (overridePriorityDropdown is null)
+            return;
+        
+        overridePriorityDropdown.SetValueWithoutNotify((int)InputUtilsConfig.bindingOverridePriority.Value);
     }
 
     private void OnDisable()
