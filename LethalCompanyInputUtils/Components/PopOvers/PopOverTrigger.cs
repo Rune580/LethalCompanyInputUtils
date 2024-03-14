@@ -6,6 +6,7 @@ namespace LethalCompanyInputUtils.Components.PopOvers;
 [RequireComponent(typeof(RectTransform))]
 public class PopOverTrigger : UIBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [TextArea(3, 20)]
     public string text = "";
     public PopOver.Placement placement;
 
