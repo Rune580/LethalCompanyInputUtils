@@ -12,6 +12,9 @@ public static class MenuManagerPatches
         // ReSharper disable once InconsistentNaming
         public static void Prefix(MenuManager __instance)
         {
+            if (__instance.menuAnimator is null)
+                return;
+            
             var parent = __instance.menuAnimator.gameObject.transform;
             
             Object.Instantiate(Assets.Load<GameObject>("Prefabs/PopOver Layer.prefab"), parent);
