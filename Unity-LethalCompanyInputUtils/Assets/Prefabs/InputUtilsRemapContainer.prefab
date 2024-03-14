@@ -4293,6 +4293,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8957903112768856750, guid: b2a6c8fd8224c1b41a6426995619c245, type: 3}
+      propertyPath: placement
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4397,25 +4401,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8957903112768856750, guid: b2a6c8fd8224c1b41a6426995619c245, type: 3}
       propertyPath: text
-      value: 'This let''s you change which Controls you are viewing/editing.
-
-
-        Global
-        - These controls are saved independently from your Modpack/Profile.
-
-
-        Local
-        - These controls are saved with your Modpack/Profile/Manual install. These
-        can be overwritten by updating your Modpack/Profile.
-
-
-        Vanilla LethalCompany
-        Controls are always Global even if you are modifying the Local Controls,
-        they will always be saved Globally.'
+      value: BindingOverrideContextSwitch.Info.PopOver
       objectReference: {fileID: 0}
     - target: {fileID: 8957903112768856750, guid: b2a6c8fd8224c1b41a6426995619c245, type: 3}
       propertyPath: placement
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8957903112768856750, guid: b2a6c8fd8224c1b41a6426995619c245, type: 3}
+      propertyPath: textIsLangToken
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

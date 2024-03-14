@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
 
 namespace LethalCompanyInputUtils.Config;
@@ -7,6 +8,7 @@ namespace LethalCompanyInputUtils.Config;
 public static class InputUtilsConfig
 {
     public static ConfigEntry<BindingOverridePriority> bindingOverridePriority = null!;
+    public static ConfigEntry<string> localeKey = null!;
     
     internal static void Init(BepInPlugin plugin)
     {
@@ -22,5 +24,14 @@ public static class InputUtilsConfig
             "\tGlobalOnly: Only loads Global defined controls\n" +
             "\tLocalOnly: Only loads Local/Profile/ModPack defined controls\n"
         );
+
+        localeKey = persistentConfig.Bind(
+            "General",
+            "Locale",
+            "en_US",
+            "Valid Locales can be found in the 'Locale' folder where InputUtils is installed at."
+        );
+
+        localeKey.SettingChanged += (_, _) => LocaleManager.LoadLocaleData();
     }
 }

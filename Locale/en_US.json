@@ -2,6 +2,7 @@
   "entries": {
     "RebindButton.ResetToDefault.PopOver": "Reset to default",
     "RebindButton.RemoveBind.PopOver": "Remove bind",
-    "RebindButton.NotSupportedDeviceBind.PopOver": "Doesn't support binding to this device"
+    "RebindButton.NotSupportedDeviceBind.PopOver": "Doesn't support binding to this device",
+    "BindingOverrideContextSwitch.Info.PopOver": "This let's you change which Controls you are viewing/editing.\n\nGlobal - These controls are saved independently from your Modpack/Profile.\n\nLocal - These controls are saved with your Modpack/Profile/Manual install. These can be overwritten by updating your Modpack/Profile.\n\nVanilla LethalCompany Controls are always Global even if you are modifying the Local Controls, they will always be saved Globally."
   }
 }

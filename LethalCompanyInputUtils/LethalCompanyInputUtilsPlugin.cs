@@ -30,7 +30,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         LoadAssetBundles();
         
-        LocaleManager.Init();
+        LocaleManager.LoadLocaleData();
         
         ControllerGlyph.LoadGlyphs();
         

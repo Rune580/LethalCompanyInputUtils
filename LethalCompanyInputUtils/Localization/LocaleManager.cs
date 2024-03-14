@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Utils;
 
 namespace LethalCompanyInputUtils.Localization;
@@ -8,14 +9,23 @@ internal static class LocaleManager
 {
     private static readonly Dictionary<string, string> LocaleEntries = new();
 
-    internal static void Init()
+    internal static void LoadLocaleData()
     {
         var localeOverlay = new Stack<Locale>();
-        var localeKey = "en_US";
+        
+        var localeKey = InputUtilsConfig.localeKey.Value;
+        var localePath = Path.Combine(FsUtils.LocaleDir, $"{localeKey}.json");
+        
+        if (!File.Exists(localePath))
+        {
+            Logging.Warn($"Could not find Locale {localeKey} at `{localePath}`!\nFalling back to `en_US`");
+            
+            localeKey = "en_US";
+            localePath = Path.Combine(FsUtils.LocaleDir, $"{localeKey}.json");
+        }
         
         do
         {
-            var localePath = Path.Combine(FsUtils.LocaleDir, $"{localeKey}.json");
             if (!File.Exists(localePath))
                 break;
             
@@ -24,6 +34,7 @@ internal static class LocaleManager
             localeOverlay.Push(locale);
 
             localeKey = locale.fallback;
+            localePath = Path.Combine(FsUtils.LocaleDir, $"{localeKey}.json");
         } while (localeKey is not null);
 
         while (localeOverlay.TryPop(out var locale))
@@ -34,6 +45,8 @@ internal static class LocaleManager
             }
         }
     }
+    
+    
 
     public static string GetString(string token) => LocaleEntries[token];
 }
