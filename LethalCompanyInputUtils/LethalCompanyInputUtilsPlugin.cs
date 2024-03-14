@@ -30,13 +30,13 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         LoadAssetBundles();
         
-        LocaleManager.LoadLocaleData();
-        
         ControllerGlyph.LoadGlyphs();
         
         FsUtils.EnsureRequiredDirs();
         
         InputUtilsConfig.Init(Info.Metadata);
+        
+        LocaleManager.LoadLocaleData();
 
         RegisterExtendedMouseLayout();
         

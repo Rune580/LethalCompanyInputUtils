@@ -4294,8 +4294,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8957903112768856750, guid: b2a6c8fd8224c1b41a6426995619c245, type: 3}
+      propertyPath: text
+      value: BindingOverridePriorityDropdown.Info.PopOver
+      objectReference: {fileID: 0}
+    - target: {fileID: 8957903112768856750, guid: b2a6c8fd8224c1b41a6426995619c245, type: 3}
       propertyPath: placement
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8957903112768856750, guid: b2a6c8fd8224c1b41a6426995619c245, type: 3}
+      propertyPath: textIsLangToken
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
