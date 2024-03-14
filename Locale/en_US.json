@@ -1,0 +1,7 @@
+{
+  "entries": {
+    "RebindButton.ResetToDefault.PopOver": "Reset to default",
+    "RebindButton.RemoveBind.PopOver": "Remove bind",
+    "RebindButton.NotSupportedDeviceBind.PopOver": "Doesn't support binding to this device"
+  }
+}

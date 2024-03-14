@@ -38,25 +38,9 @@ internal static class FsUtils
             return _assetBundlesDir;
         }
     }
-
-    public static void EnsureControlsDir()
-    {
-        if (!Directory.Exists(ControlsDir))
-            Directory.CreateDirectory(ControlsDir);
-    }
-
+    
     private static string? GetAssetBundlesDir()
     {
-        string BadInstallError()
-        {
-            var msg =
-                "InputUtils can't find it's required AssetBundles! This will cause many issues!\nThis either means your mod manager incorrectly installed InputUtils" +
-                "or if you've manually installed InputUtils, you've done so incorrectly. If you manually installed don't bother reporting the issue, I only provide support to people who use mod managers.";
-            
-            Logging.Error(msg);
-            return msg;
-        }
-
         if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(LethalCompanyInputUtilsPlugin.ModId, out var pluginInfo))
             return null;
         
@@ -71,5 +55,70 @@ internal static class FsUtils
             throw new NotSupportedException(BadInstallError());
 
         return assetBundlesDir;
+
+        string BadInstallError()
+        {
+            var msg =
+                "InputUtils can't find it's required AssetBundles! This will cause many issues!\nThis either means your mod manager incorrectly installed InputUtils" +
+                "or if you've manually installed InputUtils, you've done so incorrectly. If you manually installed don't bother reporting the issue, I only provide support to people who use mod managers.";
+            
+            Logging.Error(msg);
+            return msg;
+        }
+    }
+
+    private static string? _localeDir;
+
+    public static string LocaleDir
+    {
+        get
+        {
+            _localeDir ??= GetLocaleDir();
+
+            // This occurs when another mod depends on InputUtils without using a BepInDependency attribute.
+            if (string.IsNullOrEmpty(_localeDir))
+            {
+                var mods = BepInEx.Bootstrap.Chainloader.PluginInfos.ToPrettyString();
+                Logging.Warn($"InputUtils is loading in an invalid state!\n\tOne of the following mods may be the culprit:\n{mods}");
+                
+                return "";
+            }
+
+            return _localeDir;
+        }
+    }
+
+    private static string? GetLocaleDir()
+    {
+        if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(LethalCompanyInputUtilsPlugin.ModId, out var pluginInfo))
+            return null;
+        
+        var dllLoc = pluginInfo.Location;
+        var parentDir = Directory.GetParent(dllLoc);
+
+        if (parentDir is null)
+            throw new NotSupportedException(BadInstallError());
+
+        string localeDir = Path.Combine(parentDir.FullName, "Locale");
+        if (!Directory.Exists(localeDir))
+            throw new NotSupportedException(BadInstallError());
+
+        return localeDir;
+        
+        string BadInstallError()
+        {
+            var msg =
+                "InputUtils can't find it's required AssetBundles! This will cause many issues!\nThis either means your mod manager incorrectly installed InputUtils" +
+                "or if you've manually installed InputUtils, you've done so incorrectly. If you manually installed don't bother reporting the issue, I only provide support to people who use mod managers.";
+            
+            Logging.Error(msg);
+            return msg;
+        }
+    }
+
+    public static void EnsureControlsDir()
+    {
+        if (!Directory.Exists(ControlsDir))
+            Directory.CreateDirectory(ControlsDir);
     }
 }

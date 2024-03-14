@@ -239,6 +239,7 @@ public sealed class DeployToGame : FrostingTask<BuildContext>
     {
         var project = context.Project;
         var assetBundlesDir = context.BuildDir / "AssetBundles";
+        var localeDir = context.BuildDir / "Locale";
 
         foreach (var target in context.DeployTargets)
         {
@@ -250,6 +251,9 @@ public sealed class DeployToGame : FrostingTask<BuildContext>
 
             assetBundlesDir.GlobFiles("*")
                 .CopyFilesTo(destDir / "AssetBundles");
+            
+            localeDir.GlobFiles("*.json")
+                .CopyFilesTo(destDir / "Locale");
         }
     }
 }
@@ -311,6 +315,10 @@ public sealed class BuildThunderstorePackage : FrostingTask<BuildContext>
         var assetBundlesDir = context.BuildDir / "AssetBundles";
         assetBundlesDir.GlobFiles("*")
             .CopyFilesTo(modDir / "AssetBundles");
+        
+        var localeDir = context.BuildDir / "Locale";
+        localeDir.GlobFiles("*.json")
+            .CopyFilesTo(modDir / "Locale");
         
         File.Copy("../" / manifestFile, publishDir / manifestFile, true);
         File.Copy("../" / iconFile, publishDir / iconFile, true);

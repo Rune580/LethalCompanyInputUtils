@@ -3,6 +3,7 @@ using BepInEx;
 using HarmonyLib;
 using LethalCompanyInputUtils.Components;
 using LethalCompanyInputUtils.Glyphs;
+using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -27,6 +28,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         InputSystem.onDeviceChange += OnDeviceChanged;
         
         LoadAssetBundles();
+        
+        LocaleManager.Init();
         
         ControllerGlyph.LoadGlyphs();
         
