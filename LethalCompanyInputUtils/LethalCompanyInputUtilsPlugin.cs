@@ -123,11 +123,21 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
 
     private static void InputSystemOnDeviceChange(InputDevice device, InputDeviceChange status)
     {
-        Logging.Info("Listing Devices and Device specified Layout");
-        LogLayout(InputSystem.LoadLayout(device.layout));
+        var descBuilder = new StringBuilder();
+
+        descBuilder.AppendLine($"\tProduct: {device.description.product}");
+        descBuilder.AppendLine($"\tSerial: {device.description.serial}");
+        descBuilder.AppendLine($"\tManufacturer: {device.description.manufacturer}");
+        descBuilder.AppendLine($"\tVersion: {device.description.version}");
+        descBuilder.AppendLine($"\tDeviceClass: {device.description.deviceClass}");
+        descBuilder.AppendLine($"\tCapabilities: {device.description.capabilities}");
         
-        Logging.Info("Listing Devices and Best Matching Layout");
-        LogLayout(InputSystem.LoadLayout(InputSystem.TryFindMatchingLayout(device.description)));
+        Logging.Info($"{device.name}\n{descBuilder}\n\tDevice specified Layout {device.layout}");
+        LogLayout(InputSystem.LoadLayout(device.layout));
+
+        var matchingLayout = InputSystem.TryFindMatchingLayout(device.description);
+        Logging.Info($"\tBest Matching Layout {matchingLayout}");
+        LogLayout(InputSystem.LoadLayout(matchingLayout));
     }
 
     private static void LogLayout(InputControlLayout layout)
