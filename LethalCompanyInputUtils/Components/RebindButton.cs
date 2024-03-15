@@ -312,6 +312,7 @@ public class RebindButton : MonoBehaviour
         _rebindingOperation = inputActionRef.action.PerformInteractiveRebinding(rebindIndex)
             .OnMatchWaitForAnother(0.1f)
             .WithControlsHavingToMatchPath("<Gamepad>")
+            .WithControlsHavingToMatchPath("<Joystick>")
             .OnComplete(operation => OnRebindComplete(operation, this))
             .Start();
     }
