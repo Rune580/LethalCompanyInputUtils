@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using BepInEx;
 using HarmonyLib;
 using LethalCompanyInputUtils.Components;
@@ -7,6 +8,7 @@ using LethalCompanyInputUtils.Glyphs;
 using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Layouts;
 using UnityEngine.SceneManagement;
 
 namespace LethalCompanyInputUtils;
@@ -40,6 +42,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         LocaleManager.LoadLocaleData();
 
         RegisterExtendedMouseLayout();
+
+        DebugDeviceLayouts();
         
         Logging.Info($"InputUtils {ModVersion} has finished loading!");
     }
@@ -103,5 +107,40 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         InputSystem.RegisterLayoutOverride(extendedMouseJson);
         Logging.Info("Registered InputUtilsExtendedMouse Layout Override!");
+    }
+
+    private static void DebugDeviceLayouts()
+    {
+        Logging.Info("Listing Device Layouts");
+        
+        foreach (var layoutName in InputSystem.ListLayouts())
+        {
+            LogLayout(InputSystem.LoadLayout(layoutName));
+        }
+        
+        InputSystem.onDeviceChange += InputSystemOnDeviceChange;
+    }
+
+    private static void InputSystemOnDeviceChange(InputDevice device, InputDeviceChange status)
+    {
+        Logging.Info("Listing Devices and Device specified Layout");
+        LogLayout(InputSystem.LoadLayout(device.layout));
+        
+        Logging.Info("Listing Devices and Best Matching Layout");
+        LogLayout(InputSystem.LoadLayout(InputSystem.TryFindMatchingLayout(device.description)));
+    }
+
+    private static void LogLayout(InputControlLayout layout)
+    {
+        var builder = new StringBuilder();
+
+        builder.AppendLine($"Layout: {layout.name.ToString()}\n\tControls:");
+            
+        foreach (var control in layout.controls)
+        {
+            builder.AppendLine($"\t\t{control.name.ToString()}");
+        }
+            
+        Logging.Info(builder.ToString());
     }
 }
