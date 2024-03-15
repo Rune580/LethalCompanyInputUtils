@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 namespace LethalCompanyInputUtils;
 
 [BepInPlugin(ModId, ModName, ModVersion)]
+[BepInDependency("ainavt.lc.lethalconfig", BepInDependency.DependencyFlags.SoftDependency)]
 public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
 {
     public const string ModId = "com.rune580.LethalCompanyInputUtils";

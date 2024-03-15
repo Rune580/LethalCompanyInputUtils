@@ -1,7 +1,10 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
+using LethalConfig;
+using LethalConfig.ConfigItems;
 
 namespace LethalCompanyInputUtils.Config;
 
@@ -29,9 +32,18 @@ public static class InputUtilsConfig
             "General",
             "Locale",
             "en_US",
-            "Valid Locales can be found in the 'Locale' folder where InputUtils is installed at."
+            "Valid Locales can be found in the 'Locale' folder where InputUtils is installed at.\n" +
+            "Can reload live in-game when using LethalConfig."
         );
 
         localeKey.SettingChanged += (_, _) => LocaleManager.LoadLocaleData();
+
+        if (Chainloader.PluginInfos.ContainsKey("ainavt.lc.lethalconfig"))
+            LethalConfigSetup();
+    }
+
+    private static void LethalConfigSetup()
+    {
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(localeKey, false));
     }
 }
