@@ -10,6 +10,7 @@ This mod is just a dependency for other mods, it doesn't add content, but it all
 
 ### Where are my bind overrides stored?
 Depends on the version of InputUtils:
+- **>= 0.7.0** Global: `AppData/LocalLow/ZeekerssRBLX/Lethal Company/InputUtils/controls` Local: `BepInEx/config/controls`
 - **>= 0.4.1** `BepInEx/config/controls`
 - **<= 0.4.0** `BepInEx/controls`
 
@@ -116,19 +117,15 @@ The easiest (opinionated) way to do so would be to have a static instance in you
 [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.HardDependency)]
 public class MyExamplePlugin : BaseUnityPlugin
 {
-    internal static MyExampleInputClass InputActionsInstance = new MyExampleInputClass();
-}
-```
-You could also opt for instantiating the instance in the InputActions class (Singleton-style).
-```csharp
-public class MyExampleInputClass : LcInputActions 
-{
-    public static MyExampleInputClass Instance = new();
+    internal static MyExampleInputClass InputActionsInstance;
 
-    [InputAction("explodekey", "<Keyboard>/j", "<Gamepad>/Button North", Name = "Explode")]
-    public InputAction ExplodeKey { get; set; }
+    public void Awake()
+    {
+        InputActionsInstance = new MyExampleInputClass();
+    }
 }
 ```
+
 > [!IMPORTANT]
 > #### But How Do I Get My Binds String?
 > You may have noticed that `<keyboard>/yourKey` can be a little confusing for the special buttons. So try this:
