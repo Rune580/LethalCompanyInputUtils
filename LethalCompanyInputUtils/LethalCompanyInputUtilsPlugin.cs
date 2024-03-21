@@ -8,11 +8,13 @@ using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using static BepInEx.BepInDependency.DependencyFlags;
 
 namespace LethalCompanyInputUtils;
 
 [BepInPlugin(ModId, ModName, ModVersion)]
-[BepInDependency("ainavt.lc.lethalconfig", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("ainavt.lc.lethalconfig", SoftDependency)]
+[BepInDependency("BMX.LobbyCompatibility", SoftDependency)]
 public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
 {
     public const string ModId = "com.rune580.LethalCompanyInputUtils";
@@ -40,6 +42,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         LocaleManager.LoadLocaleData();
 
         RegisterExtendedMouseLayout();
+        
+        ModCompat.Init(this);
         
         Logging.Info($"InputUtils {ModVersion} has finished loading!");
     }
