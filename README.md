@@ -1,7 +1,9 @@
 # LethalCompany InputUtils
 
-![NuGet Version](https://img.shields.io/nuget/v/Rune580.Mods.LethalCompany.InputUtils?link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FRune580.Mods.LethalCompany.InputUtils%2F) ![NuGet Downloads](https://img.shields.io/nuget/dt/Rune580.Mods.LethalCompany.InputUtils?link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FRune580.Mods.LethalCompany.InputUtils%2F) ![Thunderstore Version](https://img.shields.io/thunderstore/v/Rune580/LethalCompany_InputUtils?link=https%3A%2F%2Fthunderstore.io%2Fc%2Flethal-company%2Fp%2FRune580%2FLethalCompany_InputUtils%2F) ![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/Rune580/LethalCompany_InputUtils?link=https%3A%2F%2Fthunderstore.io%2Fc%2Flethal-company%2Fp%2FRune580%2FLethalCompany_InputUtils%2F)
-
+[![NuGet Version](https://img.shields.io/nuget/v/Rune580.Mods.LethalCompany.InputUtils?style=for-the-badge&logo=nuget)](https://www.nuget.org/packages/Rune580.Mods.LethalCompany.InputUtils)
+[![Thunderstore Version](https://img.shields.io/thunderstore/v/Rune580/LethalCompany_InputUtils?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils/)
+[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/Rune580/LethalCompany_InputUtils?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils/)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Rune580/LethalCompanyInputUtils/build.yml?branch=master&style=for-the-badge&logo=github)](https://github.com/Rune580/LethalCompanyInputUtils/actions/workflows/build.yml)
 
 Utilities for creating InputActions and having them be accessible in-game.
 InputActions created through this mod are accessible in-game via the keybinds menu added in update v45.
@@ -30,7 +32,7 @@ add this to your project `.csproj`
 ```xml
 <ItemGroup>
   <!-- Make sure the 'Version="..."' is set to the latest version -->
-  <PackageReference Include="Rune580.Mods.LethalCompany.InputUtils" Version="0.7.1" />
+  <PackageReference Include="Rune580.Mods.LethalCompany.InputUtils" Version="0.7.2" />
 </ItemGroup>
 ```
 That should be all you need to get started.
