@@ -5,6 +5,7 @@ using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
 using LethalConfig;
 using LethalConfig.ConfigItems;
+using LethalConfig.ConfigItems.Options;
 
 namespace LethalCompanyInputUtils.Config;
 
@@ -44,6 +45,11 @@ public static class InputUtilsConfig
 
     private static void LethalConfigSetup()
     {
-        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(localeKey, false));
+        var localeDropdownOptions = new TextDropDownOptions(LocaleManager.GetAllLocales())
+        {
+            RequiresRestart = false,
+        };
+        
+        LethalConfigManager.AddConfigItem(new TextDropDownConfigItem(localeKey, localeDropdownOptions));
     }
 }

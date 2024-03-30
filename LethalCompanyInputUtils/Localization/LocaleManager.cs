@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Utils;
 
@@ -45,8 +46,11 @@ internal static class LocaleManager
             }
         }
     }
-    
-    
+
+    internal static string[] GetAllLocales() =>
+        Directory.GetFiles(FsUtils.LocaleDir, "*.json")
+            .Select(Path.GetFileNameWithoutExtension)
+            .ToArray();
 
     public static string GetString(string token) => LocaleEntries[token];
 }
