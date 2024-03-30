@@ -366,7 +366,7 @@ public sealed class BuildNuGetPackage : FrostingTask<BuildContext>
                               <?xml version="1.0" encoding="utf-8"?>
                               <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
                                   <metadata>
-                                      <id>{context.ManifestAuthor}.{manifest.name}</id>
+                                      <id>{context.ManifestAuthor}.Mods.LethalCompany.InputUtils</id>
                                       <version>{manifest.version_number}</version>
                                       <description>{manifest.description}</description>
                                       <authors>{context.ManifestAuthor}</authors>
@@ -375,9 +375,13 @@ public sealed class BuildNuGetPackage : FrostingTask<BuildContext>
                                       <iconUrl>https://cdn.rune580.dev/icons/lethalcompany_inpututils/icon.png</iconUrl>
                                       <icon>icon.png</icon>
                                       <license type="file">LICENSE</license>
+                                      <dependencies>
+                                          <group targetFramework=".NETStandard2.1">
+                                          </group>
+                                      </dependencies>
                                   </metadata>
                                   <files>
-                                      <file src="{dllFile}" target="lib/{dllFile}" />
+                                      <file src="{dllFile}" target="lib/netstandard2.1" />
                                       <file src="README.md" />
                                       <file src="CHANGELOG.md" />
                                       <file src="icon.png" />

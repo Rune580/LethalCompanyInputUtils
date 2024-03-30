@@ -49,8 +49,13 @@ jobs:
       shell: bash
       continue-on-error: true
     
-    - name: Push NuGet Package
+    - name: Push NuGet Package (GitHub Packages)
       run: dotnet nuget push "${NUGET_PKG_PATH}" --source "github"
+
+    - name: Push NuGet Package (nuget.org)
+      run: dotnet nuget push "${NUGET_PKG_PATH}" --api-key $NUGET_API_TOKEN --source https://api.nuget.org/v3/index.json
+      env:
+        NUGET_API_TOKEN: ${{ secrets.NUGET_RELEASE_API_KEY }}
 
     - name: Delete old release if it already exists
       run: gh release delete --yes "${RELEASE_VERSION}"

@@ -1,5 +1,8 @@
 # LethalCompany InputUtils
 
+![NuGet Version](https://img.shields.io/nuget/v/Rune580.Mods.LethalCompany.InputUtils?link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FRune580.Mods.LethalCompany.InputUtils%2F) ![NuGet Downloads](https://img.shields.io/nuget/dt/Rune580.Mods.LethalCompany.InputUtils?link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FRune580.Mods.LethalCompany.InputUtils%2F) ![Thunderstore Version](https://img.shields.io/thunderstore/v/Rune580/LethalCompany_InputUtils?link=https%3A%2F%2Fthunderstore.io%2Fc%2Flethal-company%2Fp%2FRune580%2FLethalCompany_InputUtils%2F) ![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/Rune580/LethalCompany_InputUtils?link=https%3A%2F%2Fthunderstore.io%2Fc%2Flethal-company%2Fp%2FRune580%2FLethalCompany_InputUtils%2F)
+
+
 Utilities for creating InputActions and having them be accessible in-game.
 InputActions created through this mod are accessible in-game via the keybinds menu added in update v45.
 
@@ -21,7 +24,18 @@ Use a Mod manager. I won't provide support if a mod manager wasn't used, a mod m
 *This Api/Mod is still in beta, please keep in mind that stuff may change.*
 Feedback is appreciated.
 
-Download the latest release from either the [Thunderstore](https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils) or the [Releases](https://github.com/Rune580/LethalCompanyInputUtils/releases).
+Add the nuget package to your project, if you want a copy and paste solution:
+
+add this to your project `.csproj`
+```xml
+<ItemGroup>
+  <!-- Make sure the 'Version="..."' is set to the latest version -->
+  <PackageReference Include="Rune580.Mods.LethalCompany.InputUtils" Version="0.7.1" />
+</ItemGroup>
+```
+That should be all you need to get started.
+
+Otherwise if you don't want to use nuget, you can download the latest release from either the [Thunderstore](https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils) or the [Releases](https://github.com/Rune580/LethalCompanyInputUtils/releases).
 Extract the zip and add a reference to the dll file of the mod in Visual Studio or Rider.
 
 ### Initializing Your Binds
