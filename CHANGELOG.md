@@ -1,8 +1,13 @@
+### [0.7.3]
+
+Mod Integration:
+- LethalConfig - Use TextDropDownConfigItem for the locale option instead of TextInputFieldConfigItem.
+
 ### [0.7.2]
 
 Mod Integration:
 - LobbyCompatibility - Register InputUtils as a client-side mod.
-- LethalConfig - Expose global config entries in-game.
+- LethalConfig - Change locale in-game.
 
 ### [0.7.1]
 
