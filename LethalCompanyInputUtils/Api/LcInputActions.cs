@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
+using LethalCompanyInputUtils.BindingPathEnums;
 using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Data;
 using LethalCompanyInputUtils.Utils;
@@ -53,7 +54,11 @@ public abstract class LcInputActions
                 continue;
 
             attr.ActionId ??= prop.Name;
-            attr.GamepadPath ??= UnboundGamepadIdentifier;
+            
+            attr.GamepadPath ??= attr.GamepadControl.ToPath();
+            if (string.IsNullOrEmpty(attr.GamepadPath))
+                attr.GamepadPath = UnboundGamepadIdentifier;
+            
             var kbmPath = string.IsNullOrWhiteSpace(attr.KbmPath) ? UnboundKeyboardAndMouseIdentifier : attr.KbmPath;
 
             mapBuilder.NewActionBinding()

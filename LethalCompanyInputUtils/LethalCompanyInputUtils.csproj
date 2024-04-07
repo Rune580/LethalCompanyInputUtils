@@ -18,6 +18,14 @@
         <PackageReference Include="TeamBMX.LobbyCompatibility" Version="1.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\LethalCompanyInputUtils.SourceGen\LethalCompanyInputUtils.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="../device_layouts.json" InProject="false" />
+    </ItemGroup>
+
     <PropertyGroup>
         <AdditionalLibsDir Condition="'$(USE_STUBBED_LIBS)' == ''">..\.gameReferences\</AdditionalLibsDir>
         <AdditionalLibsDir Condition="'$(USE_STUBBED_LIBS)' != ''">..\libs\</AdditionalLibsDir>

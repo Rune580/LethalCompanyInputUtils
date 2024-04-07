@@ -1,4 +1,5 @@
 ﻿using System;
+using LethalCompanyInputUtils.BindingPathEnums;
 using UnityEngine.InputSystem;
 
 namespace LethalCompanyInputUtils.Api;
@@ -20,6 +21,18 @@ public class InputActionAttribute : Attribute
         KbmPath = kbmPath;
     }
     
+    /// <param name="keyboardControl">The default Keyboard bind</param>
+    public InputActionAttribute(KeyboardControl keyboardControl)
+    {
+        KbmPath = keyboardControl.ToPath();
+    }
+    
+    /// <param name="mouseControl">The default Mouse bind</param>
+    public InputActionAttribute(MouseControl mouseControl)
+    {
+        KbmPath = mouseControl.ToPath();
+    }
+    
     public readonly string KbmPath;
     
     /// <summary>
@@ -29,8 +42,16 @@ public class InputActionAttribute : Attribute
     
     /// <summary>
     /// The default bind for Gamepad devices.
+    /// For using an GamepadControl enum, use <see cref="GamepadControl"/> instead.
+    /// <remarks>Takes priority when both this and <see cref="GamepadControl"/> are set.</remarks>  
     /// </summary>
     public string? GamepadPath { get; set; }
+    
+    /// <summary>
+    /// The default bind for Gamepad devices.
+    /// For using a string path, use <see cref="GamepadPath"/> instead.
+    /// </summary>
+    public GamepadControl GamepadControl { get; set; }
     
     public InputActionType ActionType { get; set; } = InputActionType.Button;
     
