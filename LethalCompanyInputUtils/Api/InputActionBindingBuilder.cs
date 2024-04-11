@@ -1,4 +1,5 @@
-﻿using LethalCompanyInputUtils.Utils;
+﻿using LethalCompanyInputUtils.BindingPathEnums;
+using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
 
 namespace LethalCompanyInputUtils.Api;
@@ -39,6 +40,26 @@ public class InputActionBindingBuilder
         return this;
     }
 
+    public InputActionBindingBuilder WithKeyboardControl(KeyboardControl keyboardControl)
+    {
+        _kbmPath = keyboardControl.ToPath();
+
+        if (string.IsNullOrWhiteSpace(_kbmPath))
+            return WithKbmPathUnbound();
+        
+        return this;
+    }
+    
+    public InputActionBindingBuilder WithMouseControl(MouseControl mouseControl)
+    {
+        _kbmPath = mouseControl.ToPath();
+
+        if (string.IsNullOrWhiteSpace(_kbmPath))
+            return WithKbmPathUnbound();
+        
+        return this;
+    }
+
     public InputActionBindingBuilder WithKbmPathUnbound()
     {
         _kbmPath = LcInputActions.UnboundKeyboardAndMouseIdentifier;
@@ -48,6 +69,16 @@ public class InputActionBindingBuilder
     public InputActionBindingBuilder WithGamepadPath(string gamepadPath)
     {
         _gamepadPath = gamepadPath;
+
+        if (string.IsNullOrWhiteSpace(_gamepadPath))
+            return WithGamepadPathUnbound();
+        
+        return this;
+    }
+    
+    public InputActionBindingBuilder WithGamepadControl(GamepadControl control)
+    {
+        _gamepadPath = control.ToPath();
 
         if (string.IsNullOrWhiteSpace(_gamepadPath))
             return WithGamepadPathUnbound();
