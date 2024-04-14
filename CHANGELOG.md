@@ -1,3 +1,16 @@
+### [0.7.4]
+
+Locale:
+- Russian translation by @Singularia
+
+Developer Experience Improvements:
+
+Keyboard, Mouse, and Gamepad have generated Enums under the `LethalCompanyInputUtils.BindingPathEnums` namespace.
+These enums are called `KeyboardControl`, `MouseControl`, and `GamepadControl` respectively.
+These enums contain **all** the keys/buttons that are accepted by Unity's InputSystem.
+
+The docs have been updated to reflect usage of the Enums, you may still use the string input paths if you'd like.
+
 ### [0.7.3]
 
 Mod Integration:
