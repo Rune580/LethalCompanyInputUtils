@@ -76,7 +76,7 @@ jobs:
       shell: bash
       continue-on-error: true
       env:
-        GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Get upload file path
       run: |
