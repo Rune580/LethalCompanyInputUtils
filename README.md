@@ -19,6 +19,13 @@ Depends on the version of InputUtils:
 - **>= 0.4.1** `BepInEx/config/controls`
 - **<= 0.4.0** `BepInEx/controls`
 
+### Lethal Company Version Support
+InputUtils only _officially_ supports the latest version of Lethal Company, except when there's a public beta, in which case both the non-beta and beta version are included.
+
+InputUtils is only guaranteed to work on these versions, older versions of Lethal Company and InputUtils are not supported by me, and issues found when using older versions of Lethal Company will not be provided support for.
+
+If you choose to use an unsupported version of Lethal Company, you do so at your own risk.
+
 ### Recommended Install
 Use a Mod manager. I won't provide support if a mod manager wasn't used, a mod manager makes it far easier to debug issues since users can just share a modpack code.
 
