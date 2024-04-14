@@ -49,7 +49,7 @@ Extract the zip and add a reference to the dll file of the mod in Visual Studio 
 ```csharp
 public class MyExampleInputClass : LcInputActions 
 {
-    [InputAction("<Keyboard>/g", Name = "Explode")]
+    [InputAction(KeyboardControl.G, Name = "Explode")]
     public InputAction ExplodeKey { get; set; }
     [InputAction("<Keyboard>/h", Name = "Another")]
     public InputAction AnotherKey { get; set; }
@@ -63,15 +63,18 @@ public class MyExampleInputClass : LcInputActions
 > [!IMPORTANT]  
 > For actions to be registered to the API, **Properties MUST be annotated with `[InputAction(...)]`**
 >```csharp
->[InputAction("YourkbmPath", Name = "", GamepadPath = "", KbmInteractions = "", GamepadInteractions = "", ActionID = "", ActionType = InputActionType...)]
+>[InputAction("YourkbmPath" /* You can also use a KeyboardControl or MouseControl */, Name = "", GamepadPath = "", GamepadControl = GamepadControl.None, KbmInteractions = "", GamepadInteractions = "", ActionID = "", ActionType = InputActionType...)]
 >```
 
 #### Required Parameters
+You only need to use **one** of the following overloads:
 * `kbmPath`: The default bind for Keyboard and Mouse devices
+* `keyboardControl`: The default bind for Keyboard devices, uses the KeyboardControl Enum
+* `mouseControl`: The default bind for Mouse devices, uses the MouseControl Enum
   
 #### Optional Parameters
 * `Name`: The Displayed text in the game keybinds menu
-* `GamepadPath`: The default bind for Gamepad devices
+* `GamepadPath` **_or_** `GamepadControl`: The default bind for Gamepad devices. When both are set, `GamepadPath` will take priority.
   
 * `KbmInteractions`: Sets the interactions of the kbm binding. See [Interactions Docs](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/api/UnityEngine.InputSystem.Interactions.html)
 * `GamepadInteractions`: Sets the interactions of the gamepad binding. See [Interactions Docs](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/api/UnityEngine.InputSystem.Interactions.html)
@@ -81,12 +84,12 @@ public class MyExampleInputClass : LcInputActions
 
 So your Attribute could be written like this:
 ```csharp
-[InputAction("<Keyboard>/minus", Name = "Explode")]
+[InputAction(KeyboardControl.Minus, Name = "Explode")]
 public InputAction ExplodeKey { get; set; }
 ```
 Or with any combination of optional parameters:
 ```csharp
-[InputAction("<Keyboard>/minus", Name = "Explode", GamepadPath = "<Gamepad>/Button North", KbmInteractions = "hold(duration = 5)")]
+[InputAction(KeyboardControl.Minus, Name = "Explode", GamepadControl = GamepadControl.ButtonNorth, KbmInteractions = "hold(duration = 5)")]
 public InputAction ExplodeKey { get; set; }
 ```
 > [!NOTE]
@@ -113,12 +116,17 @@ public class MyExampleInputClass : LcInputActions
         builder.NewActionBinding()
             .WithActionId("explodekey")
             .WithActionType(InputActionType.Button)
-            .WithKbmPath("<Keyboard>/j")
+            .WithKeyboardControl(KeyboardControl.J) // or .WithKbmPath("<Keyboard>/j")
+            .WithGamepadControl(GamepadControl.ButtonNorth) // or .WithGamepadPath("<Gamepad>/buttonNorth")
             .WithBindingName("Explode")
             .Finish();
     }
 }
 ```
+
+> [!IMPORTANT]
+> Omitting `WithGamepadControl`, `WithGamepadPath`, or `WithGamepadUnbound`, will disable binding the `InputAction` to a Gamepad device.
+> Similarly, omitting `WithKeyboardControl`, `WithMouseControl`, `WithKbmPath`, or `WithKbmUnbound`, will disable binding the `InputAction` to a Keyboard or Mouse device.
 
 ### Referencing Your Binds
 To use your InputActions class, you need to instantiate it.
@@ -141,15 +149,6 @@ public class MyExamplePlugin : BaseUnityPlugin
     }
 }
 ```
-
-> [!IMPORTANT]
-> #### But How Do I Get My Binds String?
-> You may have noticed that `<keyboard>/yourKey` can be a little confusing for the special buttons. So try this:
-> 1. First, arbitrarily set the value to some regular value or just an empty string
-> 2. Then, load up your mod and change the keybind to the desired key
-> 3. After, look in your `.../BepInEx/controls/YOURMODID.json` file
-> 4. Find the `{"action":"myaction","origPath":"","path":"<Keyboard>/f8"}]}`
-> 5. Last, copy that `path:""` from the far right i.e. `"<Keyboard>/f8"`
 
 ### Using Your Binds
 You could then simply reference the instance anywhere you need to have your actions at.

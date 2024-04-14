@@ -46,6 +46,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         ModCompat.Init(this);
         
         Logging.Info($"InputUtils {ModVersion} has finished loading!");
+        
+        LayoutExporter.TryExportLayouts();
     }
 
     private static void LoadAssetBundles()
