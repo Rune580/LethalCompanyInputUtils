@@ -33,8 +33,12 @@ internal static class LocaleManager
             var locale = Locale.LoadFrom(localePath);
             
             localeOverlay.Push(locale);
-
-            localeKey = locale.fallback;
+            
+            if (localeKey != "en_US" && locale.fallback is null)
+                localeKey = "en_US";
+            else
+                localeKey = locale.fallback;
+            
             localePath = Path.Combine(FsUtils.LocaleDir, $"{localeKey}.json");
         } while (localeKey is not null);
 
