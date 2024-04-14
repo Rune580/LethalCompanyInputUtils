@@ -337,6 +337,9 @@ Discord: @rune
 
 Github: Rune580
 
+## Contributing
+When making a PR make sure your changes are on a different branch. Do not make a PR with your changes on the `master` branch.
+
 ## Contributors
 Thanks to the following contributers:
 - @Boxofbiscuits97 for reworking most of the documentation.
