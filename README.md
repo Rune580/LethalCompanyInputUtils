@@ -341,6 +341,7 @@ Github: Rune580
 Thanks to the following contributers:
 - @Boxofbiscuits97 for reworking most of the documentation.
 - @Lordfirespeed for housekeeping and additional documentation cleanup.
+- @Singularia - Russian Translation.
 
 ## Credits
 - Reset to default icon from: @AinaVT
