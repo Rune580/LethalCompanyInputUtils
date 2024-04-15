@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using BepInEx;
 using HarmonyLib;
 using LethalCompanyInputUtils.Components;
@@ -7,6 +8,7 @@ using LethalCompanyInputUtils.Glyphs;
 using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Layouts;
 using UnityEngine.SceneManagement;
 using static BepInEx.BepInDependency.DependencyFlags;
 
@@ -42,6 +44,8 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         LocaleManager.LoadLocaleData();
 
         RegisterExtendedMouseLayout();
+
+        DebugDeviceLayouts();
         
         ModCompat.Init(this);
         
@@ -109,5 +113,50 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         InputSystem.RegisterLayoutOverride(extendedMouseJson);
         Logging.Info("Registered InputUtilsExtendedMouse Layout Override!");
+    }
+
+    private static void DebugDeviceLayouts()
+    {
+        Logging.Info("Listing Device Layouts");
+        
+        foreach (var layoutName in InputSystem.ListLayouts())
+        {
+            LogLayout(InputSystem.LoadLayout(layoutName));
+        }
+        
+        InputSystem.onDeviceChange += InputSystemOnDeviceChange;
+    }
+
+    private static void InputSystemOnDeviceChange(InputDevice device, InputDeviceChange status)
+    {
+        var descBuilder = new StringBuilder();
+
+        descBuilder.AppendLine($"\tProduct: {device.description.product}");
+        descBuilder.AppendLine($"\tSerial: {device.description.serial}");
+        descBuilder.AppendLine($"\tManufacturer: {device.description.manufacturer}");
+        descBuilder.AppendLine($"\tVersion: {device.description.version}");
+        descBuilder.AppendLine($"\tDeviceClass: {device.description.deviceClass}");
+        descBuilder.AppendLine($"\tCapabilities: {device.description.capabilities}");
+        
+        Logging.Info($"{device.name}\n{descBuilder}\n\tDevice specified Layout {device.layout}");
+        LogLayout(InputSystem.LoadLayout(device.layout));
+
+        var matchingLayout = InputSystem.TryFindMatchingLayout(device.description);
+        Logging.Info($"\tBest Matching Layout {matchingLayout}");
+        LogLayout(InputSystem.LoadLayout(matchingLayout));
+    }
+
+    private static void LogLayout(InputControlLayout layout)
+    {
+        var builder = new StringBuilder();
+
+        builder.AppendLine($"Layout: {layout.name.ToString()}\n\tControls:");
+            
+        foreach (var control in layout.controls)
+        {
+            builder.AppendLine($"\t\t{control.name.ToString()}");
+        }
+            
+        Logging.Info(builder.ToString());
     }
 }

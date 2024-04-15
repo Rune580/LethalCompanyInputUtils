@@ -29,6 +29,7 @@ public class RebindButton : MonoBehaviour
     
     private static MethodInfo? _setChangesNotAppliedMethodInfo;
     private static readonly List<RebindButton> Instances = [];
+    private static RebindButton? _currentRebindTarget;
 
     public void SetKey(RemappableKey? key, bool isBaseGame)
     {
@@ -177,6 +178,9 @@ public class RebindButton : MonoBehaviour
         
         glyphLabel.enabled = false;
 
+        CancelExistingRebind();
+        _currentRebindTarget = this;
+
         if (_key.gamepadOnly)
         {
             rebindIndicator.enabled = true;
@@ -204,7 +208,12 @@ public class RebindButton : MonoBehaviour
         _rebinding = false;
 
         if (_rebindingOperation is not null)
+        {
+            _rebindingOperation.Dispose();
             _rebindingOperation = null;
+        }
+
+        _currentRebindTarget = null;
         
         resetButton.interactable = true;
         removeButton.interactable = true;
@@ -273,6 +282,16 @@ public class RebindButton : MonoBehaviour
         Instances.Remove(this);
     }
 
+    private void OnDestroy()
+    {
+        if (_rebindingOperation is not null)
+        {
+            _rebindingOperation.Cancel();
+            _rebindingOperation.Dispose();
+            _rebindingOperation = null;
+        }
+    }
+
     private void Update()
     {
         if (!_rebinding)
@@ -281,14 +300,7 @@ public class RebindButton : MonoBehaviour
         _timeoutTimer -= Time.deltaTime;
         if (_timeoutTimer > 0f)
             return;
-
-        if (_rebindingOperation is null)
-        {
-            FinishRebinding();
-            return;
-        }
         
-        _rebindingOperation.Cancel();
         FinishRebinding();
     }
 
@@ -312,8 +324,18 @@ public class RebindButton : MonoBehaviour
         _rebindingOperation = inputActionRef.action.PerformInteractiveRebinding(rebindIndex)
             .OnMatchWaitForAnother(0.1f)
             .WithControlsHavingToMatchPath("<Gamepad>")
+            .WithControlsHavingToMatchPath("<Joystick>")
             .OnComplete(operation => OnRebindComplete(operation, this))
             .Start();
+    }
+
+    private static void CancelExistingRebind()
+    {
+        if (_currentRebindTarget is null)
+            return;
+        
+        _currentRebindTarget.FinishRebinding();
+        _currentRebindTarget = null;
     }
     
     private static void OnRebindComplete(InputActionRebindingExtensions.RebindingOperation operation, RebindButton instance)
