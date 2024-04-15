@@ -35,10 +35,12 @@ public abstract class LcInputActions
 
     protected virtual string MapName => GetType().Name;
 
-    protected LcInputActions()
+    protected LcInputActions() : this(Assembly.GetCallingAssembly().GetBepInPlugin()) {}
+
+    protected LcInputActions(BepInPlugin? plugin)
     {
         Asset = ScriptableObject.CreateInstance<InputActionAsset>();
-        Plugin = Assembly.GetCallingAssembly().GetBepInPlugin() ?? throw new InvalidOperationException();
+        Plugin = plugin ?? throw new InvalidOperationException();
 
         var mapBuilder = new InputActionMapBuilder(Id);
 
