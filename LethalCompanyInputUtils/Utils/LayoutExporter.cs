@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,8 +25,15 @@ internal static class LayoutExporter
         var args = Environment.GetCommandLineArgs();
 
         string? exportDir = null;
+        var exportAll = false;
         foreach (var arg in args)
         {
+            if (arg.StartsWith("--inputUtilsExportAllLayouts"))
+            {
+                exportAll = true;
+                continue;
+            }
+            
             if (!arg.StartsWith("--inputUtilsExportLayoutsToDir="))
                 continue;
 
@@ -39,9 +47,15 @@ internal static class LayoutExporter
         if (exportDir is null)
             return;
 
+        var layoutsToExport = exportAll
+            ? InputSystem.ListLayouts()
+                .Select(InputSystem.LoadLayout)
+                .ToArray()
+            : Layouts;
+
         try
         {
-            ExportLayouts(Layouts, Path.Combine(exportDir, "device_layouts.json"));
+            ExportLayouts(layoutsToExport, Path.Combine(exportDir, "device_layouts.json"));
             Application.Quit();
         }
         catch (Exception e)
