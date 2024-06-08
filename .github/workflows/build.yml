@@ -1,41 +1,32 @@
-
 name: Build
 
 on:
-  pull_request:
-    branches: [ master, main ]
   push:
-    branches: [ master, main ]
+    branches: [ master ]
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      USE_STUBBED_LIBS: 1
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v3
-      
-    - name: Output Short Sha Commit
-      run: |
-        export SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
-        echo "RELEASE_VERSION=${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}-${SHORT_SHA}" >> "$GITHUB_ENV"
-      shell: bash
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Grant execute permissions for build script
-      run: chmod +x build.sh
+      - name: Restore project
+        run: |
+          dotnet restore
+          dotnet tool restore
 
-    - name: Build
-      run: ./build.sh --configuration=Release --target=BuildThunderstore
+      - name: Build project
+        run: dotnet build -c Release
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: input-utils
-        path: LethalCompanyInputUtils/bin/Release/netstandard2.1/upload/
-        retention-days: 30
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./dist/*.zip
