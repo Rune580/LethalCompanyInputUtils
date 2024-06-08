@@ -1,3 +1,8 @@
+### [0.7.7]
+
+Fixes:
+- I also forgot to include Locale with the new build system, this fixes things for real this time.
+
 ### [0.7.6]
 
 Fixes:
