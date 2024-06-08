@@ -5,10 +5,7 @@ EndProject
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C126025D-A702-4C8C-840F-85F8AD98A91D}"
 	ProjectSection(SolutionItems) = preProject
-		build-settings.json = build-settings.json
-		.env = .env
-		manifest.json = manifest.json
-		READEME.md = README.md
+		README.md = README.md
 		CHANGELOG.md = CHANGELOG.md
 		thunderstore.toml = Thunderstore/thunderstore.toml
 	EndProjectSection
