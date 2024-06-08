@@ -45,7 +45,7 @@ internal static class FsUtils
 
     private static string? GetAssetBundlesDir()
     {
-        if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(LethalCompanyInputUtilsPlugin.ModId, out var pluginInfo))
+        if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(PluginInfo.PLUGIN_GUID, out var pluginInfo))
             return null;
         
         var dllLoc = pluginInfo.Location;
@@ -94,7 +94,7 @@ internal static class FsUtils
 
     private static string? GetLocaleDir()
     {
-        if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(LethalCompanyInputUtilsPlugin.ModId, out var pluginInfo))
+        if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(PluginInfo.PLUGIN_GUID, out var pluginInfo))
             return null;
         
         var dllLoc = pluginInfo.Location;

@@ -281,55 +281,18 @@ Check out Unity's documentation for their [InputSystem](https://docs.unity3d.com
 
 ## Build Instructions
 
-### Build Script Args
-- `--target=TARGET`
-  - Valid targets:
-    - Build (default)
-    - FetchRefs
-    - Deploy (requires a valid `GAME_DIR` env var)
-    - BuildThunderstore
-    - BuildNuGet
-- `--configuration=MSBUILDCONFIGURATION`
-  - Valid configurations:
-    - Debug (default)
-    - Release
-
-Check `Build/Build.cs` for the source code of the build script.
-
-### Linux
 Clone and enter the repo.
 ```shell
 git clone https://github.com/Rune580/LethalCompanyInputUtils && cd LethalCompanyInputUtils
 ```
-Copy and rename `.env.example` to `.env`.
+(Optional) Copy and rename `LethalCompanyInputUtils.csproj.user.example` to `LethalCompanyInputUtils.csproj.user`.
+Edit `LethalCompanyInputUtils/LethalCompanyInputUtils.csproj.user` to fit your needs.
 ```shell
-cp .env.example .env
+cp LethalCompanyInputUtils/LethalCompanyInputUtils.csproj.user.example LethalCompanyInputUtils/LethalCompanyInputUtils.csproj.user
 ```
-Edit `.env` to fit your needs, a valid installation of Lethal Company is required unless `USE_STUBBED_LIBS` is set.
-
-Run ./build.sh to run the default build task.
+Build the project using your IDE of choice or with the following command
 ```shell
-./build.sh
-```
-
-### Windows
-Clone the repo.
-```shell
-git clone https://github.com/Rune580/LethalCompanyInputUtils
-```
-Enter the cloned repo.
-```shell
-cd LethalCompanyInputUtils
-```
-Copy and rename `.env.example` to `.env`.
-```shell
-cp .env.example .env
-```
-Edit `.env` to fit your needs, a valid installation of Lethal Company is required unless `USE_STUBBED_LIBS` is set.
-
-Run ./build.ps1 to run the default build task.
-```shell
-.\build.ps1
+dotnet build
 ```
 
 ## Contact

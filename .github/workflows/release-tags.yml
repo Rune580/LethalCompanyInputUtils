@@ -11,89 +11,142 @@ permissions:
 
 jobs:
   build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore project
+        run: |
+          dotnet restore
+          dotnet tool restore
+
+      - name: Build and pack project
+        run: dotnet pack -c Release
+
+      - name: Upload Thunderstore artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: thunderstore-build
+          path: ./dist/*.zip
+
+      - name: Upload nupkg artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg-build
+          path: ./*/bin/Release/*.nupkg
+  
+  upload-release-artifacts:
+    name: Upload Release Artifacts
+    needs: build
     runs-on: ubuntu-latest
     env:
-      USE_STUBBED_LIBS: 1
       RELEASE_VERSION: ${{ github.ref_name }}
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v3
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        
+      - name: Delete old release if it already exists
+        run: gh release delete --yes "${RELEASE_VERSION}"
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Grant execute permissions for build script
-      run: chmod +x build.sh
+      - name: Release under current tag
+        run: |
+          export "CHANGELOG_FILE=$(mktemp --suffix=.md)"
+          echo "CHANGELOG_FILE=${CHANGELOG_FILE}" >> $GITHUB_ENV
+          gh api --method POST -H "Accept: application/vnd.github+json" \
+            "/repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+            -f tag_name="${RELEASE_VERSION}" \
+            --jq ".body" > "${CHANGELOG_FILE}"
+          cat "${CHANGELOG_FILE}"
+          gh release create "${RELEASE_VERSION}" -F "${CHANGELOG_FILE}" thunderstore-build/*.zip nupkg-build/*/bin/Release/*.nupkg
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  deploy-to-nuget:
+    name: Deploy to Nuget
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Build Thunderstore Package
-      run: ./build.sh --configuration=Release --target=BuildThunderstore
+      - name: Download nupkg artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nupkg-build
 
-    - name: Build NuGet Package
-      run: ./build.sh --configuration=Release --target=BuildNuGet
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: input-utils
-        path: LethalCompanyInputUtils/bin/Release/netstandard2.1/upload/
-        retention-days: 30
-
-    - name: Setup NuGet Push Source
-      run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Rune580/index.json"
-
-    - name: Get NuGet Package path
-      run: |
-        for fn in LethalCompanyInputUtils/bin/Release/netstandard2.1/artifacts/*.nupkg; do echo "NUGET_PKG_PATH=${fn}" >> "$GITHUB_ENV"; done;
-      shell: bash
-      continue-on-error: true
+      - name: Publish to NuGet.org
+        env:
+          NUGET_API_TOKEN: ${{ secrets.NUGET_RELEASE_API_KEY }}
+        run: |
+          dotnet nuget push ./*/bin/Release/*.nupkg --api-key $NUGET_API_TOKEN --source https://api.nuget.org/v3/index.json
     
-    - name: Push NuGet Package (GitHub Packages)
-      run: dotnet nuget push "${NUGET_PKG_PATH}" --source "github"
+  deploy-to-github-pkgs:
+    name: Deploy to GitHub Packages
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Push NuGet Package (nuget.org)
-      run: dotnet nuget push "${NUGET_PKG_PATH}" --api-key $NUGET_API_TOKEN --source https://api.nuget.org/v3/index.json
-      env:
-        NUGET_API_TOKEN: ${{ secrets.NUGET_RELEASE_API_KEY }}
+      - name: Download nupkg artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nupkg-build
 
-    - name: Delete old release if it already exists
-      run: gh release delete --yes "${RELEASE_VERSION}"
-      continue-on-error: true
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+        
+      - name: Setup NuGet Push Source
+        run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Rune580/index.json"
+      
+      - name: Publish to GitHub Packages
+        run: |
+          dotnet nuget push ./*/bin/Release/*.nupkg --source "github"
+          
+  deploy-to-thunderstore:
+    name: Deploy to Thunderstore
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Release under current tag
-      run: |
-        export "CHANGELOG_FILE=$(mktemp --suffix=.md)"
-        echo "CHANGELOG_FILE=${CHANGELOG_FILE}" >> $GITHUB_ENV
-        gh api --method POST -H "Accept: application/vnd.github+json" \
-          "/repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
-          -f tag_name="${RELEASE_VERSION}" \
-          --jq ".body" > "${CHANGELOG_FILE}"
-        cat "${CHANGELOG_FILE}"
-        gh release create "${RELEASE_VERSION}" -F "${CHANGELOG_FILE}" LethalCompanyInputUtils/bin/Release/netstandard2.1/upload/*.zip
-      shell: bash
-      continue-on-error: true
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Thunderstore artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: thunderstore-build
 
-    - name: Get upload file path
-      run: |
-        for fn in LethalCompanyInputUtils/bin/Release/netstandard2.1/upload/*.zip; do echo "THUNDERSTORE_PKG_PATH=${fn}" >> "$GITHUB_ENV"; done;
-      shell: bash
-      continue-on-error: true
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Upload Thunderstore Package
-      uses: GreenTF/upload-thunderstore-package@v4.1
-      with:
-        namespace: Rune580
-        name: LethalCompany_InputUtils
-        description: Empty
-        version: ${{ github.ref_name }}
-        community: lethal-company
-        token: ${{ secrets.THUNDERSTORE_TOKEN }}
-        repo: thunderstore.io
-        categories: |
-          libraries
-        file: ${{ env.THUNDERSTORE_PKG_PATH }}
+      - name: Restore project tools
+        run: dotnet tool restore
+
+      - name: Publish to Thunderstore
+        env:
+          TCLI_AUTH_TOKEN: ${{ secrets.THUNDERSTORE_TOKEN }}
+        run: |
+          dotnet build -target:PublishThunderstoreArtifact

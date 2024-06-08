@@ -1,1 +1,0 @@
-This directory contains stubbed libraries required for automatic builds
