@@ -149,4 +149,4 @@ jobs:
         env:
           TCLI_AUTH_TOKEN: ${{ secrets.THUNDERSTORE_TOKEN }}
         run: |
-          dotnet build -target:PublishThunderstoreArtifact
+          dotnet build LethalCompanyInputUtils/LethalCompanyInputUtils.csproj -target:PublishThunderstoreArtifact
