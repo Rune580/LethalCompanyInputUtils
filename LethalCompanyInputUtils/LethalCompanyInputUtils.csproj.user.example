@@ -1,0 +1,14 @@
+<Project>
+  <ItemGroup>
+    <!-- You can add additional files to deploy with another <FilesToDeploy> tag, you should probably leave this one alone though... -->
+    <FilesToDeploy Include="$(TargetPath);$(TargetDir)$(TargetName).pdb" />
+    
+    <!-- Add as many <DeployDirs> entries as you need, replacing what's inside of Include="..." with the path you want to deploy to -->
+    <DeployDirs Include="" />
+  </ItemGroup>
+  
+  <!-- Files will be copied whenever you Build the project -->
+  <Target Name="DeployFiles" AfterTargets="PostBuildEvent" DependsOnTargets="PackageThunderstoreArtifact">
+    <Copy SourceFiles="@(FilesToDeploy)" DestinationFolder="%(DeployDirs.Identity)/LethalCompanyInputUtils" />
+  </Target>
+</Project>

@@ -5,16 +5,55 @@
         <LangVersion>preview</LangVersion>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <IsPackable>true</IsPackable>
+        <Authors>Rune580</Authors>
+        <AssemblyName>LethalCompanyInputUtils</AssemblyName>
+        <Product>LethalCompanyInputUtils</Product>
+        <BepInExPluginGuid>com.rune580.LethalCompanyInputUtils</BepInExPluginGuid>
+        <BepInExPluginName>Lethal Company Input Utils</BepInExPluginName>
+    </PropertyGroup>
+    
+    <!-- Nuget Package specific -->
+    <PropertyGroup>
+        <PackageId>Rune580.Mods.LethalCompany.InputUtils</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/Rune580/LethalCompanyInputUtils</PackageProjectUrl>
+        <PackageIcon>inpututils-static-icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/Rune580/LethalCompanyInputUtils</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <!-- Nuget Package includes -->
+    <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="/" Visible="false" />
+        <None Include="../LICENSE" Pack="true" PackagePath="/" Visible="false" />
+        <None Include="../Thunderstore/icons/inpututils-static-icon.png" Pack="true" PackagePath="/" Visible="false" />
+    </ItemGroup>
+
+    <!-- MinVer -->
+    <PropertyGroup>
+        <MinVerDefaultPreReleaseIdentifiers>dev</MinVerDefaultPreReleaseIdentifiers>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AinaVT-LethalConfig" Version="1.4.0" />
+        <PackageReference Include="MinVer" Version="5.0.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="BepInEx.Analyzers" Version="1.*">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
         <PackageReference Include="BepInEx.Core" Version="5.*" />
         <PackageReference Include="UnityEngine.Modules" Version="2022.3.9" />
+        <PackageReference Include="LethalCompany.GameLibs.Steam" Version="49.0.0-ngd.9" PrivateAssets="all" />
+    </ItemGroup>
+    
+    <!-- Optional dependencies -->
+    <ItemGroup>
+        <PackageReference Include="AinaVT-LethalConfig" Version="1.4.0" />
         <PackageReference Include="TeamBMX.LobbyCompatibility" Version="1.0.3" />
     </ItemGroup>
 
@@ -26,16 +65,6 @@
         <AdditionalFiles Include="../device_layouts.json" InProject="false" />
     </ItemGroup>
 
-    <PropertyGroup>
-        <AdditionalLibsDir Condition="'$(USE_STUBBED_LIBS)' == ''">..\.gameReferences\</AdditionalLibsDir>
-        <AdditionalLibsDir Condition="'$(USE_STUBBED_LIBS)' != ''">..\libs\</AdditionalLibsDir>
-    </PropertyGroup>
-    
-    <ItemGroup>
-        <AssemblyFiles Include="$(AdditionalLibsDir)*.dll" InProject="false" />
-        <Reference Include="@(AssemblyFiles)" Private="false" />
-    </ItemGroup>
-
     <ItemGroup>
         <Content Include="AssetBundles\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -44,4 +73,41 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
+
+    <Target Name="SetPluginVersion" BeforeTargets="AddGeneratedFile" DependsOnTargets="MinVer">
+        <PropertyGroup>
+            <PlainVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)</PlainVersion>
+            <BepInExPluginVersion>$(PlainVersion)</BepInExPluginVersion>
+        </PropertyGroup>
+    </Target>
+
+    <Target Name="CopyUnityAssetBundles" BeforeTargets="PreBuildEvent">
+        <ItemGroup>
+            <AssetBundles Include="ui-assets" />
+        </ItemGroup>
+
+        <Copy SourceFiles="../Unity-LethalCompanyInputUtils/AssetBundles/StandaloneWindows/%(AssetBundles.Identity)" DestinationFiles="AssetBundles/%(AssetBundles.Identity)" />
+    </Target>
+
+    <Target Name="CopyDllToUnityProjPackages" AfterTargets="PostBuildEvent">
+        <ItemGroup>
+            <FilesToCopy Include="$(TargetPath);$(TargetDir)$(TargetName).pdb" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(ProjectDir)../Unity-LethalCompanyInputUtils/Packages/LethalCompanyInputUtils/" />
+    </Target>
+
+    <Target Name="PackageThunderstoreArtifact" DependsOnTargets="SetPluginVersion" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
+        <Exec Command="dotnet tcli build --config-path $(ProjectDir)../Thunderstore/thunderstore.toml --package-version $(PlainVersion)" />
+
+        <ItemGroup>
+            <FilesToRename Include="$(ProjectDir)../dist/*-$(PlainVersion).zip" />
+        </ItemGroup>
+
+        <Move SourceFiles="@(FilesToRename)" DestinationFiles="@(FilesToRename -&gt; Replace($(PlainVersion), $(MinVerVersion)))" />
+    </Target>
+
+    <Target Name="PublishThunderstoreArtifact" DependsOnTargets="SetPluginVersion">
+        <Exec Command="dotnet tcli publish --config-path $(ProjectDir)../Thunderstore/thunderstore.toml --file $(ProjectDir)../*-$(MinVerVersion).zip" />
+    </Target>
 </Project>

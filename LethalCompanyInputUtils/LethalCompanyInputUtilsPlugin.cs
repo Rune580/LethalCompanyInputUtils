@@ -12,22 +12,18 @@ using static BepInEx.BepInDependency.DependencyFlags;
 
 namespace LethalCompanyInputUtils;
 
-[BepInPlugin(ModId, ModName, ModVersion)]
+[BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 [BepInDependency("ainavt.lc.lethalconfig", SoftDependency)]
 [BepInDependency("BMX.LobbyCompatibility", SoftDependency)]
 public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
 {
-    public const string ModId = "com.rune580.LethalCompanyInputUtils";
-    public const string ModName = "Lethal Company Input Utils";
-    public const string ModVersion = "0.7.4";
-
     private Harmony? _harmony;
     
     private void Awake()
     {
         Logging.SetLogSource(Logger);
         
-        _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModId);
+        _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PluginInfo.PLUGIN_GUID);
         SceneManager.activeSceneChanged += OnSceneChanged;
         InputSystem.onDeviceChange += OnDeviceChanged;
         
@@ -45,7 +41,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         ModCompat.Init(this);
         
-        Logging.Info($"InputUtils {ModVersion} has finished loading!");
+        Logging.Info($"InputUtils {PluginInfo.PLUGIN_VERSION} has finished loading!");
         
         SceneManager.activeSceneChanged += TryExportLayoutsOnLoad;
     }
