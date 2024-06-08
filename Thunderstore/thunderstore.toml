@@ -28,6 +28,10 @@ source = "../LethalCompanyInputUtils/bin/Release/netstandard2.1/LethalCompanyInp
 target = "plugins/LethalCompanyInputUtils/"
 
 [[build.copy]]
+source = "../LethalCompanyInputUtils/bin/Release/netstandard2.1/AssetBundles"
+target = "plugins/LethalCompanyInputUtils/AssetBundles"
+
+[[build.copy]]
 source = "../CHANGELOG.md"
 target = "/"
 
