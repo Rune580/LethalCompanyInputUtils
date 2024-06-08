@@ -1,3 +1,8 @@
+### [0.7.6]
+
+Fixes:
+- Forgot to include AssetBundles with new build system, sorry about that.
+
 ### [0.7.5]
 
 Fixes:
