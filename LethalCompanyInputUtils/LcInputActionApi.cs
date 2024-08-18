@@ -13,7 +13,9 @@ namespace LethalCompanyInputUtils;
 
 public static class LcInputActionApi
 {
+    private static readonly Queue<(LcInputActions, InputActionMapBuilder)> RegistrationQueue = new();
     private static readonly Dictionary<string, LcInputActions> InputActionsMap = new();
+    private static bool _inputSystemInitialized;
     internal static bool PrefabLoaded;
     internal static RemapContainerController? ContainerInstance;
     
@@ -153,7 +155,32 @@ public static class LcInputActionApi
             lcInputActions.Loaded = false;
     }
 
-    internal static void RegisterInputActions(LcInputActions lcInputActions, InputActionMapBuilder builder)
+    internal static void QueueInputActionRegistration(LcInputActions lcInputActions, InputActionMapBuilder builder)
+    {
+        if (_inputSystemInitialized)
+        {
+            RegisterInputActions(lcInputActions, builder);
+        }
+        else
+        {
+            RegistrationQueue.Enqueue((lcInputActions, builder));
+        }
+    }
+
+    internal static void Initialize()
+    {
+        if (_inputSystemInitialized)
+            return;
+        
+        _inputSystemInitialized = true;
+
+        Logging.Info($"Unity InputSystem is ready to load Modded InputActions!");
+
+        while (RegistrationQueue.TryDequeue(out var entry))
+            RegisterInputActions(entry.Item1, entry.Item2);
+    }
+
+    private static void RegisterInputActions(LcInputActions lcInputActions, InputActionMapBuilder builder)
     {
         if (!InputActionsMap.TryAdd(lcInputActions.Id, lcInputActions))
         {
@@ -175,6 +202,8 @@ public static class LcInputActionApi
         lcInputActions.Load();
         
         lcInputActions.BuildActionRefs();
+        
+        Logging.Info($"Registered `{lcInputActions.Id}` to InputSystem");
     }
 
     internal static void DisableForRebind()
