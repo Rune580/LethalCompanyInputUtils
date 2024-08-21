@@ -2,7 +2,6 @@
 using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Components;
-using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;
@@ -168,13 +167,19 @@ public static class LcInputActionApi
         
         lcInputActions.GetAsset()
             .AddActionMap(builder.Build());
-        lcInputActions.GetAsset()
-            .Enable();
+        // lcInputActions.GetAsset()
+        //     .Enable();
         
         lcInputActions.OnAssetLoaded();
         lcInputActions.Load();
         
         lcInputActions.BuildActionRefs();
+    }
+
+    internal static void EnableRegisteredInputActions()
+    {
+        foreach (var lcInputActions in InputActions)
+            lcInputActions.Enable();
     }
 
     internal static void DisableForRebind()
