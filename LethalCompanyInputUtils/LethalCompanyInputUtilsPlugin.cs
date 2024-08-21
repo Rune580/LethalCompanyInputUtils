@@ -41,9 +41,9 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         ModCompat.Init(this);
         
-        SceneManager.activeSceneChanged += OnUnityLoaded;
-
         Logging.Info($"InputUtils {PluginInfo.PLUGIN_VERSION} has finished loading!");
+        
+        SceneManager.activeSceneChanged += TryExportLayoutsOnLoad;
     }
 
     private static void LoadAssetBundles()
@@ -107,11 +107,10 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         Logging.Info("Registered InputUtilsExtendedMouse Layout Override!");
     }
     
-    private static void OnUnityLoaded(Scene arg0, Scene arg1)
+    private static void TryExportLayoutsOnLoad(Scene arg0, Scene arg1)
     {
-        SceneManager.activeSceneChanged -= OnUnityLoaded;
+        SceneManager.activeSceneChanged -= TryExportLayoutsOnLoad;
         
-        LcInputActionApi.Initialize();
         LayoutExporter.TryExportLayouts();
     }
 }

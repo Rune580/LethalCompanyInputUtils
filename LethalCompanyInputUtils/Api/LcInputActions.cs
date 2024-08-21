@@ -76,7 +76,7 @@ public abstract class LcInputActions
             _inputProps[prop] = attr;
         }
 
-        LcInputActionApi.QueueInputActionRegistration(this, mapBuilder);
+        LcInputActionApi.RegisterInputActions(this, mapBuilder);
     }
 
     public virtual void CreateInputActions(in InputActionMapBuilder builder) { }
