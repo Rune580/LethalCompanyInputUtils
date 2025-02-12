@@ -1,0 +1,9 @@
+{
+  "entries": {
+    "RebindButton.ResetToDefault.PopOver": "重设为默认值",
+    "RebindButton.RemoveBind.PopOver": "移除绑定",
+    "RebindButton.NotSupportedDeviceBind.PopOver": "不支持绑定至此设备",
+    "BindingOverrideContextSwitch.Info.PopOver": "这可以让你更改正在查看/编辑的控制绑定.\n\n全局 - 这些控制绑定独立于你的整合包/档案进行保存。\n\n本地 - 这些控制绑定统一于你的整合包/档案/手动安装的进行保存。这些可以通过更新您的整合包/档案来覆盖。\n\n原版 Lethal Company 控制绑定将始终是全局的，即使你正在修改本地控制绑定，它们也将始终全局保存。",
+    "BindingOverridePriorityDropdown.Info.PopOver": "决定加载控制绑定时的优先级。\n\n偏好全局 - 全局控制绑定优先于整合包/档案/手动安装的控制绑定\n\n偏好本地 - 整合包/档案/手动安装的控制绑定优先于全局控制绑定\n\n仅限全局 - 只使用全局控制绑定\n\n仅限本地 - 只使用整合包/档案/手动安装的控制绑定"
+  }
+}
