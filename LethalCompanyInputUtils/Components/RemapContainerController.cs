@@ -265,6 +265,9 @@ public class RemapContainerController : MonoBehaviour
         
         contextSwitch.SwitchToGlobal();
 
+        // Force load global to fix issue where a user has "Local Only" priority and the local binds don't get unloaded properly, resulting in displaying incorrect keybinds.
+        OnBindingOverrideContextChanged(BindingOverrideType.Global);
+
         if (overridePriorityDropdown is null)
             return;
         
