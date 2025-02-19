@@ -52,8 +52,8 @@
     
     <!-- Optional dependencies -->
     <ItemGroup>
-        <PackageReference Include="AinaVT-LethalConfig" Version="1.4.0" />
-        <PackageReference Include="TeamBMX.LobbyCompatibility" Version="1.0.3" />
+        <PackageReference Include="AinaVT-LethalConfig" Version="1.4.0" PrivateAssets="all" />
+        <PackageReference Include="TeamBMX.LobbyCompatibility" Version="1.0.3" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
