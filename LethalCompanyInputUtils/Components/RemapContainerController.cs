@@ -120,7 +120,7 @@ public class RemapContainerController : MonoBehaviour
             pairedKeys[controlName] = (kbmKey, gamepadKey);
         }
         
-        _contextBindingOverrides.Add(new VanillaContextBindingOverride());
+        var contextBindingOverride = new VanillaContextBindingOverride();
         
         bindsList.AddSection("Lethal Company");
         sectionList.AddSection("Lethal Company");
@@ -142,8 +142,12 @@ public class RemapContainerController : MonoBehaviour
                     gamepadKey.currentInput = actionRef;
             }
             
+            contextBindingOverride.AddKeys(kbmKey, gamepadKey);
+            
             bindsList.AddBinds(kbmKey, gamepadKey, true);
         }
+        
+        _contextBindingOverrides.Add(contextBindingOverride);
     }
 
     public void OnSetToDefault()
@@ -195,20 +199,78 @@ public class RemapContainerController : MonoBehaviour
             {
                 if (lcInputAction.Loaded)
                     continue;
-                
-                _contextBindingOverrides.Add(new ModContextBindingOverride(lcInputAction));
+
+                var contextBindingOverride = new ModContextBindingOverride(lcInputAction);
             
                 foreach (var actionRef in lcInputAction.ActionRefs)
                 {
                     var kbmKey = actionRef.GetKbmKey();
                     var gamepadKey = actionRef.GetGamepadKey();
+                    
+                    contextBindingOverride.AddKeys(kbmKey, gamepadKey);
                 
                     bindsList.AddBinds(kbmKey, gamepadKey);
                 }
+                
+                _contextBindingOverrides.Add(contextBindingOverride);
             
                 lcInputAction.Loaded = true;
             }
         }
+    }
+
+    internal bool IsKeyOverriden(RemappableKey? key)
+    {
+        if (key is null)
+            return false;
+
+        var contextBindingOverrides = _contextBindingOverrides.Where(ctx => ctx.ContainsKey(key))
+            .ToArray();
+        
+        if (contextBindingOverrides.Length == 0)
+            return false;
+        
+        var contextBindingOverride = contextBindingOverrides[0];
+        var currentContext = contextBindingOverride.CurrentType;
+        
+        var oppositeContext = currentContext is BindingOverrideType.Global
+            ? BindingOverrideType.Local
+            : BindingOverrideType.Global;
+
+        var currentOverrides = contextBindingOverride.GetCurrentBindingOverrides();
+        var oppositeOverrides = oppositeContext switch
+        {
+            BindingOverrideType.Global => contextBindingOverride.GlobalOverrides,
+            BindingOverrideType.Local => contextBindingOverride.LocalOverrides,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        var doesCurrentOverride = currentOverrides.ContainsOverrideFor(key);
+        var doesOppositeOverride = oppositeOverrides.ContainsOverrideFor(key);
+
+        switch (InputUtilsConfig.bindingOverridePriority.Value)
+        {
+            case BindingOverridePriority.GlobalThenLocal:
+                if (currentContext is BindingOverrideType.Global)
+                    return !doesCurrentOverride && doesOppositeOverride;
+                return doesOppositeOverride;
+            case BindingOverridePriority.LocalThenGlobal:
+                if (currentContext is BindingOverrideType.Local)
+                    return !doesCurrentOverride && doesOppositeOverride;
+                return doesOppositeOverride;
+            case BindingOverridePriority.GlobalOnly:
+                if (currentContext is BindingOverrideType.Local)
+                    return true;
+                break;
+            case BindingOverridePriority.LocalOnly:
+                if (currentContext is BindingOverrideType.Global)
+                    return true;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
+        return false;
     }
 
     private void FinishUi()
@@ -247,6 +309,7 @@ public class RemapContainerController : MonoBehaviour
         var priority = (BindingOverridePriority)value;
 
         InputUtilsConfig.bindingOverridePriority.Value = priority;
+        RebindButton.ReloadGlyphs();
     }
 
     internal void SaveOverrides()
@@ -314,16 +377,28 @@ public class RemapContainerController : MonoBehaviour
         public BindingOverrideType CurrentType { get; protected set; }
         protected abstract InputActionAsset Asset { get; }
         protected abstract IReadOnlyCollection<InputActionReference> ActionRefs { get; }
-        protected BindingOverrides LocalOverrides = new();
-        protected BindingOverrides GlobalOverrides = new();
+        public BindingOverrides LocalOverrides { get; protected set; } = new();
+        public BindingOverrides GlobalOverrides { get; protected set; } = new();
+
+        private readonly List<RemappableKey> _keys = [];
 
         private bool _dirty;
         
-        protected abstract BindingOverrides GetCurrentBindingOverrides();
+        internal abstract BindingOverrides GetCurrentBindingOverrides();
         
-        protected abstract BindingOverrides GetBindingOverrides(BindingOverrideType overrideType);
+        internal abstract BindingOverrides GetBindingOverrides(BindingOverrideType overrideType);
         
         protected abstract string GetBindingOverridesPath(BindingOverrideType overrideType);
+
+        public void AddKeys(params RemappableKey?[] keys)
+        {
+            _keys.AddRange(keys.Where(key => key is not null)!);
+        }
+
+        public bool ContainsKey(RemappableKey? key)
+        {
+            return key is not null && _keys.Contains(key);
+        }
         
         public void LoadOverrides(BindingOverrideType overrideType)
         {
@@ -401,9 +476,9 @@ public class RemapContainerController : MonoBehaviour
 
         protected override IReadOnlyCollection<InputActionReference> ActionRefs => _inputActions.ActionRefs;
 
-        protected override BindingOverrides GetCurrentBindingOverrides() => _inputActions.GetCurrentBindingOverrides();
+        internal override BindingOverrides GetCurrentBindingOverrides() => _inputActions.GetCurrentBindingOverrides();
 
-        protected override BindingOverrides GetBindingOverrides(BindingOverrideType overrideType) =>
+        internal override BindingOverrides GetBindingOverrides(BindingOverrideType overrideType) =>
             _inputActions.GetBindingOverrides(overrideType);
 
         protected override string GetBindingOverridesPath(BindingOverrideType overrideType) =>
@@ -435,9 +510,9 @@ public class RemapContainerController : MonoBehaviour
         protected override InputActionAsset Asset => _inputActions.Asset;
         protected override IReadOnlyCollection<InputActionReference> ActionRefs => _inputActions.ActionRefs;
 
-        protected override BindingOverrides GetCurrentBindingOverrides() => new(Asset.bindings);
+        internal override BindingOverrides GetCurrentBindingOverrides() => new(Asset.bindings);
 
-        protected override BindingOverrides GetBindingOverrides(BindingOverrideType overrideType) =>
+        internal override BindingOverrides GetBindingOverrides(BindingOverrideType overrideType) =>
             _inputActions.GetBindingOverrides(overrideType);
 
         protected override string GetBindingOverridesPath(BindingOverrideType overrideType) =>

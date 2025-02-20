@@ -3,12 +3,13 @@ using LethalCompanyInputUtils.Utils.Anim;
 using LethalCompanyInputUtils.Utils.Anim.TweenValues;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace LethalCompanyInputUtils.Components.Switch;
 
 public class BindingOverrideContextSwitch : MonoBehaviour
 {
+    public static BindingOverrideType currentContext = BindingOverrideType.Global;
+    
     private readonly TweenRunner<Vector2Tween> _maskTweenRunner = new();
     private readonly TweenRunner<Vector2Tween> _selectorTweenRunner = new();
     
@@ -17,8 +18,6 @@ public class BindingOverrideContextSwitch : MonoBehaviour
     public SwitchMaskGraphic? selectorMask;
     public RectTransform? selector;
     
-    private BindingOverrideType _currentType = BindingOverrideType.Global;
-
     protected BindingOverrideContextSwitch()
     {
         _maskTweenRunner.Init(this);
@@ -27,26 +26,26 @@ public class BindingOverrideContextSwitch : MonoBehaviour
 
     public void SwitchToGlobal()
     {
-        if (_currentType == BindingOverrideType.Global)
+        if (currentContext == BindingOverrideType.Global)
             return;
 
-        _currentType = BindingOverrideType.Global;
+        currentContext = BindingOverrideType.Global;
         
         MoveSwitch(new Vector2(-45, 0), 0.1f);
         
-        onBindingOverrideContextChanged.Invoke(_currentType);
+        onBindingOverrideContextChanged.Invoke(currentContext);
     }
 
     public void SwitchToLocal()
     {
-        if (_currentType == BindingOverrideType.Local)
+        if (currentContext == BindingOverrideType.Local)
             return;
 
-        _currentType = BindingOverrideType.Local;
+        currentContext = BindingOverrideType.Local;
         
         MoveSwitch(new Vector2(45, 0), 0.1f);
         
-        onBindingOverrideContextChanged.Invoke(_currentType);
+        onBindingOverrideContextChanged.Invoke(currentContext);
     }
 
     private void MoveSwitch(Vector2 pos, float duration)

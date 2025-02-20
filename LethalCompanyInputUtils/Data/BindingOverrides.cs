@@ -82,6 +82,36 @@ public class BindingOverrides
         }
     }
 
+    public bool ContainsOverrideFor(RemappableKey key)
+    {
+        var actionRef = key.currentInput;
+        var action = actionRef.action;
+        
+        var bindIndex = key.GetRebindingIndex();
+        
+        if (bindIndex < 0 || bindIndex >= action.bindings.Count)
+            return false;
+        
+        var binding = action.bindings[bindIndex];
+        
+        foreach (var bindingOverride in overrides)
+        {
+            if (action.name != bindingOverride.action)
+                continue;
+            
+            var origPath = bindingOverride.origPath;
+            var group = bindingOverride.groups;
+            
+            if (!string.IsNullOrEmpty(group) && binding.groups.Contains(group) && binding.path == origPath)
+                return true;
+
+            if (binding.path == origPath)
+                return true;
+        }
+        
+        return false;
+    }
+
     public string AsJson() => JsonConvert.SerializeObject(this);
 
     public static BindingOverrides FromJson(string json)

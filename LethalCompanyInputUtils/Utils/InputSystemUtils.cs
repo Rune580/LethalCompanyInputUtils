@@ -61,6 +61,27 @@ internal static class InputSystemUtils
         return null;
     }
 
+    public static int GetRebindingIndex(this RemappableKey? key)
+    {
+        if (key is null)
+            return -1;
+
+        var action = key.currentInput.action;
+
+        if (action.controls.Count == 0)
+        {
+            if (action.bindings.Count == 0)
+                return -1;
+
+            if (key.gamepadOnly && action.bindings.Count > 1)
+                return 1;
+            
+            return 0;
+        }
+
+        return key.rebindingIndex < 0 ? action.GetBindingIndexForControl(action.controls[0]) : key.rebindingIndex;
+    }
+
     public static void LoadOverridesFromControls(this InputActionAsset asset, string fileName)
     {
         var overridePriority = InputUtilsConfig.bindingOverridePriority.Value;
