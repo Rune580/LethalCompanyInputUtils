@@ -1,3 +1,15 @@
+### [0.7.8]
+
+Added:
+- Lethal Company keybinds now support Local keybinds, you can now ship vanilla keybinds with modpacks/profiles.
+- Added warnings for different scenarios in the rebind ui to better inform users of possible issues with their current configuration.
+
+Fixes:
+- Fixed issue when using an `-Only` priority and editing the opposite config resulting in the UI not visually updating newly rebound keys.
+
+Locale:
+- Chinese translation by @CoolLKKPS (I don't know if it's simplified or not)
+
 ### [0.7.7]
 
 Fixes:
