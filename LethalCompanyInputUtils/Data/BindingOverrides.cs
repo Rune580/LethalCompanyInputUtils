@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using LethalCompanyInputUtils.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace LethalCompanyInputUtils.Data;
@@ -41,8 +43,17 @@ public class BindingOverrides
         foreach (var bindingOverride in overrides)
         {
             var action = asset.FindAction(bindingOverride.action);
+            
+            var group = bindingOverride.groups;
 
-            action?.ApplyBindingOverride(bindingOverride.path, group: bindingOverride.groups);
+            if (string.IsNullOrEmpty(group))
+            {
+                action?.ApplyBindingOverride(bindingOverride.path, path: bindingOverride.origPath);
+            }
+            else
+            {
+                action?.ApplyBindingOverride(bindingOverride.path, group);
+            }
         }
     }
 
@@ -55,7 +66,17 @@ public class BindingOverrides
                 if (actionRef.action.name != bindingOverride.action)
                     continue;
                 
-                actionRef.action.ApplyBindingOverride(bindingOverride.path, group: bindingOverride.groups);
+                var group = bindingOverride.groups;
+
+                if (string.IsNullOrEmpty(group))
+                {
+                    actionRef.action.ApplyBindingOverride(bindingOverride.path, path: bindingOverride.origPath);
+                }
+                else
+                {
+                    actionRef.action.ApplyBindingOverride(bindingOverride.path, group);
+                }
+                
                 break;
             }
         }
@@ -73,5 +94,47 @@ public class BindingOverrides
         overrides.overrides = list.ToObject<List<BindingOverride>>()!;
 
         return overrides;
+    }
+
+    public static bool TryFromUnityInputJson(InputActionAsset asset, string json, out BindingOverrides? overrides)
+    {
+        overrides = null;
+        
+        try
+        {
+            var bindings = new List<InputBinding>();
+
+            foreach (var bindingOverrideJson in JsonUtility.FromJson<InputActionMap.BindingOverrideListJson>(json)
+                         .bindings)
+            {
+                if (string.IsNullOrEmpty(bindingOverrideJson.id))
+                {
+                    Debug.LogWarning("Could not override binding as no existing binding was found with the id: " +
+                                     bindingOverrideJson.id);
+                    continue;
+                }
+
+                var bindingMask = new InputBinding
+                {
+                    m_Id = bindingOverrideJson.id
+                };
+
+                var num = asset.FindBinding(bindingMask, out _);
+
+                if (num == -1)
+                    continue;
+
+                var binding = InputActionMap.BindingOverrideJson.ToBinding(bindingOverrideJson);
+                bindings.Add(binding);
+            }
+
+            overrides = new BindingOverrides(bindings);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Logging.Error(e);
+            return false;
+        }
     }
 }

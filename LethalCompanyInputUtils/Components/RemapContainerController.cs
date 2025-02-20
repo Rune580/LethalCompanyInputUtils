@@ -27,7 +27,7 @@ public class RemapContainerController : MonoBehaviour
     
     public List<RemappableKey> baseGameKeys = [];
 
-    private readonly List<ContextBindingOverride> _contextBindingOverrides = [];
+    private readonly List<BaseContextBindingOverride> _contextBindingOverrides = [];
     
     internal int LayerShown;
     
@@ -120,10 +120,30 @@ public class RemapContainerController : MonoBehaviour
             pairedKeys[controlName] = (kbmKey, gamepadKey);
         }
         
+        _contextBindingOverrides.Add(new VanillaContextBindingOverride());
+        
         bindsList.AddSection("Lethal Company");
         sectionList.AddSection("Lethal Company");
+
+        var actionRefMap = VanillaInputActions.Instance.ActionRefs
+            .ToDictionary(actionRef => actionRef.action.name);
+        
         foreach (var (_, (kbmKey, gamepadKey)) in pairedKeys)
+        {
+            if (kbmKey is not null)
+            {
+                if (actionRefMap.TryGetValue(kbmKey.currentInput.action.name, out var actionRef))
+                    kbmKey.currentInput = actionRef;
+            }
+            
+            if (gamepadKey is not null)
+            {
+                if (actionRefMap.TryGetValue(gamepadKey.currentInput.action.name, out var actionRef))
+                    gamepadKey.currentInput = actionRef;
+            }
+            
             bindsList.AddBinds(kbmKey, gamepadKey, true);
+        }
     }
 
     public void OnSetToDefault()
@@ -176,7 +196,7 @@ public class RemapContainerController : MonoBehaviour
                 if (lcInputAction.Loaded)
                     continue;
                 
-                _contextBindingOverrides.Add(new ContextBindingOverride(lcInputAction));
+                _contextBindingOverrides.Add(new ModContextBindingOverride(lcInputAction));
             
                 foreach (var actionRef in lcInputAction.ActionRefs)
                 {
@@ -236,9 +256,9 @@ public class RemapContainerController : MonoBehaviour
             var binding = _contextBindingOverrides[i];
             
             binding.SaveOverrides();
-            binding.inputActions.Load();
+            binding.Reload();
             
-            _contextBindingOverrides[i] = new ContextBindingOverride(binding.inputActions);
+            _contextBindingOverrides[i] = binding.Reset();
         }
     }
 
@@ -249,9 +269,9 @@ public class RemapContainerController : MonoBehaviour
             var binding = _contextBindingOverrides[i];
             
             binding.DiscardOverrides();
-            binding.inputActions.Load();
+            binding.Reload();
 
-            _contextBindingOverrides[i] = new ContextBindingOverride(binding.inputActions);
+            _contextBindingOverrides[i] = binding.Reset();
         }
     }
     
@@ -288,77 +308,136 @@ public class RemapContainerController : MonoBehaviour
         LcInputActionApi.ContainerInstance = null;
         LayerShown = 0;
     }
-    
-    private class ContextBindingOverride
+
+    private abstract class BaseContextBindingOverride
     {
-        public readonly LcInputActions inputActions;
-        
-        private BindingOverrides _localOverrides;
-        private BindingOverrides _globalOverrides;
-        
-        public BindingOverrideType currentType;
+        public BindingOverrideType CurrentType { get; protected set; }
+        protected abstract InputActionAsset Asset { get; }
+        protected abstract IReadOnlyCollection<InputActionReference> ActionRefs { get; }
+        protected BindingOverrides LocalOverrides = new();
+        protected BindingOverrides GlobalOverrides = new();
+
         private bool _dirty;
         
-        public ContextBindingOverride(LcInputActions inputActions)
-        {
-            this.inputActions = inputActions;
-
-            _localOverrides = this.inputActions.GetBindingOverrides(BindingOverrideType.Local);
-            _globalOverrides = this.inputActions.GetBindingOverrides(BindingOverrideType.Global);
-        }
-
+        protected abstract BindingOverrides GetCurrentBindingOverrides();
+        
+        protected abstract BindingOverrides GetBindingOverrides(BindingOverrideType overrideType);
+        
+        protected abstract string GetBindingOverridesPath(BindingOverrideType overrideType);
+        
         public void LoadOverrides(BindingOverrideType overrideType)
         {
             switch (overrideType)
             {
                 case BindingOverrideType.Global:
-                    if (currentType != overrideType && _dirty)
-                        _localOverrides = inputActions.GetCurrentBindingOverrides();
+                    if (CurrentType != overrideType && _dirty)
+                        LocalOverrides = GetCurrentBindingOverrides();
                     
-                    inputActions.Asset.RemoveAllBindingOverrides();
-                    _globalOverrides.LoadInto(inputActions.ActionRefs);
+                    Asset.RemoveAllBindingOverrides();
+                    GlobalOverrides.LoadInto(ActionRefs);
                     break;
                 case BindingOverrideType.Local:
-                    if (currentType != overrideType && _dirty)
-                        _globalOverrides = inputActions.GetCurrentBindingOverrides();
+                    if (CurrentType != overrideType && _dirty)
+                        GlobalOverrides = GetCurrentBindingOverrides();
                     
-                    inputActions.Asset.RemoveAllBindingOverrides();
-                    _localOverrides.LoadInto(inputActions.ActionRefs);
+                    Asset.RemoveAllBindingOverrides();
+                    LocalOverrides.LoadInto(ActionRefs);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(overrideType), overrideType, null);
             }
 
-            currentType = overrideType;
+            CurrentType = overrideType;
             _dirty = true;
         }
-
+        
         public void SaveOverrides()
         {
-            switch (currentType)
+            switch (CurrentType)
             {
                 case BindingOverrideType.Global:
-                    _globalOverrides = inputActions.GetCurrentBindingOverrides();
+                    GlobalOverrides = GetCurrentBindingOverrides();
                     break;
                 case BindingOverrideType.Local:
-                    _localOverrides = inputActions.GetCurrentBindingOverrides();
+                    LocalOverrides = GetCurrentBindingOverrides();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            File.WriteAllText(inputActions.GetBindingOverridesPath(BindingOverrideType.Local), _localOverrides.AsJson());
-            File.WriteAllText(inputActions.GetBindingOverridesPath(BindingOverrideType.Global), _globalOverrides.AsJson());
+            File.WriteAllText(GetBindingOverridesPath(BindingOverrideType.Local), LocalOverrides.AsJson());
+            File.WriteAllText(GetBindingOverridesPath(BindingOverrideType.Global), GlobalOverrides.AsJson());
 
             _dirty = false;
         }
-
+        
         public void DiscardOverrides()
         {
-            _localOverrides = inputActions.GetBindingOverrides(BindingOverrideType.Local);
-            _globalOverrides = inputActions.GetBindingOverrides(BindingOverrideType.Global);
+            LocalOverrides = GetBindingOverrides(BindingOverrideType.Local);
+            GlobalOverrides = GetBindingOverrides(BindingOverrideType.Global);
 
             _dirty = false;
         }
+
+        public abstract void Reload();
+        
+        public abstract BaseContextBindingOverride Reset();
+    }
+    
+    private sealed class ModContextBindingOverride : BaseContextBindingOverride
+    {
+        private readonly LcInputActions _inputActions;
+
+        public ModContextBindingOverride(LcInputActions inputActions)
+        {
+            _inputActions = inputActions;
+
+            LocalOverrides = GetBindingOverrides(BindingOverrideType.Local);
+            GlobalOverrides = GetBindingOverrides(BindingOverrideType.Global);
+        }
+
+        protected override InputActionAsset Asset => _inputActions.Asset;
+
+        protected override IReadOnlyCollection<InputActionReference> ActionRefs => _inputActions.ActionRefs;
+
+        protected override BindingOverrides GetCurrentBindingOverrides() => _inputActions.GetCurrentBindingOverrides();
+
+        protected override BindingOverrides GetBindingOverrides(BindingOverrideType overrideType) =>
+            _inputActions.GetBindingOverrides(overrideType);
+
+        protected override string GetBindingOverridesPath(BindingOverrideType overrideType) =>
+            _inputActions.GetBindingOverridesPath(overrideType);
+
+        public override void Reload() => _inputActions.Load();
+
+        public override BaseContextBindingOverride Reset() => new ModContextBindingOverride(_inputActions);
+    }
+
+    private sealed class VanillaContextBindingOverride : BaseContextBindingOverride
+    {
+        private readonly VanillaInputActions _inputActions;
+        
+        public VanillaContextBindingOverride()
+        {
+            _inputActions = VanillaInputActions.Instance;
+
+            LocalOverrides = GetBindingOverrides(BindingOverrideType.Local);
+            GlobalOverrides = GetBindingOverrides(BindingOverrideType.Global);
+        }
+
+        protected override InputActionAsset Asset => _inputActions.Asset;
+        protected override IReadOnlyCollection<InputActionReference> ActionRefs => _inputActions.ActionRefs;
+
+        protected override BindingOverrides GetCurrentBindingOverrides() => new(Asset.bindings);
+
+        protected override BindingOverrides GetBindingOverrides(BindingOverrideType overrideType) =>
+            _inputActions.GetBindingOverrides(overrideType);
+
+        protected override string GetBindingOverridesPath(BindingOverrideType overrideType) =>
+            _inputActions.GetBindingOverridesPath(overrideType);
+
+        public override void Reload() => _inputActions.Load();
+
+        public override BaseContextBindingOverride Reset() => new VanillaContextBindingOverride();
     }
 }

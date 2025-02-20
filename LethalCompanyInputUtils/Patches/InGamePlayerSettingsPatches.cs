@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LethalCompanyInputUtils.Data;
 
 namespace LethalCompanyInputUtils.Patches;
 
@@ -10,6 +11,11 @@ public static class InGamePlayerSettingsPatches
         public static void Prefix()
         {
             LcInputActionApi.SaveOverrides();
+        }
+
+        public static void Postfix()
+        {
+            VanillaInputActions.Instance.Load();
         }
     }
     

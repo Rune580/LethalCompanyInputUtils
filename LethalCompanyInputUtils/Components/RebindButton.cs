@@ -22,7 +22,6 @@ public class RebindButton : MonoBehaviour
     public float timeout = 5f;
     
     private RemappableKey? _key;
-    private bool _isBaseGame;
     private InputActionRebindingExtensions.RebindingOperation? _rebindingOperation;
     private bool _rebinding;
     private float _timeoutTimer;
@@ -33,7 +32,6 @@ public class RebindButton : MonoBehaviour
     public void SetKey(RemappableKey? key, bool isBaseGame)
     {
         _key = key;
-        _isBaseGame = isBaseGame;
         
         UpdateState();
     }
@@ -226,9 +224,6 @@ public class RebindButton : MonoBehaviour
             return;
         
         action.RemoveBindingOverride(bindIndex);
-
-        if (_isBaseGame)
-            BaseGameUnsavedChanges();
         
         MarkSettingsAsDirty();
         UpdateState();
@@ -248,9 +243,6 @@ public class RebindButton : MonoBehaviour
             _key.gamepadOnly
                 ? LcInputActions.UnboundGamepadIdentifier
                 : LcInputActions.UnboundKeyboardAndMouseIdentifier);
-
-        if (_isBaseGame)
-            BaseGameUnsavedChanges();
 
         MarkSettingsAsDirty();
         UpdateState();
@@ -320,19 +312,10 @@ public class RebindButton : MonoBehaviour
     {
         if (!operation.completed)
             return;
-
-        if (instance._isBaseGame)
-            BaseGameUnsavedChanges();
         
         MarkSettingsAsDirty();
         
         instance.FinishRebinding();
-    }
-
-    private static void BaseGameUnsavedChanges()
-    {
-        IngamePlayerSettings.Instance.unsavedSettings.keyBindings =
-            IngamePlayerSettings.Instance.playerInput.actions.SaveBindingOverridesAsJson();
     }
 
     private static void MarkSettingsAsDirty()
