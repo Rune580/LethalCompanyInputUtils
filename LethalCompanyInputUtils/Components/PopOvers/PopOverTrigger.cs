@@ -15,7 +15,7 @@ public class PopOverTrigger : UIBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public RectTransform? target;
 
-    protected override void Awake()
+    public override void Awake()
     {
         base.Awake();
 
@@ -33,7 +33,7 @@ public class PopOverTrigger : UIBehaviour, IPointerEnterHandler, IPointerExitHan
         PopOverManager.RemoveHotTrigger(this);
     }
 
-    protected override void OnDisable()
+    public override void OnDisable()
     {
         base.OnDisable();
         

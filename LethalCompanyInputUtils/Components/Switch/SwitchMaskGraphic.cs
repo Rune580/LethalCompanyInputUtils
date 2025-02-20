@@ -1,5 +1,4 @@
-﻿using System;
-using LethalCompanyInputUtils.Utils;
+﻿using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +25,7 @@ public class SwitchMaskGraphic : Graphic
     private Vector2 _offset = new(-45, 0);
     private RectTransform? _rectTransform;
 
-    protected override void Awake()
+    public override void Awake()
     {
         base.Awake();
 
@@ -39,7 +38,7 @@ public class SwitchMaskGraphic : Graphic
         UpdateGeometry();
     }
 
-    protected override void OnPopulateMesh(VertexHelper vh)
+    public override void OnPopulateMesh(VertexHelper vh)
     {
         if (_rectTransform is null)
             return;
