@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using HarmonyLib;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Glyphs;
 using TMPro;
@@ -320,8 +319,7 @@ public class RebindButton : MonoBehaviour
 
     private static void MarkSettingsAsDirty()
     {
-        _setChangesNotAppliedMethodInfo ??= AccessTools.Method(typeof(IngamePlayerSettings), "SetChangesNotAppliedTextVisible");
-        _setChangesNotAppliedMethodInfo.Invoke(IngamePlayerSettings.Instance, [true]);
+        IngamePlayerSettings.Instance.SetChangesNotAppliedTextVisible();
     }
     
     public static void ReloadGlyphs()

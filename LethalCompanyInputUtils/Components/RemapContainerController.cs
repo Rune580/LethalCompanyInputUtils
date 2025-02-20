@@ -351,7 +351,7 @@ public class RemapContainerController : MonoBehaviour
             _dirty = true;
         }
         
-        public void SaveOverrides()
+        public virtual void SaveOverrides()
         {
             switch (CurrentType)
             {
@@ -365,11 +365,12 @@ public class RemapContainerController : MonoBehaviour
                     throw new ArgumentOutOfRangeException();
             }
 
-            File.WriteAllText(GetBindingOverridesPath(BindingOverrideType.Local), LocalOverrides.AsJson());
-            File.WriteAllText(GetBindingOverridesPath(BindingOverrideType.Global), GlobalOverrides.AsJson());
+            WriteOverridesToDisk();
 
             _dirty = false;
         }
+
+        protected abstract void WriteOverridesToDisk();
         
         public void DiscardOverrides()
         {
@@ -408,6 +409,12 @@ public class RemapContainerController : MonoBehaviour
         protected override string GetBindingOverridesPath(BindingOverrideType overrideType) =>
             _inputActions.GetBindingOverridesPath(overrideType);
 
+        protected override void WriteOverridesToDisk()
+        {
+            File.WriteAllText(GetBindingOverridesPath(BindingOverrideType.Local), LocalOverrides.AsJson());
+            File.WriteAllText(GetBindingOverridesPath(BindingOverrideType.Global), GlobalOverrides.AsJson());
+        }
+
         public override void Reload() => _inputActions.Load();
 
         public override BaseContextBindingOverride Reset() => new ModContextBindingOverride(_inputActions);
@@ -435,6 +442,26 @@ public class RemapContainerController : MonoBehaviour
 
         protected override string GetBindingOverridesPath(BindingOverrideType overrideType) =>
             _inputActions.GetBindingOverridesPath(overrideType);
+
+        public override void SaveOverrides()
+        {
+            base.SaveOverrides();
+            
+            // Load global into vanilla settings keybinds and save
+            Asset.RemoveAllBindingOverrides();
+            
+            GlobalOverrides.LoadInto(ActionRefs);
+            IngamePlayerSettings.Instance.unsavedSettings.keyBindings = Asset.SaveBindingOverridesAsJson();
+            IngamePlayerSettings.Instance.settings.keyBindings = IngamePlayerSettings.Instance.unsavedSettings.keyBindings;
+            IngamePlayerSettings.Instance.SaveSettingsToPrefs();
+            
+            Asset.RemoveAllBindingOverrides();
+        }
+
+        protected override void WriteOverridesToDisk()
+        {
+            File.WriteAllText(GetBindingOverridesPath(BindingOverrideType.Local), LocalOverrides.AsJson());
+        }
 
         public override void Reload() => _inputActions.Load();
 

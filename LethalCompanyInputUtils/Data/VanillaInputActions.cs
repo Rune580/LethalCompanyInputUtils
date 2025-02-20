@@ -44,10 +44,13 @@ internal class VanillaInputActions
     
     internal BindingOverrides GetBindingOverrides(BindingOverrideType overrideType)
     {
+        if (overrideType is BindingOverrideType.Global)
+            return GetGlobalBindingOverridesFromVanilla();
+        
         var jsonPath = overrideType.GetJsonPath(FileName);
 
         if (!File.Exists(jsonPath))
-            return overrideType is BindingOverrideType.Global ? GetGlobalBindingOverridesFromVanilla() : new BindingOverrides();
+            return new BindingOverrides();
 
         try
         {
@@ -61,7 +64,34 @@ internal class VanillaInputActions
         return new BindingOverrides();
     }
 
-    public void Load() => Asset.LoadOverridesFromControls(FileName);
+    public void Load()
+    {
+        var overridePriority = InputUtilsConfig.bindingOverridePriority.Value;
+
+        var globalOverrides = GetGlobalBindingOverridesFromVanilla();
+        
+        switch (overridePriority)
+        {
+            case BindingOverridePriority.GlobalThenLocal:
+                Asset.LoadOverridesFromControls(FileName, BindingOverrideType.Local, true);
+                globalOverrides.LoadInto(Asset);
+                break;
+            case BindingOverridePriority.LocalThenGlobal:
+                Asset.RemoveAllBindingOverrides();
+                globalOverrides.LoadInto(Asset);
+                Asset.LoadOverridesFromControls(FileName, BindingOverrideType.Local, false);
+                break;
+            case BindingOverridePriority.GlobalOnly:
+                Asset.RemoveAllBindingOverrides();
+                globalOverrides.LoadInto(Asset);
+                break;
+            case BindingOverridePriority.LocalOnly:
+                Asset.LoadOverridesFromControls(FileName, BindingOverrideType.Local, true);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(overridePriority), overridePriority, null);
+        }
+    }
 
     private BindingOverrides GetGlobalBindingOverridesFromVanilla()
     {

@@ -100,6 +100,9 @@ public class BindingOverrides
     {
         overrides = null;
         
+        if (string.IsNullOrEmpty(json))
+            return false;
+        
         try
         {
             var bindings = new List<InputBinding>();
@@ -119,12 +122,17 @@ public class BindingOverrides
                     m_Id = bindingOverrideJson.id
                 };
 
-                var num = asset.FindBinding(bindingMask, out _);
+                var num = asset.FindBinding(bindingMask, out var action);
 
                 if (num == -1)
                     continue;
 
                 var binding = InputActionMap.BindingOverrideJson.ToBinding(bindingOverrideJson);
+                
+                binding.id = action.id;
+                binding.action = action.bindings[num].action;
+                binding.path = action.bindings[num].path;
+                
                 bindings.Add(binding);
             }
 
