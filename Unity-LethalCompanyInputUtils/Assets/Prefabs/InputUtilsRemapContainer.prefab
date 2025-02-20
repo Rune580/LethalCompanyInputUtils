@@ -85,6 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8089545806984986137}
   - component: {fileID: 496113919600177824}
+  - component: {fileID: 7998641556828880296}
   - component: {fileID: 6300660325196098095}
   m_Layer: 5
   m_Name: Item Label
@@ -120,6 +121,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 712291435864952321}
   m_CullTransparentMesh: 1
+--- !u!114 &7998641556828880296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712291435864952321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1815988069, guid: de7f53af8e88288428b07212e8711754, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  token: 
+  getTokenFromLabel: 1
+  label: {fileID: 6300660325196098095}
 --- !u!114 &6300660325196098095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -614,17 +630,30 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Prefer Global
+    - m_Text: OverridePriority.PreferGlobal
       m_Image: {fileID: 0}
-    - m_Text: Prefer Local
+    - m_Text: OverridePriority.PreferLocal
       m_Image: {fileID: 0}
-    - m_Text: Global Only
+    - m_Text: OverridePriority.GlobalOnly
       m_Image: {fileID: 0}
-    - m_Text: Local Only
+    - m_Text: OverridePriority.LocalOnly
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2462229333810361394}
+        m_TargetAssemblyTypeName: LethalCompanyInputUtils.Components.LocaleResolver,
+          LethalCompanyInputUtils
+        m_MethodName: ReloadFromLabel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!1 &1792300722851106141
 GameObject:
@@ -1171,6 +1200,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8290736175567898934}
   - component: {fileID: 4470750033452763005}
+  - component: {fileID: 5753683981360153763}
   - component: {fileID: 6983091470868587683}
   m_Layer: 5
   m_Name: Text (TMP)
@@ -1206,6 +1236,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3270070694502219206}
   m_CullTransparentMesh: 1
+--- !u!114 &5753683981360153763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3270070694502219206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1815988069, guid: de7f53af8e88288428b07212e8711754, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  token: Context.Global
+  getTokenFromLabel: 0
+  label: {fileID: 6983091470868587683}
 --- !u!114 &6983091470868587683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1908,6 +1953,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4293234167247132287}
   - component: {fileID: 6285654614924636473}
+  - component: {fileID: 2462229333810361394}
   - component: {fileID: 6442189391022228067}
   m_Layer: 5
   m_Name: Label
@@ -1943,6 +1989,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3957725358194925854}
   m_CullTransparentMesh: 1
+--- !u!114 &2462229333810361394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3957725358194925854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1815988069, guid: de7f53af8e88288428b07212e8711754, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  token: 
+  getTokenFromLabel: 1
+  label: {fileID: 6442189391022228067}
 --- !u!114 &6442189391022228067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1963,7 +2024,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Prefer Global
+  m_text: OverridePriority.PreferGlobal
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b1b3e0dd669d8cf4c94a621574758947, type: 2}
   m_sharedMaterial: {fileID: -3185717856774438929, guid: b1b3e0dd669d8cf4c94a621574758947, type: 2}
@@ -2132,6 +2193,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6578701232891335068}
   - component: {fileID: 1909222155368763472}
+  - component: {fileID: 8875787861551672749}
   - component: {fileID: 7644390699152596345}
   m_Layer: 5
   m_Name: Text (TMP)
@@ -2167,6 +2229,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4583006644839304099}
   m_CullTransparentMesh: 1
+--- !u!114 &8875787861551672749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583006644839304099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1815988069, guid: de7f53af8e88288428b07212e8711754, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  token: Context.Local
+  getTokenFromLabel: 0
+  label: {fileID: 7644390699152596345}
 --- !u!114 &7644390699152596345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3045,6 +3122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7986727057819436014}
   - component: {fileID: 5260353967996231935}
+  - component: {fileID: 5157092260934319698}
   - component: {fileID: 7915317053370462154}
   m_Layer: 5
   m_Name: Text (TMP)
@@ -3080,6 +3158,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5896030070373809259}
   m_CullTransparentMesh: 1
+--- !u!114 &5157092260934319698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5896030070373809259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1815988069, guid: de7f53af8e88288428b07212e8711754, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  token: Context.Global
+  getTokenFromLabel: 0
+  label: {fileID: 7915317053370462154}
 --- !u!114 &7915317053370462154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3886,6 +3979,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7029566844888269424}
   - component: {fileID: 1838598809106130112}
+  - component: {fileID: 8108817887142157188}
   - component: {fileID: 3777255424586263412}
   m_Layer: 5
   m_Name: Text (TMP)
@@ -3921,6 +4015,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8065244299663972022}
   m_CullTransparentMesh: 1
+--- !u!114 &8108817887142157188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8065244299663972022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1815988069, guid: de7f53af8e88288428b07212e8711754, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  token: Context.Local
+  getTokenFromLabel: 0
+  label: {fileID: 3777255424586263412}
 --- !u!114 &3777255424586263412
 MonoBehaviour:
   m_ObjectHideFlags: 0

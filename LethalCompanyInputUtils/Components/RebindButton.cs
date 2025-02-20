@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
-using HarmonyLib;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Glyphs;
+using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -19,28 +18,26 @@ public class RebindButton : MonoBehaviour
     public RebindIndicator? rebindIndicator;
     public Button? resetButton;
     public Button? removeButton;
+    public GameObject? overrideIndicator;
     public float timeout = 5f;
     
     private RemappableKey? _key;
-    private bool _isBaseGame;
     private InputActionRebindingExtensions.RebindingOperation? _rebindingOperation;
     private bool _rebinding;
     private float _timeoutTimer;
     
-    private static MethodInfo? _setChangesNotAppliedMethodInfo;
     private static readonly List<RebindButton> Instances = [];
 
     public void SetKey(RemappableKey? key, bool isBaseGame)
     {
         _key = key;
-        _isBaseGame = isBaseGame;
         
         UpdateState();
     }
 
     public void UpdateState()
     {
-        if (bindLabel is null || glyphLabel is null || button is null || notSupportedImage is null || resetButton is null || removeButton is null)
+        if (bindLabel is null || glyphLabel is null || button is null || notSupportedImage is null || resetButton is null || removeButton is null || overrideIndicator is null)
             return;
 
         if (_key is null)
@@ -49,7 +46,7 @@ public class RebindButton : MonoBehaviour
             return;
         }
 
-        var bindingIndex = GetRebindingIndex();
+        var bindingIndex = _key.GetRebindingIndex();
         var action = _key.currentInput.action;
 
         if (bindingIndex >= action.bindings.Count)
@@ -59,9 +56,11 @@ public class RebindButton : MonoBehaviour
         }
 
         resetButton.gameObject.SetActive(action.bindings[bindingIndex].hasOverrides);
+        
+        CheckIfOverriden();
 
         var effectivePath = action.bindings[bindingIndex].effectivePath;
-        
+
         var bindPath = InputControlPath.ToHumanReadableString(effectivePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
 
         if (_key.gamepadOnly)
@@ -144,25 +143,16 @@ public class RebindButton : MonoBehaviour
         removeButton.gameObject.SetActive(false);
     }
 
-    private int GetRebindingIndex()
+    private void CheckIfOverriden()
     {
-        if (_key is null)
-            return -1;
+        if (_key is null || overrideIndicator is null)
+            return;
 
-        var action = _key.currentInput.action;
-
-        if (action.controls.Count == 0)
-        {
-            if (action.bindings.Count == 0)
-                return -1;
-
-            if (_key.gamepadOnly && action.bindings.Count > 1)
-                return 1;
-            
-            return 0;
-        }
-
-        return _key.rebindingIndex < 0 ? action.GetBindingIndexForControl(action.controls[0]) : _key.rebindingIndex;
+        var remapController = LcInputActionApi.ContainerInstance;
+        if (remapController is null)
+            return;
+        
+        overrideIndicator.SetActive(remapController.IsKeyOverriden(_key));
     }
 
     public void StartRebinding()
@@ -170,7 +160,7 @@ public class RebindButton : MonoBehaviour
         if (_key is null || bindLabel is null || glyphLabel is null || rebindIndicator is null || resetButton is null || removeButton is null)
             return;
 
-        var rebindIndex = GetRebindingIndex();
+        var rebindIndex = _key.GetRebindingIndex();
 
         resetButton.interactable = false;
         removeButton.interactable = false;
@@ -219,16 +209,13 @@ public class RebindButton : MonoBehaviour
         if (_key is null)
             return;
 
-        var bindIndex = GetRebindingIndex();
+        var bindIndex = _key.GetRebindingIndex();
         var action = _key.currentInput.action;
         
         if (!action.bindings[bindIndex].hasOverrides)
             return;
         
         action.RemoveBindingOverride(bindIndex);
-
-        if (_isBaseGame)
-            BaseGameUnsavedChanges();
         
         MarkSettingsAsDirty();
         UpdateState();
@@ -241,16 +228,13 @@ public class RebindButton : MonoBehaviour
         if (_key is null)
             return;
 
-        var bindIndex = GetRebindingIndex();
+        var bindIndex = _key.GetRebindingIndex();
         var action = _key.currentInput.action;
 
         action.ApplyBindingOverride(bindIndex,
             _key.gamepadOnly
                 ? LcInputActions.UnboundGamepadIdentifier
                 : LcInputActions.UnboundKeyboardAndMouseIdentifier);
-
-        if (_isBaseGame)
-            BaseGameUnsavedChanges();
 
         MarkSettingsAsDirty();
         UpdateState();
@@ -320,25 +304,15 @@ public class RebindButton : MonoBehaviour
     {
         if (!operation.completed)
             return;
-
-        if (instance._isBaseGame)
-            BaseGameUnsavedChanges();
         
         MarkSettingsAsDirty();
         
         instance.FinishRebinding();
     }
 
-    private static void BaseGameUnsavedChanges()
-    {
-        IngamePlayerSettings.Instance.unsavedSettings.keyBindings =
-            IngamePlayerSettings.Instance.playerInput.actions.SaveBindingOverridesAsJson();
-    }
-
     private static void MarkSettingsAsDirty()
     {
-        _setChangesNotAppliedMethodInfo ??= AccessTools.Method(typeof(IngamePlayerSettings), "SetChangesNotAppliedTextVisible");
-        _setChangesNotAppliedMethodInfo.Invoke(IngamePlayerSettings.Instance, [true]);
+        IngamePlayerSettings.Instance.SetChangesNotAppliedTextVisible();
     }
     
     public static void ReloadGlyphs()

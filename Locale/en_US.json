@@ -1,9 +1,18 @@
 {
   "entries": {
+    "Context.Global": "Global",
+    "Context.Local": "Local",
+    "OverridePriority.PreferGlobal": "Prefer Global",
+    "OverridePriority.PreferLocal": "Prefer Local",
+    "OverridePriority.GlobalOnly": "Global Only",
+    "OverridePriority.LocalOnly": "Local Only",
     "RebindButton.ResetToDefault.PopOver": "Reset to default",
     "RebindButton.RemoveBind.PopOver": "Remove bind",
     "RebindButton.NotSupportedDeviceBind.PopOver": "Doesn't support binding to this device",
-    "BindingOverrideContextSwitch.Info.PopOver": "This let's you change which Controls you are viewing/editing.\n\nGlobal - These controls are saved independently from your Modpack/Profile.\n\nLocal - These controls are saved with your Modpack/Profile/Manual install. These can be overwritten by updating your Modpack/Profile.\n\nVanilla LethalCompany Controls are always Global even if you are modifying the Local Controls, they will always be saved Globally.",
-    "BindingOverridePriorityDropdown.Info.PopOver": "Determines the priority when loading Controls.\n\nPrefer Global - Global Controls take priority over Modpack/Profile/Manual install Controls\n\nPrefer Local - Modpack/Profile/Manual install Controls take priority over Global Controls\n\nGlobal Only - Only uses Global Controls\n\nLocal Only - Only uses Modpack/Profile/Manual install Controls"
+    "RebindButton.DisabledByOverride.PopOver": "This KeyBind is being overriden by it's [OppositeContext] override.\n\nYou can view the [OppositeContext] override by clicking the [OppositeContext] Button in the top left.\n\nYou can also change the binding priorities with the DropDown that says \\[[BindingOverridePriorityConfigValue]\\] right below the [OppositeContext] Button.[OptionalPreferPriority]",
+    "RebindButton.DisabledByOverride.PopOver.Optional": "\n\nWith [BindingOverridePriorityConfigValue] set, rebinding this Control, either to the same key or a different key, is enough to fix this.",
+    "BindingOverrideContextSwitch.Info.PopOver": "This let's you change which Controls you are viewing/editing.\n\nGlobal - These controls are saved independently from your Modpack/Profile.\n\nLocal - These controls are saved with your Modpack/Profile/Manual install. These can be overwritten by updating your Modpack/Profile.",
+    "BindingOverridePriorityDropdown.Info.PopOver": "Determines the priority when loading Controls.\n\nPrefer Global - Global Controls take priority over Modpack/Profile/Manual install Controls\n\nPrefer Local - Modpack/Profile/Manual install Controls take priority over Global Controls\n\nGlobal Only - Only uses Global Controls\n\nLocal Only - Only uses Modpack/Profile/Manual install Controls",
+    "LegacyControls.Button.Label": "Show Legacy Controls ({0} present)"
   }
 }

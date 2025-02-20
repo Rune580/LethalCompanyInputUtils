@@ -2,7 +2,7 @@
 using System.Linq;
 using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.Components;
-using LethalCompanyInputUtils.Config;
+using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
 using TMPro;
 using UnityEngine;
@@ -40,7 +40,7 @@ public static class LcInputActionApi
         if (ContainerInstance is not null && ContainerInstance.legacyButton is not null)
         {
             var label = ContainerInstance.legacyButton.GetComponentInChildren<TextMeshProUGUI>();
-            label.SetText($"> Show Legacy Controls ({actualKeyCount} present)");
+            label.SetText($"> {string.Format(LocaleManager.GetString("LegacyControls.Button.Label"),  actualKeyCount)}");
         }
 
         if (keySlotCount == 0)

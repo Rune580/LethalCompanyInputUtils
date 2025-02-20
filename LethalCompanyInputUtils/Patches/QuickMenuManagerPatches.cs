@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LethalCompanyInputUtils.Data;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine;
 
@@ -29,6 +30,11 @@ public static class QuickMenuManagerPatches
             }
 
             return true;
+        }
+
+        public static void Postfix()
+        {
+            VanillaInputActions.Instance.Load();
         }
     }
 }
