@@ -1,3 +1,8 @@
+### [0.7.9]
+
+Fixes:
+- Fixed issue where InputUtils failing to load LethalCompany keybinds caused other issues.
+
 ### [0.7.8]
 
 Added:
