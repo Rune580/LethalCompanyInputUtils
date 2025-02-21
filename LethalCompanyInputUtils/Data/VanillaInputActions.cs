@@ -19,8 +19,10 @@ internal class VanillaInputActions
         get
         {
             if (field is null)
-                throw new InvalidOperationException("VanillaInputActions is not yet initialized!");
-
+            {
+                field = new VanillaInputActions();
+                field.Load();
+            }
             return field;
         }
         internal set;
