@@ -5,6 +5,15 @@ namespace LethalCompanyInputUtils.Patches;
 
 public static class InGamePlayerSettingsPatches
 {
+    [HarmonyPatch(typeof(IngamePlayerSettings), nameof(IngamePlayerSettings.UpdateGameToMatchSettings))]
+    public static class UpdateGameToMatchSettingsPatch
+    {
+        public static void Prefix()
+        {
+            VanillaInputActions.Instance.Load();
+        }
+    }
+    
     [HarmonyPatch(typeof(IngamePlayerSettings), nameof(IngamePlayerSettings.SaveChangedSettings))]
     public static class SaveChangedSettingsPatch
     {

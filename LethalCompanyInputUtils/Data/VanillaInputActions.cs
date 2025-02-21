@@ -18,11 +18,7 @@ internal class VanillaInputActions
     {
         get
         {
-            if (field is null)
-            {
-                field = new VanillaInputActions();
-                field.Load();
-            }
+            field ??= new VanillaInputActions();
             return field;
         }
         internal set;
