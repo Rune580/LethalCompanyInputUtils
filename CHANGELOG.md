@@ -1,3 +1,8 @@
+### [0.7.10]
+
+Fixes:
+- Actually load LethalCompany keybinds
+
 ### [0.7.9]
 
 Fixes:

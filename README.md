@@ -39,7 +39,7 @@ add this to your project `.csproj`
 ```xml
 <ItemGroup>
   <!-- Make sure the 'Version="..."' is set to the latest version -->
-  <PackageReference Include="Rune580.Mods.LethalCompany.InputUtils" Version="0.7.9" />
+  <PackageReference Include="Rune580.Mods.LethalCompany.InputUtils" Version="0.7.10" />
 </ItemGroup>
 ```
 That should be all you need to get started.
