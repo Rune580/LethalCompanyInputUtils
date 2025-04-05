@@ -6,6 +6,7 @@ using LethalCompanyInputUtils.Config;
 using LethalCompanyInputUtils.Glyphs;
 using LethalCompanyInputUtils.Localization;
 using LethalCompanyInputUtils.Utils;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using static BepInEx.BepInDependency.DependencyFlags;
@@ -17,6 +18,8 @@ namespace LethalCompanyInputUtils;
 [BepInDependency("BMX.LobbyCompatibility", SoftDependency)]
 public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
 {
+    private static ExampleActions? _instance;
+    
     private Harmony? _harmony;
     
     private void Awake()
@@ -44,6 +47,21 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         Logging.Info($"InputUtils {PluginInfo.PLUGIN_VERSION} has finished loading!");
         
         SceneManager.activeSceneChanged += TryExportLayoutsOnLoad;
+        
+        _instance = new ExampleActions();
+        
+        _instance.ExampleMovementAction.started += ExampleMovementActionOnperformed;
+        _instance.ExampleMovementAction.performed += ExampleMovementActionOnperformed;
+        _instance.ExampleMovementAction.canceled += ExampleMovementActionOnperformed;
+        
+        _instance.Enable();
+    }
+
+    private static void ExampleMovementActionOnperformed(InputAction.CallbackContext obj)
+    {
+        var axisValue = obj.ReadValue<Vector2>();
+        
+        Debug.Log($"ExampleMovementActionOnperformed {axisValue}");
     }
 
     private static void LoadAssetBundles()

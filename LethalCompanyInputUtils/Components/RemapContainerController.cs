@@ -204,12 +204,31 @@ public class RemapContainerController : MonoBehaviour
             
                 foreach (var actionRef in lcInputAction.ActionRefs)
                 {
-                    var kbmKey = actionRef.GetKbmKey();
-                    var gamepadKey = actionRef.GetGamepadKey();
-                    
-                    contextBindingOverride.AddKeys(kbmKey, gamepadKey);
-                
-                    bindsList.AddBinds(kbmKey, gamepadKey);
+                    var kbmKeys = actionRef.GetKbmKeys();
+                    var gamepadKeys = actionRef.GetGamepadKeys();
+
+                    if (kbmKeys.Length == gamepadKeys.Length)
+                    {
+                        for (int i = 0; i < kbmKeys.Length; i++)
+                        {
+                            contextBindingOverride.AddKeys(kbmKeys[i], gamepadKeys[i]);
+                            bindsList.AddBinds(kbmKeys[i], gamepadKeys[i]);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var key in kbmKeys)
+                        {
+                            contextBindingOverride.AddKeys(key, null);
+                            bindsList.AddBinds(key, null);
+                        }
+
+                        foreach (var key in gamepadKeys)
+                        {
+                            contextBindingOverride.AddKeys(key, null);
+                            bindsList.AddBinds(key, null);
+                        }
+                    }
                 }
                 
                 _contextBindingOverrides.Add(contextBindingOverride);

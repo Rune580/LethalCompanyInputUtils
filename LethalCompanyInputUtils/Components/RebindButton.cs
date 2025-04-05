@@ -286,6 +286,7 @@ public class RebindButton : MonoBehaviour
             .WithControlsExcluding("<Mouse>/scroll/y")
             .WithControlsExcluding("<Mouse>/scroll/x")
             .WithCancelingThrough("<Keyboard>/escape")
+            .WithTargetBinding(rebindIndex)
             .OnComplete(operation => OnRebindComplete(operation, this))
             .OnCancel(_ => FinishRebinding())
             .Start();
@@ -296,6 +297,7 @@ public class RebindButton : MonoBehaviour
         _rebindingOperation = inputActionRef.action.PerformInteractiveRebinding(rebindIndex)
             .OnMatchWaitForAnother(0.1f)
             .WithControlsHavingToMatchPath("<Gamepad>")
+            .WithTargetBinding(rebindIndex)
             .OnComplete(operation => OnRebindComplete(operation, this))
             .Start();
     }

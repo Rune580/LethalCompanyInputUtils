@@ -1,4 +1,5 @@
-﻿using LethalCompanyInputUtils.BindingPathEnums;
+﻿using LethalCompanyInputUtils.Api.Composite;
+using LethalCompanyInputUtils.BindingPathEnums;
 using LethalCompanyInputUtils.Utils;
 using UnityEngine.InputSystem;
 
@@ -114,6 +115,11 @@ public class InputActionBindingBuilder
     {
         _name = name;
         return this;
+    }
+
+    public Vector2DCompositeActionBindingBuilder AddVector2DCompositeBinding(CompositeVectorMode mode = CompositeVectorMode.DigitalNormalized)
+    {
+        return new Vector2DCompositeActionBindingBuilder(_mapBuilder, this, mode);
     }
 
     public InputAction Finish()

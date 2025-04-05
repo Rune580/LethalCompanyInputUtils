@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LethalCompanyInputUtils.Api;
@@ -17,48 +18,92 @@ internal static class InputSystemUtils
 
     public static bool IsGamepadBind(this InputBinding binding) => string.Equals(binding.groups, DeviceGroups.Gamepad);
 
-    public static RemappableKey? GetKbmKey(this InputActionReference actionRef)
+    public static RemappableKey[] GetKbmKeys(this InputActionReference actionRef)
     {
         var bindings = actionRef.action.bindings;
+
+        var keys = new List<RemappableKey>();
         
         for (var i = 0; i < bindings.Count; i++)
         {
             var binding = bindings[i];
             if (!binding.IsKbmBind())
                 continue;
-            
-            return new RemappableKey
+
+            if (binding.isPartOfComposite)
             {
-                ControlName = binding.name,
-                currentInput = actionRef,
-                rebindingIndex = i,
-                gamepadOnly = false
-            };
+                var name = $"{actionRef.action.name} {binding.name}";
+                keys.Add(new RemappableKey
+                {
+                    ControlName = name,
+                    currentInput = actionRef,
+                    rebindingIndex = i,
+                    gamepadOnly = false
+                });
+                
+                continue;
+            }
+
+            if (binding is { isComposite: false, isPartOfComposite: false })
+            {
+                return
+                [
+                    new RemappableKey
+                    {
+                        ControlName = binding.name,
+                        currentInput = actionRef,
+                        rebindingIndex = i,
+                        gamepadOnly = false
+                    }
+                ];
+            }
         }
 
-        return null;
+        return keys.ToArray();
     }
 
-    public static RemappableKey? GetGamepadKey(this InputActionReference actionRef)
+    public static RemappableKey[] GetGamepadKeys(this InputActionReference actionRef)
     {
         var bindings = actionRef.action.bindings;
 
-        for (int i = 0; i < bindings.Count; i++)
+        var keys = new List<RemappableKey>();
+        
+        for (var i = 0; i < bindings.Count; i++)
         {
             var binding = bindings[i];
             if (!binding.IsGamepadBind())
                 continue;
 
-            return new RemappableKey
+            if (binding.isPartOfComposite)
             {
-                ControlName = binding.name,
-                currentInput = actionRef,
-                rebindingIndex = i,
-                gamepadOnly = true
-            };
+                var name = $"{actionRef.action.name} {binding.name}";
+                keys.Add(new RemappableKey
+                {
+                    ControlName = name,
+                    currentInput = actionRef,
+                    rebindingIndex = i,
+                    gamepadOnly = true
+                });
+                
+                continue;
+            }
+
+            if (binding is { isComposite: false, isPartOfComposite: false })
+            {
+                return
+                [
+                    new RemappableKey
+                    {
+                        ControlName = binding.name,
+                        currentInput = actionRef,
+                        rebindingIndex = i,
+                        gamepadOnly = true
+                    }
+                ];
+            }
         }
 
-        return null;
+        return keys.ToArray();
     }
 
     public static int GetRebindingIndex(this RemappableKey? key)
@@ -72,6 +117,9 @@ internal static class InputSystemUtils
         {
             if (action.bindings.Count == 0)
                 return -1;
+
+            if (action.bindings.Count > key.rebindingIndex)
+                return key.rebindingIndex;
 
             if (key.gamepadOnly && action.bindings.Count > 1)
                 return 1;
