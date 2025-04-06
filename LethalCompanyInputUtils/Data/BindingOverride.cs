@@ -9,4 +9,5 @@ public struct BindingOverride
     public string? origPath;
     public string? path;
     public string? groups;
+    public string? compositePath;
 }

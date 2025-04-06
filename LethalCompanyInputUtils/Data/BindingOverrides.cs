@@ -15,15 +15,15 @@ public class BindingOverrides
 
     public BindingOverrides()
     {
-        overrides = new List<BindingOverride>();
+        overrides = [];
     }
     
     public BindingOverrides(IEnumerable<InputBinding> bindings)
     {
-        overrides = new List<BindingOverride>();
+        overrides = [];
         foreach (var binding in bindings)
         {
-            if (!binding.hasOverrides)
+            if (!binding.hasOverrides || binding.isComposite)
                 continue;
 
             var bindingOverride = new BindingOverride
@@ -33,6 +33,9 @@ public class BindingOverrides
                 path = binding.overridePath,
                 groups = binding.groups
             };
+
+            if (binding.isPartOfComposite)
+                bindingOverride.compositePath = binding.name;
             
             overrides.Add(bindingOverride);
         }
@@ -49,11 +52,17 @@ public class BindingOverrides
             if (string.IsNullOrEmpty(group))
             {
                 action?.ApplyBindingOverride(bindingOverride.path, path: bindingOverride.origPath);
+                continue;
             }
-            else
+
+            if (!string.IsNullOrEmpty(bindingOverride.compositePath))
             {
-                action?.ApplyBindingOverride(bindingOverride.path, group);
+                var rebindingIndex = action.GetRebindingIndexWithComposite(bindingOverride.compositePath, group);
+                action?.ApplyBindingOverride(rebindingIndex, bindingOverride.path);
+                continue;
             }
+
+            action?.ApplyBindingOverride(bindingOverride.path, group);
         }
     }
 
@@ -71,12 +80,18 @@ public class BindingOverrides
                 if (string.IsNullOrEmpty(group))
                 {
                     actionRef.action.ApplyBindingOverride(bindingOverride.path, path: bindingOverride.origPath);
-                }
-                else
-                {
-                    actionRef.action.ApplyBindingOverride(bindingOverride.path, group);
+                    continue;
                 }
                 
+                if (!string.IsNullOrEmpty(bindingOverride.compositePath))
+                {
+                    var rebindingIndex = actionRef.action.GetRebindingIndexWithComposite(bindingOverride.compositePath, group);
+                    actionRef.action.ApplyBindingOverride(rebindingIndex, bindingOverride.path);
+                    continue;
+                }
+
+                actionRef.action.ApplyBindingOverride(bindingOverride.path, group);
+
                 break;
             }
         }

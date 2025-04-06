@@ -130,6 +130,22 @@ internal static class InputSystemUtils
         return key.rebindingIndex < 0 ? action.GetBindingIndexForControl(action.controls[0]) : key.rebindingIndex;
     }
 
+    public static int GetRebindingIndexWithComposite(this InputAction action, string compositePath, string group)
+    {
+        for (int i = 0; i < action.bindings.Count; i++)
+        {
+            var binding = action.bindings[i];
+
+            if (!binding.isPartOfComposite)
+                continue;
+
+            if (binding.name == compositePath && binding.groups.Contains(group))
+                return i;
+        }
+        
+        return -1;
+    }
+
     public static void LoadOverridesFromControls(this InputActionAsset asset, string fileName)
     {
         var overridePriority = InputUtilsConfig.bindingOverridePriority.Value;
