@@ -15,10 +15,10 @@ public class ExampleActions : LcInputActions
             .WithActionId("Movement")
             .WithActionType(InputActionType.Value)
             .AddVector2DCompositeBinding()
-            .WithKeyboardAxisBinding(Vector2DAxis.Up, KeyboardControl.W)
-            .WithKeyboardAxisBinding(Vector2DAxis.Down, KeyboardControl.S)
-            .WithKeyboardAxisBinding(Vector2DAxis.Left, KeyboardControl.A)
-            .WithKeyboardAxisBinding(Vector2DAxis.Right, KeyboardControl.D)
+            .WithKbmAxisBinding(Vector2DAxis.Up, KeyboardControl.W)
+            .WithKbmAxisBinding(Vector2DAxis.Down, KeyboardControl.S)
+            .WithKbmAxisBinding(Vector2DAxis.Left, KeyboardControl.A)
+            .WithKbmAxisBinding(Vector2DAxis.Right, KeyboardControl.D)
             .Finish();
     }
 }

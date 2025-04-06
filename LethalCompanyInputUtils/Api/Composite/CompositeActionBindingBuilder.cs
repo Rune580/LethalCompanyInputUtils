@@ -38,10 +38,13 @@ public abstract class CompositeActionBindingBuilder<TAxisEnum, TBuilder>
         }
     }
     
-    public TBuilder WithKeyboardAxisBinding(TAxisEnum axis, KeyboardControl control, string? processors = null) =>
-        WithKeyboardAxisBinding(axis, control.ToPath(), processors);
+    public TBuilder WithKbmAxisBinding(TAxisEnum axis, MouseControl control, string? processors = null) =>
+        WithKbmAxisBinding(axis, control.ToPath(), processors);
+    
+    public TBuilder WithKbmAxisBinding(TAxisEnum axis, KeyboardControl control, string? processors = null) =>
+        WithKbmAxisBinding(axis, control.ToPath(), processors);
 
-    public TBuilder WithKeyboardAxisBinding(TAxisEnum axis, string path, string? processors = null)
+    public TBuilder WithKbmAxisBinding(TAxisEnum axis, string path, string? processors = null)
     {
         _kbmAxisBindings[axis] = path;
         _kbmAxisProcessors[axis] = processors;
