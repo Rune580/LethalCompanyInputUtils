@@ -1,9 +1,10 @@
 using System;
+using LethalCompanyInputUtils.Api.Composite;
 
 namespace LethalCompanyInputUtils.Api;
 
-[AttributeUsage(AttributeTargets.Property)]
-public class CompositeActionAttribute : Attribute
+
+public abstract class CompositeActionAttribute : Attribute
 {
-    
+    internal abstract void BuildInto(InputActionBindingBuilder actionBuilder);
 }

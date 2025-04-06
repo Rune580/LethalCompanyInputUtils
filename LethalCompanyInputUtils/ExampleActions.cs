@@ -7,6 +7,7 @@ namespace LethalCompanyInputUtils;
 
 public class ExampleActions : LcInputActions
 {
+    [CompositeVector2DAction]
     public InputAction ExampleMovementAction { get; private set; }
     
     public override void CreateInputActions(in InputActionMapBuilder builder)
