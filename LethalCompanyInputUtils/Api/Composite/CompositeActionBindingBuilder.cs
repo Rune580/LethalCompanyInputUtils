@@ -7,7 +7,12 @@ using UnityEngine.InputSystem;
 
 namespace LethalCompanyInputUtils.Api.Composite;
 
-public abstract class CompositeActionBindingBuilder<TAxisEnum, TBuilder>
+public abstract class CompositeActionBindingBuilder
+{
+    public abstract InputAction Finish();
+}
+
+public abstract class CompositeActionBindingBuilder<TAxisEnum, TBuilder> : CompositeActionBindingBuilder
     where TAxisEnum : Enum
     where TBuilder : CompositeActionBindingBuilder<TAxisEnum, TBuilder>
 {
@@ -73,7 +78,7 @@ public abstract class CompositeActionBindingBuilder<TAxisEnum, TBuilder>
         return (TBuilder)this;
     }
 
-    public InputAction Finish()
+    public override InputAction Finish()
     {
         var action = _actionBuilder.Finish();
         

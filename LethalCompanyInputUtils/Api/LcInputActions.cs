@@ -24,7 +24,7 @@ public abstract class LcInputActions
     internal InputActionAsset GetAsset() => Asset;
 
     internal bool Loaded = false;
-    private readonly Dictionary<PropertyInfo, InputActionAttribute> _inputProps;
+    private readonly Dictionary<PropertyInfo, string> _inputProps;
 
     internal bool WasEnabled { get; private set; }
     public bool Enabled => Asset.enabled;
@@ -44,7 +44,7 @@ public abstract class LcInputActions
         var mapBuilder = new InputActionMapBuilder(Id);
 
         var props = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        _inputProps = new Dictionary<PropertyInfo, InputActionAttribute>();
+        _inputProps = new Dictionary<PropertyInfo, string>();
         foreach (var prop in props)
         {
             var attr = prop.GetCustomAttribute<InputActionAttribute>();
@@ -72,7 +72,31 @@ public abstract class LcInputActions
                 .WithGamepadInteractions(attr.GamepadInteractions)
                 .Finish();
 
-            _inputProps[prop] = attr;
+            _inputProps[prop] = attr.ActionId;
+        }
+
+        foreach (var prop in props)
+        {
+            var attrs = prop.GetCustomAttributes<CompositeActionAttribute>()
+                .ToArray();
+
+            if (attrs.Length == 0)
+                continue;
+
+            if (prop.PropertyType != typeof(InputAction))
+                continue;
+
+            var actionBuilder = mapBuilder.NewActionBinding();
+
+            foreach (var attr in attrs)
+            {
+                attr.ActionId ??= prop.Name;
+
+                actionBuilder = actionBuilder.WithActionId(attr.ActionId)
+                    .WithActionType(attr.ActionType);
+                
+                var compositeBuilder = attr.BuildInto(actionBuilder);
+            }
         }
 
         LcInputActionApi.RegisterInputActions(this, mapBuilder);
@@ -84,9 +108,9 @@ public abstract class LcInputActions
 
     internal void BuildActionRefs()
     {
-        foreach (var (prop, attr) in _inputProps)
+        foreach (var (prop, actionId) in _inputProps)
         {
-            var action = Asset.FindAction(attr.ActionId);
+            var action = Asset.FindAction(actionId);
             prop.SetValue(this, action);
         }
 
