@@ -1,3 +1,8 @@
+### [0.7.11]
+
+Fixes:
+- Added an option to patch `InputManager.RegisterCustomTypes` to run in a try-catch to prevent it from causing cascading issues when it attempts to load a `Type` that references another `Type` from an optional dependency that is not currently installed. This should fix some of the recent issues where the game would launch with a "Your files could not be loaded" message. 
+
 ### [0.7.10]
 
 Fixes:
