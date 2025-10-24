@@ -40,7 +40,7 @@ public static class InputUtilsConfig
         localeKey.SettingChanged += (_, _) => LocaleManager.LoadLocaleData();
 
         patchInputManagerUseSaferRegisterOfCustomTypes = plugin.Config.Bind(
-            "Pacthes",
+            "Patches",
             "Patch InputManager to use a Safer RegisterCustomTypes method",
             true,
             "This may fix issues where Unity attempts to load optional dependencies from mods that are not installed.\n" +
