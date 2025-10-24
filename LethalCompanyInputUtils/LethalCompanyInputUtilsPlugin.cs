@@ -23,17 +23,17 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
     {
         Logging.SetLogSource(Logger);
         
+        InputUtilsConfig.Init(this);
+
         _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PluginInfo.PLUGIN_GUID);
         SceneManager.activeSceneChanged += OnSceneChanged;
         InputSystem.onDeviceChange += OnDeviceChanged;
-        
+
         LoadAssetBundles();
-        
+
         ControllerGlyph.LoadGlyphs();
-        
+
         FsUtils.EnsureRequiredDirs();
-        
-        InputUtilsConfig.Init(this);
         
         LocaleManager.LoadLocaleData();
 

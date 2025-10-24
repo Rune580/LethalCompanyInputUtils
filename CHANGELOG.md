@@ -1,3 +1,8 @@
+### [0.7.12]
+
+Fixes:
+- Make sure the config option is registered before checking it so we don't break everything.
+
 ### [0.7.11]
 
 Fixes:
