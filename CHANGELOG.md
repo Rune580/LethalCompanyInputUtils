@@ -1,3 +1,7 @@
+### [0.7.13]
+Fixes:
+- Remapping vanilla keybinds should work again on v73 and v80.
+
 ### [0.7.12]
 
 Fixes:
