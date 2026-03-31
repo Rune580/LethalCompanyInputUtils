@@ -25,6 +25,7 @@ public class RebindButton : MonoBehaviour
     private InputActionRebindingExtensions.RebindingOperation? _rebindingOperation;
     private bool _rebinding;
     private float _timeoutTimer;
+    private bool _wasActionEnabled;
     
     private static readonly List<RebindButton> Instances = [];
 
@@ -167,6 +168,10 @@ public class RebindButton : MonoBehaviour
         
         glyphLabel.enabled = false;
 
+        _wasActionEnabled = _key.currentInput.action.enabled;
+        if (_wasActionEnabled)
+            _key.currentInput.action.Disable();
+
         if (_key.gamepadOnly)
         {
             rebindIndicator.enabled = true;
@@ -198,6 +203,12 @@ public class RebindButton : MonoBehaviour
         
         resetButton.interactable = true;
         removeButton.interactable = true;
+
+        if (_wasActionEnabled)
+        {
+            _key.currentInput.action.Enable();
+            _wasActionEnabled = false;
+        }
         
         UpdateState();
     }
