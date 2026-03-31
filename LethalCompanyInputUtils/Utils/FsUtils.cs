@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using BepInEx;
+using BepInEx.Bootstrap;
 
 namespace LethalCompanyInputUtils.Utils;
 
@@ -33,7 +34,7 @@ internal static class FsUtils
             // This occurs when another mod depends on InputUtils without using a BepInDependency attribute.
             if (string.IsNullOrEmpty(_assetBundlesDir))
             {
-                var mods = BepInEx.Bootstrap.Chainloader.PluginInfos.ToPrettyString();
+                var mods = Chainloader.PluginInfos.ToPrettyString();
                 Logging.Warn($"InputUtils is loading in an invalid state!\n\tOne of the following mods may be the culprit:\n{mods}");
                 
                 return "";
@@ -45,7 +46,7 @@ internal static class FsUtils
 
     private static string? GetAssetBundlesDir()
     {
-        if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(PluginInfo.PLUGIN_GUID, out var pluginInfo))
+        if (!Chainloader.PluginInfos.TryGetValue(MyPluginInfo.PLUGIN_GUID, out var pluginInfo))
             return null;
         
         var dllLoc = pluginInfo.Location;
@@ -82,7 +83,7 @@ internal static class FsUtils
             // This occurs when another mod depends on InputUtils without using a BepInDependency attribute.
             if (string.IsNullOrEmpty(_localeDir))
             {
-                var mods = BepInEx.Bootstrap.Chainloader.PluginInfos.ToPrettyString();
+                var mods = Chainloader.PluginInfos.ToPrettyString();
                 Logging.Warn($"InputUtils is loading in an invalid state!\n\tOne of the following mods may be the culprit:\n{mods}");
                 
                 return "";
@@ -94,7 +95,7 @@ internal static class FsUtils
 
     private static string? GetLocaleDir()
     {
-        if (!BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue(PluginInfo.PLUGIN_GUID, out var pluginInfo))
+        if (!Chainloader.PluginInfos.TryGetValue(MyPluginInfo.PLUGIN_GUID, out var pluginInfo))
             return null;
         
         var dllLoc = pluginInfo.Location;

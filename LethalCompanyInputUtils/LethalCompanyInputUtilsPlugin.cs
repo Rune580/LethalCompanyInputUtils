@@ -12,7 +12,7 @@ using static BepInEx.BepInDependency.DependencyFlags;
 
 namespace LethalCompanyInputUtils;
 
-[BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInDependency("ainavt.lc.lethalconfig", SoftDependency)]
 [BepInDependency("BMX.LobbyCompatibility", SoftDependency)]
 public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
@@ -25,7 +25,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         InputUtilsConfig.Init(this);
 
-        _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PluginInfo.PLUGIN_GUID);
+        _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), MyPluginInfo.PLUGIN_GUID);
         SceneManager.activeSceneChanged += OnSceneChanged;
         InputSystem.onDeviceChange += OnDeviceChanged;
 
@@ -41,7 +41,7 @@ public class LethalCompanyInputUtilsPlugin : BaseUnityPlugin
         
         ModCompat.Init(this);
         
-        Logging.Info($"InputUtils {PluginInfo.PLUGIN_VERSION} has finished loading!");
+        Logging.Info($"InputUtils {MyPluginInfo.PLUGIN_VERSION} has finished loading!");
         
         SceneManager.activeSceneChanged += TryExportLayoutsOnLoad;
     }

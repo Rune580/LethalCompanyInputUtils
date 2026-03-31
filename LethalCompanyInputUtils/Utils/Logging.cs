@@ -20,7 +20,7 @@ internal static class Logging
     {
         if (_logSource is null)
         {
-            Debug.LogError($"[{PluginInfo.PLUGIN_NAME}] [Error] {msg}");
+            Debug.LogError($"[{MyPluginInfo.PLUGIN_NAME}] [Error] {msg}");
         }
         else
         {
@@ -32,7 +32,7 @@ internal static class Logging
     {
         if (_logSource is null)
         {
-            Debug.LogWarning($"[{PluginInfo.PLUGIN_NAME}] [Warning] {msg}");
+            Debug.LogWarning($"[{MyPluginInfo.PLUGIN_NAME}] [Warning] {msg}");
         }
         else
         {
@@ -44,7 +44,7 @@ internal static class Logging
     {
         if (_logSource is null)
         {
-            Debug.Log($"[{PluginInfo.PLUGIN_NAME}] [Info] {msg}");
+            Debug.Log($"[{MyPluginInfo.PLUGIN_NAME}] [Info] {msg}");
         }
         else
         {
