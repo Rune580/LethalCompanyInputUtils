@@ -24,6 +24,8 @@ public class SectionListController : MonoBehaviour
         if (scrollRect is null)
             scrollRect = GetComponentInChildren<ScrollRect>();
 
+        scrollRect.scrollSensitivity = 0.05f;
+
         _viewport = scrollRect.viewport;
         _content = scrollRect.content;
     }

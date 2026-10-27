@@ -41,6 +41,8 @@ public class BindsListController : MonoBehaviour
         if (scrollRect is null)
             scrollRect = GetComponentInChildren<ScrollRect>();
 
+        scrollRect.scrollSensitivity = 0.05f;
+
         if (_verticalLayoutGroup is null)
             _verticalLayoutGroup = scrollRect.content.GetComponent<VerticalLayoutGroup>();
         
