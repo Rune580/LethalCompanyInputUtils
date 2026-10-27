@@ -1,4 +1,3 @@
-
 name: Release tagged build
 
 on:
@@ -6,8 +5,9 @@ on:
     tags: [ '*' ]
 
 permissions:
-    contents: write
-    packages: write
+  contents: write
+  packages: write
+  id-token: write
 
 jobs:
   build:
@@ -92,12 +92,18 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
+          
+      - name: NuGet login (OIDC -> temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
 
       - name: Publish to NuGet.org
         env:
-          NUGET_API_TOKEN: ${{ secrets.NUGET_RELEASE_API_KEY }}
+          NUGET_API_TOKEN: ${{ secrets.NUGET_API_TOKEN }}
         run: |
-          dotnet nuget push ./*/bin/Release/*.nupkg --api-key $NUGET_API_TOKEN --source https://api.nuget.org/v3/index.json
+          dotnet nuget push ./*/bin/Release/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
     
   deploy-to-github-pkgs:
     name: Deploy to GitHub Packages
