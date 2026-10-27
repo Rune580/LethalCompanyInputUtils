@@ -1,3 +1,7 @@
+### [0.7.14]
+Fixes:
+- Scroll sensitivity in UI set to `0.05f`.
+
 ### [0.7.13]
 Fixes:
 - Remapping vanilla keybinds should work again on v73 and v80.
